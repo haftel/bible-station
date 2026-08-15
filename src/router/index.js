@@ -41,9 +41,12 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
-    } else {
-      return { top: 0 }
     }
+    // Let the DevotionalsView component handle its own scrolling for deep links
+    if (to.query.post) {
+      return false
+    }
+    return { top: 0 }
   }
 })
 

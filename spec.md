@@ -97,7 +97,24 @@ graph TD
 - **Header**: Title "Devotionals".
 - **Disclaimer Banner**: Explains that posts are for encouragement, passion for God's word.
 - **Post List**: Dynamically rendered from `src/data/devotionalsData.js`.
+- **Pagination** (10 posts per page):
+  - Page state managed via `?page=N` query parameter (default: page 1).
+  - Pagination controls rendered below posts: Previous arrow, numbered page buttons, Next arrow.
+  - Active page highlighted with `--accent-color` background.
+  - Browser back/forward navigation supported via `router.replace` and route query watcher.
+- **Copy Link Button**:
+  - Inline chain-link SVG icon to the right of each post title.
+  - On click: copies URL `<base>/devotionals?post=<id>` to clipboard.
+  - Shows brief "Copied!" tooltip (2-second fade animation).
+  - Styled with `--text-light` default, `--accent-color` on hover.
+- **Deep Linking** (`?post=<id>`):
+  - On mount, checks for `post` query parameter.
+  - Looks up the devotional's index in the full array and computes the correct page (`Math.floor(index / 10) + 1`).
+  - Navigates to the computed page and scrolls the matching `<article>` element into view.
+  - Applies a brief highlight flash animation (box-shadow pulse) on the target post.
+  - Links remain stable even when new devotionals shift content across pages.
 - **Post Schema**:
+  - `id`: string (kebab-case slug, used for deep linking and DOM element id)
   - `title`: string
   - `author`: string
   - `date`: string

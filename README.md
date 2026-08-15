@@ -10,7 +10,7 @@ Live Site: [https://haftel.github.io/bible-station/](https://haftel.github.io/bi
 
 - **🌐 Single Page Application with Global Navigation**: Fast, smooth client-side routing across all sections with clean direct URLs and responsive mobile navigation.
 - **🏠 Home & Welcome**: Overview of the mission, quick feature access cards, and inspiring hero scripture banner.
-- **📜 Devotionals**: Thoughtful devotional reflections and scripture applications.
+- **📜 Devotionals**: Thoughtful devotional reflections and scripture applications, paginated (10 per page) with shareable deep links to individual posts.
 - **🧠 Scripture Memory Tool**: Interactive scripture memorization suite with automated verse fetching via `bible-api.com` (WEB, KJV, BBE, ASV, YLT) and Custom text paste, offering 5 distinct practice modes:
   1. **Vanish Mode**: Eraser slider (0% to 100%) with interactive click-to-reveal word blanks.
   2. **Fill in the Blanks**: Customizable blank percentage (25% to 100%) with automated answer validation and visual feedback.
