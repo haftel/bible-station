@@ -212,9 +212,10 @@ graph TD
     - `actions/upload-pages-artifact@v3`
     - `actions/deploy-pages@v4`
 
-### 5.3 Clean Direct URL Routing (No Hash Routing)
-- **Vite Base**: `base: process.env.NODE_ENV === 'production' ? '/bible-station/' : '/'`
+### 5.3 Custom Domain & Clean Direct URL Routing (No Hash Routing)
+- **Custom Domain**: `biblestation.org` — configured via `public/CNAME` which Vite copies into `dist/` on every build, ensuring the custom domain setting persists across GitHub Pages deployments.
+- **Vite Base**: `base: '/'` — the site is served from the root of the custom domain.
 - **History Mode**: `createWebHistory(import.meta.env.BASE_URL)`
 - **SPA Fallback Script**:
-  - `public/404.html` captures the current path and query string, redirecting to the index with query parameter `?p=...`.
+  - `public/404.html` captures the current path and query string, redirecting to the index with query parameter `?p=...`. Uses `pathSegmentsToKeep = 0` since the custom domain serves from root (no subpath).
   - `index.html` inspects `window.location.search`, replaces URL history state before Vue Router initializes, delivering clean URL paths without visible hashtags or page reloads.

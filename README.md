@@ -2,7 +2,7 @@
 
 **Bible Station** is a modern Single Page Application (SPA) built with **Vue 3** and **Vite**, designed to help believers hide God's word in their hearts and find biblical encouragement for every season of life.
 
-Live Site: [https://haftel.github.io/bible-station/](https://haftel.github.io/bible-station/)
+Live Site: [https://biblestation.org](https://biblestation.org)
 
 ---
 
@@ -40,6 +40,7 @@ bible-station/
 │       └── deploy.yml            # Automated GitHub Pages CI/CD workflow
 ├── public/
 │   ├── 404.html                  # SPA redirect handler for GitHub Pages deep linking
+│   ├── CNAME                     # Custom domain config (biblestation.org)
 │   └── favicon.svg               # SVG bible icon favicon (with background for dark mode)
 ├── src/
 │   ├── assets/
@@ -128,6 +129,7 @@ Deployments are fully automated via GitHub Actions on every commit to the `main`
 1. The pipeline (`.github/workflows/deploy.yml`) checks out the code, runs on Node.js 20, executes `npm ci` and `npm run build`.
 2. The generated production assets in `dist/` are packaged and published to GitHub Pages.
 3. Clean deep links (such as `/devotionals` and `/memory`) are supported seamlessly using the `404.html` SPA routing fallback.
+4. The custom domain `biblestation.org` is preserved across deploys via the `public/CNAME` file.
 
 ---
 
