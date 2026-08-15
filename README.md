@@ -105,6 +105,21 @@ npm run preview
 
 ---
 
+## 🌿 Contribution & Branching Workflow
+
+To maintain production stability on `main`:
+1. **Never commit directly to `main` without explicit user permission.**
+2. Always create and work on a dedicated branch:
+   ```bash
+   git checkout -b feat/your-feature-name
+   # or fix/..., docs/..., chore/...
+   ```
+3. Run and verify local builds (`npm run build`).
+4. Update `spec.md` and `README.md` concurrently.
+5. Request review and permission before merging into `main`.
+
+---
+
 ## 🚢 Deployment (GitHub Pages)
 
 Deployments are fully automated via GitHub Actions on every commit to the `main` branch.

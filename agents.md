@@ -44,6 +44,15 @@ This document defines the strict constitutional rules and operational mandates g
 - **Mandate**: Every change must be validated against automated builds and manual user verification criteria before declaring completion.
 - **Regressions**: Existing functionalities (Scripture Memorizer 5 modes, Verses for Feelings 30 categories, Devotionals reading, responsive layout) must never be broken or degraded.
 
+### Rule 7: Feature Branch Isolation & Protected `main` Branch
+- **Mandate**: **NEVER make changes directly to `main` without explicit user permission.** All development, bug fixes, features, refactors, and document updates must occur in dedicated feature/task branches.
+- **Branch Naming Standard**:
+  - `feat/<feature-name>` for new features
+  - `fix/<bug-name>` for bug fixes
+  - `docs/<doc-topic>` for documentation improvements
+  - `chore/<task-name>` for tooling and dependency updates
+- **Merge/Deploy Protocol**: Merging into `main` or deploying to production requires explicit user review and permission after presenting a completed walkthrough and verification report.
+
 ---
 
 ## 2. Agent Workflow Protocol
@@ -55,10 +64,14 @@ flowchart TD
     C --> D["Request User Approval"]
     D --> E{"Approved?"}
     E -- No --> C
-    E -- Yes --> F["Execute Code Changes"]
-    F --> G["Update spec.md & README.md"]
-    G --> H["Run Verification & Build Tests"]
-    H --> I["Deliver Walkthrough to User"]
+    E -- Yes --> F["Create/Checkout Dedicated Feature Branch<br/>(e.g., feat/..., fix/..., docs/...)"]
+    F --> G["Execute Code Changes on Branch"]
+    G --> H["Update spec.md & README.md Synchronously"]
+    H --> I["Run Verification & Build Tests Locally"]
+    I --> J["Deliver Walkthrough & Request Permission to Merge to main"]
+    J --> K{"User Approved Merge?"}
+    K -- Yes --> L["Merge/Push to main & Trigger Deploy Pipeline"]
+    K -- No --> G
 ```
 
 ---
@@ -67,8 +80,10 @@ flowchart TD
 
 Before completing any task, every agent must confirm:
 - [ ] Implementation plan was presented, reviewed, and approved.
+- [ ] Work was executed on a dedicated feature/task branch (never directly on `main` without permission).
 - [ ] Source code changes follow clean Vue 3 Composition/SFC patterns.
 - [ ] [spec.md](file:///Users/jared/Dev/bible-station/spec.md) has been updated with any new or modified specifications.
 - [ ] [README.md](file:///Users/jared/Dev/bible-station/README.md) reflects the latest changes and instructions.
 - [ ] Build succeeds locally without errors or broken links.
 - [ ] GitHub Actions pipeline configuration remains healthy and compatible.
+- [ ] Explicit user permission was obtained prior to merging/pushing to `main`.

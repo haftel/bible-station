@@ -166,9 +166,18 @@ graph TD
 
 ---
 
-## 5. Deployment & CI/CD Pipeline
+## 5. Branching, Governance & CI/CD Deployment
 
-### 5.1 GitHub Actions Workflow (`.github/workflows/deploy.yml`)
+### 5.1 Branching Strategy & Main Protection
+- **Rule of Branch Isolation**: Never commit or push directly to `main` without explicit user permission.
+- **Feature Branches**: All feature additions, bug fixes, refactors, and document changes must be developed on dedicated branches using semantic naming:
+  - `feat/<feature-name>`: New user-facing or technical features
+  - `fix/<bug-name>`: Bug fixes and performance patches
+  - `docs/<doc-topic>`: Specification, README, and governance updates
+  - `chore/<task-name>`: Tooling, dependency, and configuration changes
+- **Merge Approval**: Merging into `main` requires explicit user review and approval after local verification.
+
+### 5.2 GitHub Actions Workflow (`.github/workflows/deploy.yml`)
 - Triggered on:
   - `push` to branch `main`
   - `workflow_dispatch` (manual trigger)
@@ -184,7 +193,7 @@ graph TD
     - `actions/upload-pages-artifact@v3`
     - `actions/deploy-pages@v4`
 
-### 5.2 Clean Direct URL Routing (No Hash Routing)
+### 5.3 Clean Direct URL Routing (No Hash Routing)
 - **Vite Base**: `base: process.env.NODE_ENV === 'production' ? '/bible-station/' : '/'`
 - **History Mode**: `createWebHistory(import.meta.env.BASE_URL)`
 - **SPA Fallback Script**:
