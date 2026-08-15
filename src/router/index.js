@@ -9,7 +9,7 @@ const routes = [
     path: '/',
     name: 'Home',
     component: HomeView,
-    meta: { title: 'Bible Station - Scripture & Encouragement' }
+    meta: { title: 'Bible Station - Scripture Memory & Encouragement' }
   },
   {
     path: '/devotionals',
