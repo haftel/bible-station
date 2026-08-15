@@ -2,6 +2,11 @@
   <nav class="navbar" aria-label="Main Navigation">
     <div class="navbar-container">
       <router-link to="/" class="navbar-brand" @click="closeMenu">
+        <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 22" width="24" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3C10 1.5 7 1 2 1C1.5 1 1 1.4 1 2v16c0 0.6 0.5 1 1 1c5 0 8 0.5 10 2"/>
+          <path d="M12 3c2-1.5 5-2 10-2c0.5 0 1 0.4 1 1v16c0 0.6-0.5 1-1 1c-5 0-8 0.5-10 2"/>
+          <line x1="12" y1="3" x2="12" y2="21"/>
+        </svg>
         <span class="brand-title">Bible Station</span>
       </router-link>
 
@@ -27,20 +32,12 @@
           Home
         </router-link>
         <router-link
-          to="/devotionals"
-          class="nav-item"
-          active-class="nav-item-active"
-          @click="closeMenu"
-        >
-          Devotionals
-        </router-link>
-        <router-link
           to="/memory"
           class="nav-item"
           active-class="nav-item-active"
           @click="closeMenu"
         >
-          Scripture Memorizer
+          Scripture Memory Tool
         </router-link>
         <router-link
           to="/verses-for-feelings"
@@ -48,7 +45,15 @@
           active-class="nav-item-active"
           @click="closeMenu"
         >
-          Verses for Feelings
+          Bible Verses for Feelings
+        </router-link>
+        <router-link
+          to="/devotionals"
+          class="nav-item"
+          active-class="nav-item-active"
+          @click="closeMenu"
+        >
+          Devotionals
         </router-link>
       </div>
     </div>
@@ -94,6 +99,11 @@ const closeMenu = () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.brand-icon {
+  color: var(--accent-color);
+  flex-shrink: 0;
 }
 
 .brand-title {

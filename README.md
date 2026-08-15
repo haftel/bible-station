@@ -11,13 +11,13 @@ Live Site: [https://haftel.github.io/bible-station/](https://haftel.github.io/bi
 - **🌐 Single Page Application with Global Navigation**: Fast, smooth client-side routing across all sections with clean direct URLs and responsive mobile navigation.
 - **🏠 Home & Welcome**: Overview of the mission, quick feature access cards, and inspiring hero scripture banner.
 - **📜 Devotionals**: Thoughtful devotional reflections and scripture applications.
-- **🧠 Scripture Memorizer**: Interactive scripture memorization suite with automated verse fetching via `bible-api.com` (WEB, KJV, BBE, ASV, YLT) and Custom text paste, offering 5 distinct practice modes:
+- **🧠 Scripture Memory Tool**: Interactive scripture memorization suite with automated verse fetching via `bible-api.com` (WEB, KJV, BBE, ASV, YLT) and Custom text paste, offering 5 distinct practice modes:
   1. **Vanish Mode**: Eraser slider (0% to 100%) with interactive click-to-reveal word blanks.
   2. **Fill in the Blanks**: Customizable blank percentage (25% to 100%) with automated answer validation and visual feedback.
   3. **Scramble Mode**: Word bank with randomly shuffled word buttons to reconstruct verses sequentially.
   4. **First Letter Mode**: Displays initial letters with word length placeholders and hover tooltip cheats.
   5. **Type Full Mode**: Letter-by-letter live comparison typing engine with color-coded feedback and memory challenge toggle.
-- **🕊️ Verses for Feelings**: Comprehensive catalog of ~240+ KJV verses across **30 emotional states** grouped into **10 categories** (Uplifting and Heavy feelings), complete with dynamic color accenting and random verse generation.
+- **🕊️ Bible Verses for Feelings**: Comprehensive catalog of ~240+ KJV verses across **30 emotional states** grouped into **10 categories** (Uplifting and Heavy feelings), complete with dynamic color accenting and random verse generation.
 
 ---
 
@@ -39,7 +39,8 @@ bible-station/
 │   └── workflows/
 │       └── deploy.yml            # Automated GitHub Pages CI/CD workflow
 ├── public/
-│   └── 404.html                  # SPA redirect handler for GitHub Pages deep linking
+│   ├── 404.html                  # SPA redirect handler for GitHub Pages deep linking
+│   └── favicon.svg               # SVG bible icon favicon (with background for dark mode)
 ├── src/
 │   ├── assets/
 │   │   └── styles/

@@ -62,12 +62,14 @@ graph TD
 
 ### 3.1 Navigation Bar (`src/components/Navbar.vue`)
 - Positioned persistently at the top of all views.
+- **Brand Logo**: Inline SVG open-bible icon (black outline, `--accent-color` stroke) next to the brand title.
 - **Brand Title**: "Bible Station" linking to `/`.
+- **Favicon**: `public/favicon.svg` — same open-bible SVG with a `#fcfcfc` rounded-rect background for dark-mode browser tab visibility.
 - **Navigation Links**:
   1. `Home` (`/`)
-  2. `Devotionals` (`/devotionals`)
-  3. `Scripture Memorizer` (`/memory`)
-  4. `Verses for Feelings` (`/verses-for-feelings`)
+  2. `Scripture Memory Tool` (`/memory`)
+  3. `Bible Verses for Feelings` (`/verses-for-feelings`)
+  4. `Devotionals` (`/devotionals`)
 - **Active Route Highlighting**: Active link indicated with `--accent-color` and bottom accent border.
 - **Mobile Responsiveness**: Clean mobile drawer/toggle for viewports under `768px`.
 

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="6" fill="#fcfcfc"/>
+  <g transform="translate(4, 5)" fill="none" stroke="#333333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Left page -->
+    <path d="M12 3C10 1.5 7 1 2 1C1.5 1 1 1.4 1 2v16c0 0.6 0.5 1 1 1c5 0 8 0.5 10 2"/>
+    <!-- Right page -->
+    <path d="M12 3c2-1.5 5-2 10-2c0.5 0 1 0.4 1 1v16c0 0.6-0.5 1-1 1c-5 0-8 0.5-10 2"/>
+    <!-- Spine -->
+    <line x1="12" y1="3" x2="12" y2="21"/>
+  </g>
+</svg>
