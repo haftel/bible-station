@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible Verse Memorizer</title>
+    <style>
+        :root {
+            --bg-color: #fcfcfc;
+            --text-main: #333333;
+            --text-light: #666666;
+            --accent-color: #4a6c6f;
+            --disclaimer-bg: #eef2f3;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 1rem 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 2rem;
+        }
+
+        .disclaimer {
+            background-color: var(--disclaimer-bg);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.2rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            text-align: left;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .post {
+            background: #ffffff;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .dashboard-container {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Forms */
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .form-col {
+            flex: 1;
+        }
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; gap: 1rem; }
+        }
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(74, 108, 111, 0.2);
+        }
+        
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .btn-secondary {
+            background-color: var(--disclaimer-bg);
+            color: var(--text-main);
+            border: 1px solid #d0d7d9;
+        }
+        .btn-secondary:hover {
+            background-color: #dce3e5;
+        }
+        .btn-text {
+            background: none;
+            color: var(--accent-color);
+            text-decoration: underline;
+            padding: 0.5rem;
+        }
+
+        /* Dashboard UI */
+        .dashboard-header {
+            background-color: var(--text-main);
+            color: #ffffff;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .dashboard-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            border-bottom: 1px solid #eaeaea;
+            background: #fafafa;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+        .tab-active {
+            color: var(--accent-color);
+            border-bottom-color: var(--accent-color);
+        }
+        .tab-content {
+            padding: 2rem;
+        }
+
+        /* Game Text Display */
+        .game-text-display {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.4rem;
+            line-height: 2.2;
+            color: var(--text-main);
+        }
+        .game-instructions {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .toolbar span {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-right: 0.5rem;
+        }
+        .toolbar-btn {
+            background: var(--disclaimer-bg);
+            border: 1px solid #d0d7d9;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .toolbar-btn:hover {
+            background: #dce3e5;
+        }
+
+        /* Vanish Game */
+        .vanish-word-hidden {
+            color: #d1d5db;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .vanish-word-hidden:hover {
+            color: #9ca3af;
+        }
+
+        /* Fill Game */
+        .fill-input {
+            display: inline-block;
+            border: none;
+            border-bottom: 2px solid #9ca3af;
+            background-color: #f3f4f6;
+            margin: 0 4px;
+            text-align: center;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: inherit;
+            color: var(--accent-color);
+            border-radius: 4px 4px 0 0;
+            padding: 0 2px;
+        }
+        .fill-input:focus {
+            outline: none;
+            border-bottom-color: var(--accent-color);
+            background-color: #ffffff;
+        }
+        .fill-correct {
+            background-color: #dcfce7;
+            color: #166534;
+            border-bottom-color: #166534;
+        }
+        .fill-incorrect {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-bottom-color: #991b1b;
+        }
+
+        /* Scramble Game */
+        .scramble-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eaeaea;
+        }
+        .scramble-btn {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: Georgia, "Times New Roman", serif;
+            transition: all 0.2s;
+        }
+        .scramble-btn:hover {
+            border-color: var(--accent-color);
+            background: #f8fafc;
+        }
+        .scramble-btn-used {
+            background: #f3f4f6;
+            color: transparent;
+            border-color: #e5e7eb;
+            cursor: default;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .scramble-error {
+            background-color: #fee2e2 !important;
+            border-color: #f87171 !important;
+            color: #991b1b !important;
+        }
+        .scramble-target {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            row-gap: 1rem;
+            min-height: 80px;
+        }
+        .scramble-target-word {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-right: 0.4rem;
+        }
+        .scramble-target-blank {
+            display: inline-block;
+            width: 2.5rem;
+            border-bottom: 2px solid #d1d5db;
+            margin: 0 0.2rem;
+        }
+
+        /* First Letter Game */
+        .first-letter-word {
+            cursor: help;
+            transition: color 0.2s;
+        }
+        .first-letter-word:hover {
+            color: var(--accent-color);
+        }
+
+        /* Type Game */
+        .type-display-box {
+            background-color: var(--disclaimer-bg);
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            min-height: 140px;
+            margin-bottom: 1.5rem;
+            white-space: pre-wrap;
+        }
+        .type-char-correct {
+            color: #166534;
+            font-weight: bold;
+        }
+        .type-char-error {
+            color: #991b1b;
+            background-color: #fee2e2;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+        .type-char-future {
+            color: #cbd5e1;
+        }
+        .type-char-punct {
+            color: #94a3b8;
+        }
+
+        /* Feedback Messages */
+        .feedback-message {
+            margin-top: 1rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .text-success { color: #166534; }
+        .text-error { color: #991b1b; }
+
+        /* Utilities */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-4 { margin-top: 1rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .shake { animation: shake 0.4s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            50% { transform: translateX(4px); }
+            75% { transform: translateX(-4px); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Scripture Memorizer</h1>
+        <p class="header-subtitle">Fetch a verse or paste your own to practice memorization.</p>
+        <div class="disclaimer">
+            <strong>Note:</strong> Some translations may have formatting issues. If issues arise, I recommend copying the output text, pasting into "Paste Custom Text" and reformatting.
+        </div>
+    </header>
+
+    <main>
+        <!-- Configuration Card -->
+        <div class="post">
+            <div class="form-row">
+                <div class="form-col">
+                    <label class="form-label">Reference (e.g., John 3:16)</label>
+                    <input type="text" id="reference" placeholder="Enter verse reference" class="form-control">
+                </div>
+                <div class="form-col">
+                    <label class="form-label">Translation</label>
+                    <select id="translation" class="form-control">
+                        <option value="web">World English Bible (WEB)</option>
+                        <option value="kjv" selected>King James Version (KJV)</option>
+                        <option value="bbe">Bible in Basic English (BBE)</option>
+                        <option value="asv">American Standard Version (ASV)</option>
+                        <option value="ylt">Young's Literal Translation (YLT)</option>
+                        <option value="custom">Paste Custom Text (NIV, ESV, etc.)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Custom Text Area (Hidden by default) -->
+            <div id="custom-text-container" class="hidden fade-in mt-4">
+                <label class="form-label">Custom Verse Text</label>
+                <textarea id="custom-text" rows="3" placeholder="Paste your verse text here..." class="form-control"></textarea>
+            </div>
+
+            <button id="fetch-btn" onclick="fetchVerse()" class="btn btn-primary">
+                Load Verse
+            </button>
+        </div>
+
+        <!-- Game Interface (Hidden until verse loads) -->
+        <div id="game-dashboard" class="post dashboard-container hidden fade-in">
+            
+            <div class="dashboard-header">
+                <h2 id="display-reference"></h2>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button id="btn-vanish" onclick="switchTab('vanish')" class="tab-btn tab-active">Vanish</button>
+                <button id="btn-fill" onclick="switchTab('fill')" class="tab-btn">Fill in Blanks</button>
+                <button id="btn-scramble" onclick="switchTab('scramble')" class="tab-btn">Scramble</button>
+                <button id="btn-first-letter" onclick="switchTab('first-letter')" class="tab-btn">First Letter</button>
+                <button id="btn-type" onclick="switchTab('type')" class="tab-btn">Type Full</button>
+            </div>
+
+            <!-- Tab 1: Vanish (Eraser Game) -->
+            <div id="vanish-tab" class="tab-content">
+                <div class="toolbar">
+                    <span>Hide:</span>
+                    <button onclick="renderVanish(0)" class="toolbar-btn">0%</button>
+                    <button onclick="renderVanish(0.25)" class="toolbar-btn">25%</button>
+                    <button onclick="renderVanish(0.50)" class="toolbar-btn">50%</button>
+                    <button onclick="renderVanish(0.75)" class="toolbar-btn">75%</button>
+                    <button onclick="renderVanish(1)" class="toolbar-btn">100%</button>
+                </div>
+                <p class="game-instructions">(Click on blank spaces to reveal them)</p>
+                <div id="vanish-text" class="game-text-display"></div>
+            </div>
+
+            <!-- Tab 2: Fill in the Blanks -->
+            <div id="fill-tab" class="tab-content hidden">
+                <div class="toolbar">
+                    <span>Blanks:</span>
+                    <button onclick="renderFill(0.25)" class="toolbar-btn">25%</button>
+                    <button onclick="renderFill(0.50)" class="toolbar-btn">50%</button>
+                    <button onclick="renderFill(0.75)" class="toolbar-btn">75%</button>
+                    <button onclick="renderFill(1)" class="toolbar-btn">100%</button>
+                </div>
+                <div id="fill-text" class="game-text-display mb-2"></div>
+                <div class="text-center">
+                    <button onclick="checkFill()" class="btn btn-secondary">Check Answers</button>
+                    <p id="fill-feedback" class="feedback-message"></p>
+                </div>
+            </div>
+
+            <!-- Tab 3: Scramble Game -->
+            <div id="scramble-tab" class="tab-content hidden">
+                <div id="scramble-target" class="game-text-display scramble-target"></div>
+                <div id="scramble-bank" class="scramble-bank"></div>
+                <div class="text-center mt-4">
+                    <button onclick="initScramble()" class="btn btn-secondary">Reset Scramble</button>
+                </div>
+            </div>
+
+            <!-- Tab 4: First Letters Game -->
+            <div id="first-letter-tab" class="tab-content hidden">
+                <p class="game-instructions">Read aloud using only the first letters as hints. (Hover over a word to cheat!)</p>
+                <div id="first-letter-text" class="game-text-display tracking-wide"></div>
+            </div>
+
+            <!-- Tab 5: Type Full Verse -->
+            <div id="type-tab" class="tab-content hidden">
+                <div class="text-center mb-2">
+                    <button id="toggle-verse-btn" onclick="toggleTypeMode()" class="btn btn-secondary">
+                        Hide Verse (Type from Memory)
+                    </button>
+                </div>
+                <p class="game-instructions">(Pro tip: Don't worry about punctuation or spaces—just type the letters!)</p>
+                
+                <!-- Real-time Interactive Text Display -->
+                <div id="type-display" class="game-text-display type-display-box">
+                    <!-- Spans dynamically injected here as you type -->
+                </div>
+
+                <!-- Hidden but functional input box -->
+                <textarea id="type-input" oninput="handleTypeInput()" rows="3" placeholder="Start typing the letters here..." class="form-control"></textarea>
+                
+                <div class="text-center mt-4">
+                    <p id="type-feedback" class="feedback-message text-success hidden fade-in">🎉 Perfect! You typed the verse perfectly.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Bible Station. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        let currentVerse = "";
+        let currentRef = "";
+        let typeMode = 'show'; // 'show' or 'hide' for the typing tab
+        const tabs = ['vanish', 'fill', 'scramble', 'first-letter', 'type'];
+
+        // Helper: Strip punctuation and lower case for fair checking
+        function cleanString(str) {
+            return str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        }
+
+        // Toggle custom text area based on dropdown
+        document.getElementById('translation').addEventListener('change', (e) => {
+            const customArea = document.getElementById('custom-text-container');
+            if (e.target.value === 'custom') {
+                customArea.classList.remove('hidden');
+            } else {
+                customArea.classList.add('hidden');
+            }
+        });
+
+        // Fetch Verse logic
+        async function fetchVerse() {
+            const refInput = document.getElementById('reference').value;
+            const trans = document.getElementById('translation').value;
+            const btn = document.getElementById('fetch-btn');
+
+            if (!refInput) return alert('Please enter a Bible reference.');
+
+            btn.innerText = "Loading...";
+            
+            if (trans === 'custom') {
+                const customText = document.getElementById('custom-text').value;
+                if(!customText) {
+                    btn.innerText = "Load Verse";
+                    return alert('Please paste your text in the custom field.');
+                }
+                currentVerse = customText.trim();
+                currentRef = refInput;
+                initializeDashboard();
+                btn.innerText = "Load Verse";
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://bible-api.com/${encodeURIComponent(refInput)}?translation=${trans}`);
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error);
+                
+                // Clean up spacing
+                currentVerse = data.text.trim().replace(/\s+/g, ' ');
+                currentRef = data.reference;
+                
+                initializeDashboard();
+            } catch (err) {
+                alert("Could not fetch that verse automatically. Ensure the reference is valid, or use 'Paste Custom Text' for versions like NIV/ESV.");
+            }
+            btn.innerText = "Load Verse";
+        }
+
+        // Setup the UI once data is loaded
+        function initializeDashboard() {
+            document.getElementById('game-dashboard').classList.remove('hidden');
+            document.getElementById('display-reference').innerText = currentRef;
+            
+            // Re-init games
+            switchTab('vanish'); 
+            renderVanish(0);
+            renderFill(0.25);
+            initScramble();
+            renderFirstLetter();
+            
+            // Reset Type Full tab
+            typeMode = 'show';
+            document.getElementById('toggle-verse-btn').innerText = "Hide Verse (Type from Memory)";
+            document.getElementById('type-input').value = "";
+            document.getElementById('type-feedback').classList.add('hidden');
+            renderTypeDisplay();
+        }
+
+        // --- UI Logic: Tab Switching ---
+        function switchTab(tabId) {
+            tabs.forEach(id => {
+                document.getElementById(`${id}-tab`).classList.add('hidden');
+                document.getElementById(`btn-${id}`).classList.remove('tab-active');
+            });
+            
+            document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+            document.getElementById(`btn-${tabId}`).classList.add('tab-active');
+        }
+
+        // --- Game 1: Vanish Logic ---
+        function renderVanish(percent) {
+            const rawWords = currentVerse.split(/\s+/);
+            const totalWords = rawWords.length;
+            const numHide = Math.floor(totalWords * percent);
+            
+            let hideIndices = [];
+            while(hideIndices.length < numHide) {
+                let r = Math.floor(Math.random() * totalWords);
+                if(!hideIndices.includes(r)) hideIndices.push(r);
+            }
+            
+            let html = rawWords.map((word, i) => {
+                if(hideIndices.includes(i)) {
+                    let blanked = word.replace(/[a-zA-Z0-9]/g, '_');
+                    const safeWord = word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    return `<span class="vanish-word-hidden" title="Click to reveal" onclick="this.innerText='${safeWord}'; this.classList.remove('vanish-word-hidden')">${blanked}</span>`;
+                }
+                return `<span>${word}</span>`;
+            }).join(' ');
+            
+            document.getElementById('vanish-text').innerHTML = html;
+        }
+
+        // --- Game 2: Fill in the Blanks Logic ---
+        function renderFill(percent) {
+            document.getElementById('fill-feedback').innerText = ""; 
+            const rawWords = currentVerse.split(/\s+/);
+            const totalWords = rawWords.length;
+            const numHide = Math.floor(totalWords * percent);
+            
+            let hideIndices = [];
+            while(hideIndices.length < numHide && hideIndices.length < totalWords) {
+                let r = Math.floor(Math.random() * totalWords);
+                if(!hideIndices.includes(r)) hideIndices.push(r);
+            }
+            
+            let html = rawWords.map((word, i) => {
+                if(hideIndices.includes(i)) {
+                    const match = word.match(/^([^a-zA-Z0-9]*)([a-zA-Z0-9]+.*[a-zA-Z0-9]+|[a-zA-Z0-9]+)([^a-zA-Z0-9]*)$/);
+                    let prefix = "", coreWord = word, suffix = "";
+                    
+                    if(match) {
+                        prefix = match[1];
+                        coreWord = match[2];
+                        suffix = match[3];
+                    }
+
+                    const inputWidth = Math.max(3, coreWord.length) + 1; 
+                    const safeWord = cleanString(coreWord); 
+                    
+                    return `${prefix}<input type="text" data-correct="${safeWord}" class="fill-input" style="width: ${inputWidth}ch;" autocomplete="off">${suffix}`;
+                }
+                return `<span>${word}</span>`;
+            }).join(' ');
+            
+            document.getElementById('fill-text').innerHTML = html;
+        }
+
+        function checkFill() {
+            const inputs = document.querySelectorAll('.fill-input');
+            let allCorrect = true;
+
+            inputs.forEach(input => {
+                const target = input.getAttribute('data-correct');
+                const userVal = cleanString(input.value);
+                
+                input.classList.remove('fill-correct', 'fill-incorrect');
+
+                if(userVal === target) {
+                    input.classList.add('fill-correct');
+                } else {
+                    input.classList.add('fill-incorrect', 'shake');
+                    allCorrect = false;
+                    setTimeout(() => input.classList.remove('shake'), 400);
+                }
+            });
+
+            const feedback = document.getElementById('fill-feedback');
+            if (allCorrect) {
+                feedback.innerText = "Perfect! You got all the blanks right.";
+                feedback.classList.remove('text-error');
+                feedback.classList.add('text-success');
+            } else {
+                feedback.innerText = "Some words need fixing. Check the red boxes and try again!";
+                feedback.classList.remove('text-success');
+                feedback.classList.add('text-error');
+            }
+        }
+
+        // --- Game 3: Scramble Logic ---
+        let scrambleTarget = [];
+        let scrambleBank = [];
+        let expectedIndex = 0;
+
+        function initScramble() {
+            scrambleTarget = currentVerse.split(/\s+/);
+            scrambleBank = [...scrambleTarget].map((word, idx) => ({ word, used: false, originalIndex: idx }))
+                                                  .sort(() => Math.random() - 0.5);
+            expectedIndex = 0;
+            renderScramble();
+        }
+
+        function renderScramble() {
+            const bankHtml = scrambleBank.map((item, i) => {
+                if(item.used) return `<button class="scramble-btn scramble-btn-used">${item.word}</button>`;
+                return `<button id="scramble-btn-${i}" onclick="guessScramble(${i})" class="scramble-btn">${item.word}</button>`;
+            }).join('');
+            
+            const targetHtml = scrambleTarget.map((word, i) => {
+                if(i < expectedIndex) return `<span class="scramble-target-word fade-in">${word}</span>`;
+                return `<span class="scramble-target-blank"></span>`;
+            }).join('');
+            
+            document.getElementById('scramble-bank').innerHTML = bankHtml;
+            document.getElementById('scramble-target').innerHTML = targetHtml;
+        }
+
+        function guessScramble(bankIndex) {
+            const item = scrambleBank[bankIndex];
+            if(item.word === scrambleTarget[expectedIndex]) {
+                item.used = true;
+                expectedIndex++;
+                renderScramble();
+                if(expectedIndex === scrambleTarget.length) {
+                    setTimeout(() => alert('Perfect! You unscrambled the verse successfully.'), 300);
+                }
+            } else {
+                const btn = document.getElementById(`scramble-btn-${bankIndex}`);
+                btn.classList.add('scramble-error', 'shake');
+                setTimeout(() => {
+                    btn.classList.remove('scramble-error', 'shake');
+                }, 400);
+            }
+        }
+
+        // --- Game 4: First Letters Logic ---
+        function renderFirstLetter() {
+            const rawWords = currentVerse.split(/\s+/);
+            let html = rawWords.map(word => {
+                let firstFound = false;
+                let blanked = "";
+                for(let char of word) {
+                    if(/[a-zA-Z0-9]/.test(char)) {
+                        if(!firstFound) {
+                            blanked += char;
+                            firstFound = true;
+                        } else {
+                            blanked += "_";
+                        }
+                    } else {
+                        blanked += char; 
+                    }
+                }
+                const safeWord = word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                return `<span class="first-letter-word" title="${safeWord}">${blanked}</span>`;
+            }).join(' ');
+            
+            document.getElementById('first-letter-text').innerHTML = html;
+        }
+
+        // --- Game 5: Type Full Verse Logic (Letter-by-Letter) ---
+        function toggleTypeMode() {
+            typeMode = typeMode === 'show' ? 'hide' : 'show';
+            const btn = document.getElementById('toggle-verse-btn');
+            btn.innerText = typeMode === 'show' ? "Hide Verse (Type from Memory)" : "Show Verse to Learn";
+            renderTypeDisplay();
+            document.getElementById('type-input').focus();
+        }
+
+        function handleTypeInput() {
+            renderTypeDisplay();
+        }
+
+        function renderTypeDisplay() {
+            if (!currentVerse) return;
+
+            const typedText = document.getElementById('type-input').value;
+            // Strip out everything except letters and numbers for easy comparison
+            const cleanedTyped = typedText.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(); 
+            
+            let html = '';
+            let typedIndex = 0;
+            
+            // 1. Find the index in currentVerse that corresponds to our current typing position
+            let activeIndex = currentVerse.length; 
+            let tempCount = 0;
+            for (let i = 0; i < currentVerse.length; i++) {
+                if (/[a-zA-Z0-9]/.test(currentVerse[i])) {
+                    if (tempCount === cleanedTyped.length) {
+                        activeIndex = i;
+                        break;
+                    }
+                    tempCount++;
+                }
+            }
+
+            // 2. Build the display character by character
+            for (let i = 0; i < currentVerse.length; i++) {
+                const char = currentVerse[i];
+                const isAlphanum = /[a-zA-Z0-9]/.test(char);
+                // Safe handling of characters for innerHTML injection
+                const displayChar = char === '<' ? '&lt;' : char === '>' ? '&gt;' : char;
+                
+                let colorClass = "";
+                
+                if (isAlphanum) {
+                    if (i < activeIndex) {
+                        // This character has been typed
+                        const targetChar = char.toLowerCase();
+                        const userChar = cleanedTyped[typedIndex];
+                        if (userChar === targetChar) {
+                            colorClass = "type-char-correct";
+                        } else {
+                            colorClass = "type-char-error";
+                        }
+                        typedIndex++;
+                    } else {
+                        // Future alphanumeric character
+                        colorClass = typeMode === 'show' ? "type-char-future" : "hidden";
+                    }
+                } else {
+                    // Punctuation and spaces
+                    if (i <= activeIndex) {
+                        // Punctuation right before or immediately at our current typing cursor
+                        colorClass = "type-char-punct";
+                    } else {
+                        // Future punctuation
+                        colorClass = typeMode === 'show' ? "type-char-future" : "hidden";
+                    }
+                }
+                
+                html += `<span class="${colorClass}">${displayChar}</span>`;
+            }
+
+            document.getElementById('type-display').innerHTML = html;
+
+            // 3. Check for completion
+            const feedback = document.getElementById('type-feedback');
+            const targetCleanedLength = currentVerse.replace(/[^a-zA-Z0-9]/g, '').length;
+            
+            // Only trigger completion if they typed all characters and all are correct
+            if (cleanedTyped.length === targetCleanedLength && targetCleanedLength > 0) {
+                // Verify there are no errors (no red spans)
+                if (!html.includes('type-char-error')) {
+                    feedback.classList.remove('hidden');
+                } else {
+                    feedback.classList.add('hidden');
+                }
+            } else {
+                feedback.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
