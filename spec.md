@@ -127,12 +127,13 @@ graph TD
 - **Configuration Card**:
   - Reference input: Text field (e.g. `John 3:16`, `Psalm 23:1`).
   - Translation dropdown:
+    - `niv`: New International Version (NIV)
     - `web`: World English Bible
     - `kjv`: King James Version (default)
     - `bbe`: Bible in Basic English
     - `asv`: American Standard Version
     - `ylt`: Young's Literal Translation
-    - `custom`: Paste Custom Text (NIV, ESV, etc.)
+    - `custom`: Paste Custom Text (ESV, NLT, etc.)
   - Custom Textarea (visible only when `custom` is selected).
   - Load Verse button: Fetches verse via `https://bible-api.com/{ref}?translation={trans}` or uses custom text, cleans whitespace, and initializes the dashboard.
 - **Interactive Game Dashboard** (5 Tabs):
