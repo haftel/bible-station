@@ -30,12 +30,13 @@
                 v-model="selectedTranslation"
                 class="form-control"
               >
+                <option value="niv">New International Version (NIV)</option>
                 <option value="web">World English Bible (WEB)</option>
                 <option value="kjv">King James Version (KJV)</option>
                 <option value="bbe">Bible in Basic English (BBE)</option>
                 <option value="asv">American Standard Version (ASV)</option>
                 <option value="ylt">Young's Literal Translation (YLT)</option>
-                <option value="custom">Paste Custom Text (NIV, ESV, etc.)</option>
+                <option value="custom">Paste Custom Text (ESV, NLT, etc.)</option>
               </select>
             </div>
           </div>
@@ -302,11 +303,62 @@ const fetchVerse = async () => {
   }
 
   try {
-    const response = await fetch(`https://bible-api.com/${encodeURIComponent(refQuery)}?translation=${selectedTranslation.value}`)
+    let apiTranslation = selectedTranslation.value
+    let isNiv = false
+    if (apiTranslation === 'niv') {
+      apiTranslation = 'web' // Use WEB to parse the reference and verses
+      isNiv = true
+    }
+
+    const response = await fetch(`https://bible-api.com/${encodeURIComponent(refQuery)}?translation=${apiTranslation}`)
     const data = await response.json()
 
     if (data.error) {
       throw new Error(data.error)
+    }
+
+    if (isNiv && data.verses && data.verses.length > 0) {
+      // Map bible-api book_id to bolls.life numeric index
+      const bookMap = {
+        "GEN": 1, "EXO": 2, "LEV": 3, "NUM": 4, "DEU": 5, "JOS": 6, "JDG": 7, "RUT": 8, "1SA": 9, "2SA": 10,
+        "1KI": 11, "2KI": 12, "1CH": 13, "2CH": 14, "EZR": 15, "NEH": 16, "EST": 17, "JOB": 18, "PSA": 19, "PRO": 20,
+        "ECC": 21, "SNG": 22, "ISA": 23, "JER": 24, "LAM": 25, "EZK": 26, "DAN": 27, "HOS": 28, "JOL": 29, "AMO": 30,
+        "OBA": 31, "JON": 32, "MIC": 33, "NAM": 34, "HAB": 35, "ZEP": 36, "HAG": 37, "ZEC": 38, "MAL": 39,
+        "MAT": 40, "MRK": 41, "LUK": 42, "JHN": 43, "ACT": 44, "ROM": 45, "1CO": 46, "2CO": 47, "GAL": 48, "EPH": 49,
+        "PHP": 50, "COL": 51, "1TH": 52, "2TH": 53, "1TI": 54, "2TI": 55, "TIT": 56, "PHM": 57, "HEB": 58, "JAS": 59,
+        "1PE": 60, "2PE": 61, "1JN": 62, "2JN": 63, "3JN": 64, "JUD": 65, "REV": 66
+      }
+      
+      const bookIdStr = data.verses[0].book_id
+      const bookIndex = bookMap[bookIdStr]
+
+      if (bookIndex) {
+        const chaptersNeeded = [...new Set(data.verses.map(v => v.chapter))]
+        let nivTextParts = []
+
+        for (let chapter of chaptersNeeded) {
+          const bollsResp = await fetch(`https://bolls.life/get-chapter/NIV/${bookIndex}/${chapter}/`)
+          if (!bollsResp.ok) continue
+          
+          const bollsData = await bollsResp.json()
+          if (Array.isArray(bollsData)) {
+            const requiredVersesForChapter = new Set(data.verses.filter(v => v.chapter === chapter).map(v => v.verse))
+            const chapterText = bollsData
+              .filter(v => requiredVersesForChapter.has(v.verse))
+              .map(v => v.text.replace(/<[^>]*>?/gm, '').trim())
+              .join(' ')
+            if (chapterText) {
+              nivTextParts.push(chapterText)
+            }
+          }
+        }
+        
+        if (nivTextParts.length > 0) {
+          data.text = nivTextParts.join(' ')
+        } else {
+          throw new Error("Could not fetch NIV text from secondary API.")
+        }
+      }
     }
 
     currentVerse.value = data.text.trim().replace(/\s+/g, ' ')
@@ -314,7 +366,7 @@ const fetchVerse = async () => {
     hasLoadedVerse.value = true
     initializeDashboard()
   } catch (err) {
-    errorMessage.value = "Could not fetch that verse automatically. Ensure the reference is valid, or use 'Paste Custom Text' for versions like NIV/ESV."
+    errorMessage.value = "Could not fetch that verse automatically. Ensure the reference is valid, or use 'Paste Custom Text' for versions like ESV."
   } finally {
     isLoading.value = false
   }
