@@ -31,12 +31,13 @@
                 class="form-control"
               >
                 <option value="niv">New International Version (NIV)</option>
+                <option value="esv">English Standard Version (ESV)</option>
                 <option value="web">World English Bible (WEB)</option>
                 <option value="kjv">King James Version (KJV)</option>
                 <option value="bbe">Bible in Basic English (BBE)</option>
                 <option value="asv">American Standard Version (ASV)</option>
                 <option value="ylt">Young's Literal Translation (YLT)</option>
-                <option value="custom">Paste Custom Text (ESV, NLT, etc.)</option>
+                <option value="custom">Paste Custom Text (NLT, etc.)</option>
               </select>
             </div>
           </div>
@@ -304,10 +305,13 @@ const fetchVerse = async () => {
 
   try {
     let apiTranslation = selectedTranslation.value
-    let isNiv = false
-    if (apiTranslation === 'niv') {
+    let isFallback = false
+    let fallbackTranslation = ''
+
+    if (apiTranslation === 'niv' || apiTranslation === 'esv') {
+      fallbackTranslation = apiTranslation.toUpperCase()
       apiTranslation = 'web' // Use WEB to parse the reference and verses
-      isNiv = true
+      isFallback = true
     }
 
     const response = await fetch(`https://bible-api.com/${encodeURIComponent(refQuery)}?translation=${apiTranslation}`)
@@ -317,7 +321,7 @@ const fetchVerse = async () => {
       throw new Error(data.error)
     }
 
-    if (isNiv && data.verses && data.verses.length > 0) {
+    if (isFallback && data.verses && data.verses.length > 0) {
       // Map bible-api book_id to bolls.life numeric index
       const bookMap = {
         "GEN": 1, "EXO": 2, "LEV": 3, "NUM": 4, "DEU": 5, "JOS": 6, "JDG": 7, "RUT": 8, "1SA": 9, "2SA": 10,
@@ -334,29 +338,49 @@ const fetchVerse = async () => {
 
       if (bookIndex) {
         const chaptersNeeded = [...new Set(data.verses.map(v => v.chapter))]
-        let nivTextParts = []
+        let fallbackTextParts = []
 
         for (let chapter of chaptersNeeded) {
-          const bollsResp = await fetch(`https://bolls.life/get-chapter/NIV/${bookIndex}/${chapter}/`)
+          const bollsResp = await fetch(`https://bolls.life/get-chapter/${fallbackTranslation}/${bookIndex}/${chapter}/`)
           if (!bollsResp.ok) continue
           
           const bollsData = await bollsResp.json()
           if (Array.isArray(bollsData)) {
             const requiredVersesForChapter = new Set(data.verses.filter(v => v.chapter === chapter).map(v => v.verse))
+            
             const chapterText = bollsData
               .filter(v => requiredVersesForChapter.has(v.verse))
-              .map(v => v.text.replace(/<[^>]*>?/gm, '').trim())
+              .map(v => {
+                // Strip headings (often prepended before a <br/> with no punctuation)
+                const parts = v.text.split(/<br\s*\/?>/i)
+                let i = 0
+                while (i < parts.length - 1) {
+                  const current = parts[i].trim()
+                  const next = parts[i + 1].trim()
+                  const endsWithPunct = /[.,;:'"!?”)\]]$/.test(current)
+                  const nextStartsUpper = /^[A-Z“"‘'0-9]/.test(next)
+                  
+                  if (!endsWithPunct && nextStartsUpper) {
+                    i++ // Skip heading
+                  } else {
+                    break
+                  }
+                }
+                // Rejoin the actual verse lines and strip remaining HTML tags
+                return parts.slice(i).join(' ').replace(/<[^>]*>?/gm, '').trim()
+              })
               .join(' ')
+              
             if (chapterText) {
-              nivTextParts.push(chapterText)
+              fallbackTextParts.push(chapterText)
             }
           }
         }
         
-        if (nivTextParts.length > 0) {
-          data.text = nivTextParts.join(' ')
+        if (fallbackTextParts.length > 0) {
+          data.text = fallbackTextParts.join(' ')
         } else {
-          throw new Error("Could not fetch NIV text from secondary API.")
+          throw new Error(`Could not fetch ${fallbackTranslation} text from secondary API.`)
         }
       }
     }
@@ -366,7 +390,7 @@ const fetchVerse = async () => {
     hasLoadedVerse.value = true
     initializeDashboard()
   } catch (err) {
-    errorMessage.value = "Could not fetch that verse automatically. Ensure the reference is valid, or use 'Paste Custom Text' for versions like ESV."
+    errorMessage.value = "Could not fetch that verse automatically. Ensure the reference is valid, or use 'Paste Custom Text' for other versions."
   } finally {
     isLoading.value = false
   }

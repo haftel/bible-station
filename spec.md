@@ -128,6 +128,7 @@ graph TD
   - Reference input: Text field (e.g. `John 3:16`, `Psalm 23:1`).
   - Translation dropdown:
     - `niv`: New International Version (NIV)
+    - `esv`: English Standard Version (ESV)
     - `web`: World English Bible
     - `kjv`: King James Version (default)
     - `bbe`: Bible in Basic English
