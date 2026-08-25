@@ -127,7 +127,7 @@ graph TD
 - **Configuration Card**:
   - Reference input: Text field (e.g. `John 3:16`, `Psalm 23:1`).
   - Translation dropdown:
-    - `niv`: New International Version (NIV, modern 2011 edition)
+    - `niv`: New International Version (NIV, modern 2011 edition, default)
     - `esv`: English Standard Version (ESV)
     - `csb`: Christian Standard Bible (CSB)
     - `nasb`: New American Standard Bible (NASB)
@@ -136,7 +136,7 @@ graph TD
     - `net`: New English Translation (NET)
     - `amp`: Amplified Bible (AMP)
     - `web`: World English Bible
-    - `kjv`: King James Version (default)
+    - `kjv`: King James Version
     - `bbe`: Bible in Basic English
     - `asv`: American Standard Version
     - `ylt`: Young's Literal Translation

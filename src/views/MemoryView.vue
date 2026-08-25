@@ -249,7 +249,7 @@
 import { ref, computed, nextTick } from 'vue'
 
 const referenceInput = ref('John 3:16')
-const selectedTranslation = ref('kjv')
+const selectedTranslation = ref('niv')
 const customText = ref('')
 const isLoading = ref(false)
 const errorMessage = ref('')
