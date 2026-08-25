@@ -3,9 +3,6 @@
     <header class="page-header">
       <h1 class="page-title">Scripture Memorizer</h1>
       <p class="page-subtitle">Fetch a verse or paste your own to practice memorization.</p>
-      <div class="disclaimer">
-        <strong>Note:</strong> Some translations may have formatting issues. If issues arise, I recommend copying the output text, pasting into "Paste Custom Text" and reformatting.
-      </div>
     </header>
 
     <main class="container">
@@ -32,12 +29,18 @@
               >
                 <option value="niv">New International Version (NIV)</option>
                 <option value="esv">English Standard Version (ESV)</option>
+                <option value="csb">Christian Standard Bible (CSB)</option>
+                <option value="nasb">New American Standard Bible (NASB)</option>
+                <option value="nkjv">New King James Version (NKJV)</option>
+                <option value="nlt">New Living Translation (NLT)</option>
+                <option value="net">New English Translation (NET)</option>
+                <option value="amp">Amplified Bible (AMP)</option>
                 <option value="web">World English Bible (WEB)</option>
                 <option value="kjv">King James Version (KJV)</option>
                 <option value="bbe">Bible in Basic English (BBE)</option>
                 <option value="asv">American Standard Version (ASV)</option>
                 <option value="ylt">Young's Literal Translation (YLT)</option>
-                <option value="custom">Paste Custom Text (NLT, etc.)</option>
+                <option value="custom">Paste Custom Text</option>
               </select>
             </div>
           </div>
@@ -308,8 +311,9 @@ const fetchVerse = async () => {
     let isFallback = false
     let fallbackTranslation = ''
 
-    if (apiTranslation === 'niv' || apiTranslation === 'esv') {
-      fallbackTranslation = apiTranslation.toUpperCase()
+    const bollsTranslations = ['niv', 'esv', 'csb', 'nasb', 'nkjv', 'nlt', 'net', 'amp']
+    if (bollsTranslations.includes(apiTranslation)) {
+      fallbackTranslation = apiTranslation === 'csb' ? 'CSB17' : apiTranslation.toUpperCase()
       apiTranslation = 'web' // Use WEB to parse the reference and verses
       isFallback = true
     }
@@ -367,7 +371,11 @@ const fetchVerse = async () => {
                   }
                 }
                 // Rejoin the actual verse lines and strip remaining HTML tags
-                return parts.slice(i).join(' ').replace(/<[^>]*>?/gm, '').trim()
+                let rawText = parts.slice(i).join(' ')
+                // Remove <sup> tags and their contents (footnotes/cross-refs)
+                rawText = rawText.replace(/<sup[^>]*>.*?<\/sup>/gi, '')
+                // Remove remaining HTML tags
+                return rawText.replace(/<[^>]*>?/gm, '').trim()
               })
               .join(' ')
               
@@ -383,6 +391,9 @@ const fetchVerse = async () => {
           throw new Error(`Could not fetch ${fallbackTranslation} text from secondary API.`)
         }
       }
+    } else if (data.verses && data.verses.length > 0) {
+      // Re-assemble standard API verses explicitly to prevent missing spaces
+      data.text = data.verses.map(v => v.text.trim()).join(' ')
     }
 
     currentVerse.value = data.text.trim().replace(/\s+/g, ' ')

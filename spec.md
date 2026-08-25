@@ -123,18 +123,24 @@ graph TD
   - `paragraphs`: string[]
 
 ### 4.3 Scripture Memorizer View (`/memory` -> `src/views/MemoryView.vue`)
-- **Header**: Title "Scripture Memorizer", subtitle, and formatting disclaimer.
+- **Header**: Title "Scripture Memorizer" and subtitle.
 - **Configuration Card**:
   - Reference input: Text field (e.g. `John 3:16`, `Psalm 23:1`).
   - Translation dropdown:
     - `niv`: New International Version (NIV)
     - `esv`: English Standard Version (ESV)
+    - `csb`: Christian Standard Bible (CSB)
+    - `nasb`: New American Standard Bible (NASB)
+    - `nkjv`: New King James Version (NKJV)
+    - `nlt`: New Living Translation (NLT)
+    - `net`: New English Translation (NET)
+    - `amp`: Amplified Bible (AMP)
     - `web`: World English Bible
     - `kjv`: King James Version (default)
     - `bbe`: Bible in Basic English
     - `asv`: American Standard Version
     - `ylt`: Young's Literal Translation
-    - `custom`: Paste Custom Text (ESV, NLT, etc.)
+    - `custom`: Paste Custom Text
   - Custom Textarea (visible only when `custom` is selected).
   - Load Verse button: Fetches verse via `https://bible-api.com/{ref}?translation={trans}` or uses custom text, cleans whitespace, and initializes the dashboard.
 - **Interactive Game Dashboard** (5 Tabs):
