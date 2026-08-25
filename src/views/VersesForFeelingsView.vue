@@ -2,7 +2,7 @@
   <div class="feelings-view">
     <header class="page-header">
       <h1 class="page-title">Scripture for Every Season</h1>
-      <p class="page-subtitle">Select your current feeling to find a verse (KJV) that speaks to your heart.</p>
+      <p class="page-subtitle">Select your current feeling to find a verse (NIV) that speaks to your heart.</p>
     </header>
 
     <main class="container">

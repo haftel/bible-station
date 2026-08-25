@@ -17,7 +17,7 @@ Live Site: [https://biblestation.org](https://biblestation.org)
   3. **Scramble Mode**: Word bank with randomly shuffled word buttons to reconstruct verses sequentially.
   4. **First Letter Mode**: Displays initial letters with word length placeholders and hover tooltip cheats.
   5. **Type Full Mode**: Letter-by-letter live comparison typing engine with color-coded feedback and memory challenge toggle.
-- **🕊️ Bible Verses for Feelings**: Comprehensive catalog of ~240+ KJV verses across **30 emotional states** grouped into **10 categories** (Uplifting and Heavy feelings), complete with dynamic color accenting and random verse generation.
+- **🕊️ Bible Verses for Feelings**: Comprehensive catalog of 240 modern NIV verses across **30 emotional states** grouped into **10 categories** (Uplifting and Heavy feelings), complete with dynamic color accenting and random verse generation.
 
 ---
 
@@ -51,7 +51,7 @@ bible-station/
 │   │   └── AppFooter.vue         # Global application footer
 │   ├── data/
 │   │   ├── devotionalsData.js    # Devotional articles data
-│   │   └── feelingsData.js       # 30 feelings categories and ~240+ KJV scripture texts
+│   │   └── feelingsData.js       # 30 feelings categories and 240 modern NIV scripture texts
 │   ├── router/
 │   │   └── index.js              # Vue Router configuration
 │   ├── views/

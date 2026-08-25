@@ -313,7 +313,13 @@ const fetchVerse = async () => {
 
     const bollsTranslations = ['niv', 'esv', 'csb', 'nasb', 'nkjv', 'nlt', 'net', 'amp']
     if (bollsTranslations.includes(apiTranslation)) {
-      fallbackTranslation = apiTranslation === 'csb' ? 'CSB17' : apiTranslation.toUpperCase()
+      if (apiTranslation === 'csb') {
+        fallbackTranslation = 'CSB17'
+      } else if (apiTranslation === 'niv') {
+        fallbackTranslation = 'NIV2011'
+      } else {
+        fallbackTranslation = apiTranslation.toUpperCase()
+      }
       apiTranslation = 'web' // Use WEB to parse the reference and verses
       isFallback = true
     }
@@ -374,6 +380,8 @@ const fetchVerse = async () => {
                 let rawText = parts.slice(i).join(' ')
                 // Remove <sup> tags and their contents (footnotes/cross-refs)
                 rawText = rawText.replace(/<sup[^>]*>.*?<\/sup>/gi, '')
+                // Remove bold headings/superscriptions at start of verse
+                rawText = rawText.replace(/^<b>.*?<\/b>\s*/i, '')
                 // Remove remaining HTML tags
                 return rawText.replace(/<[^>]*>?/gm, '').trim()
               })

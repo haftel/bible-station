@@ -127,7 +127,7 @@ graph TD
 - **Configuration Card**:
   - Reference input: Text field (e.g. `John 3:16`, `Psalm 23:1`).
   - Translation dropdown:
-    - `niv`: New International Version (NIV)
+    - `niv`: New International Version (NIV, modern 2011 edition)
     - `esv`: English Standard Version (ESV)
     - `csb`: Christian Standard Bible (CSB)
     - `nasb`: New American Standard Bible (NASB)
@@ -142,7 +142,7 @@ graph TD
     - `ylt`: Young's Literal Translation
     - `custom`: Paste Custom Text
   - Custom Textarea (visible only when `custom` is selected).
-  - Load Verse button: Fetches verse via `https://bible-api.com/{ref}?translation={trans}` or uses custom text, cleans whitespace, and initializes the dashboard.
+  - Load Verse button: Fetches verse via `https://bible-api.com/{ref}?translation={trans}` or secondary API (`bolls.life` fallback for copyrighted translations with NIV mapped to modern `NIV2011`) or uses custom text, cleans whitespace/headings, and initializes the dashboard.
 - **Interactive Game Dashboard** (5 Tabs):
   1. **Vanish Mode**:
      - Toolbar buttons: `0%`, `25%`, `50%`, `75%`, `100%`.
@@ -189,7 +189,7 @@ graph TD
     8. *Anger & Hurt*: Angry, Bitter, Betrayed
     9. *Weariness & Stress*: Tired, Overwhelmed, Stressed
     10. *Self-Worth & Isolation*: Lonely, Insecure, Guilty
-- **Data Source**: `src/data/feelingsData.js` containing 30 emotion keys, each with at least 8 verified KJV scriptures.
+- **Data Source**: `src/data/feelingsData.js` containing 30 emotion keys, each with at least 8 verified modern NIV (2011) scriptures.
 
 ---
 
