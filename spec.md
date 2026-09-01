@@ -30,7 +30,7 @@ graph TD
 - **Build Tool**: Vite
 - **Routing**: Vue Router 4 using HTML5 Web History (`createWebHistory(import.meta.env.BASE_URL)`). Clean direct URLs without hashtags (`/devotionals`, `/memory`, `/verses-for-feelings`).
 - **GitHub Pages Fallback**: Single-Page Application redirect via `public/404.html` and `index.html` to support direct deep linking and page reloads on static GitHub Pages hosting.
-- **Styling**: Vanilla CSS utilizing CSS Custom Properties (Design Tokens), zero heavy CSS frameworks.
+- **Styling**: Vanilla CSS utilizing CSS Custom Properties (Design Tokens), zero heavy CSS frameworks. Google Fonts `Inter` for UI typography.
 
 ---
 
@@ -48,13 +48,19 @@ graph TD
 - `--success-color: #166534` / `--success-bg: #dcfce7` (Correct input feedback)
 - `--error-color: #991b1b` / `--error-bg: #fee2e2` (Error input feedback)
 
-### 2.2 Typography
-- **UI & Navigation Font**: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`
+### 2.2 Elevation & Shape Tokens
+- `--shadow-xs` through `--shadow-xl`: Layered multi-stop box-shadows for subtle material depth
+- `--radius-sm: 8px`, `--radius-md: 12px`, `--radius-lg: 16px`, `--radius-xl: 24px`, `--radius-full: 9999px` (pill)
+- `--transition-fast: 0.15s`, `--transition-base: 0.2s`, `--transition-smooth: 0.3s` (all using `cubic-bezier(0.4, 0, 0.2, 1)`)
+
+### 2.3 Typography
+- **UI & Navigation Font**: `'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` (loaded via Google Fonts in `index.html`, weights 400/500/600/700)
 - **Scripture & Devotional Text Font**: `Georgia, "Times New Roman", serif`
 
-### 2.3 Animations
-- **Fade In**: `@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }`
+### 2.4 Animations
+- **Fade In**: `@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }` (0.35s, cubic-bezier)
 - **Shake**: `@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-4px); } }`
+- **Page Transitions**: Smooth 0.25s opacity + translateY fade with cubic-bezier easing
 
 ---
 
@@ -62,6 +68,7 @@ graph TD
 
 ### 3.1 Navigation Bar (`src/components/Navbar.vue`)
 - Positioned persistently at the top of all views.
+- **Glass-morphism**: Semi-transparent background (`rgba(255,255,255,0.82)`) with `backdrop-filter: blur(12px)` for modern frosted-glass effect.
 - **Brand Logo**: Inline SVG open-bible icon (black outline, `--accent-color` stroke) next to the brand title.
 - **Brand Title**: "Bible Station" linking to `/`.
 - **Favicon**: `public/favicon.svg` — same open-bible SVG with a `#fcfcfc` rounded-rect background for dark-mode browser tab visibility.
@@ -70,8 +77,8 @@ graph TD
   2. `Scripture Memory Tool` (`/memory`)
   3. `Bible Verses for Feelings` (`/verses-for-feelings`)
   4. `Devotionals` (`/devotionals`)
-- **Active Route Highlighting**: Active link indicated with `--accent-color` and bottom accent border.
-- **Mobile Responsiveness**: Clean mobile drawer/toggle for viewports under `768px`.
+- **Active Route Highlighting**: Active link indicated with pill-shaped highlight (`--radius-full`), `--accent-color` text, and `--disclaimer-bg` background.
+- **Mobile Responsiveness**: Clean mobile drawer/toggle for viewports under `768px` with glass-morphism backdrop.
 
 ### 3.2 Footer (`src/components/AppFooter.vue`)
 - Positioned at the bottom of the page content.

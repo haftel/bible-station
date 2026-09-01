@@ -12,6 +12,21 @@
   --success-bg: #dcfce7;
   --error-color: #991b1b;
   --error-bg: #fee2e2;
+
+  /* Modern design tokens */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.06), 0 4px 10px -4px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 20px 40px -5px rgba(0, 0, 0, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.03);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 *, *::before, *::after {
@@ -19,7 +34,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-main);
   line-height: 1.6;
@@ -28,6 +43,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #app {
@@ -43,35 +60,39 @@ body {
 /* Common Header Styles */
 .page-header {
   text-align: center;
-  padding: 3rem 1rem 1rem;
+  padding: 3.5rem 1.5rem 1.5rem;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .page-title {
   font-size: 2.5rem;
+  font-weight: 700;
   color: var(--accent-color);
   margin-bottom: 0.5rem;
   margin-top: 0;
+  letter-spacing: -0.5px;
 }
 
 .page-subtitle {
   color: var(--text-light);
   font-size: 1.1rem;
   margin-top: 0;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  font-weight: 400;
 }
 
 /* Callout / Disclaimer */
 .disclaimer {
   background-color: var(--disclaimer-bg);
   border-left: 4px solid var(--accent-color);
-  padding: 1.2rem;
-  border-radius: 4px;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-sm);
   margin-bottom: 2rem;
   font-size: 0.95rem;
   color: var(--text-main);
   text-align: left;
+  line-height: 1.7;
 }
 
 .disclaimer strong {
@@ -82,7 +103,7 @@ body {
 main.container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.25rem;
   width: 100%;
 }
 
@@ -90,10 +111,15 @@ main.container {
 .post {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   padding: 2rem;
   margin-bottom: 2.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.post:hover {
+  box-shadow: var(--shadow-md);
 }
 
 /* Bible Verse Quotations */
@@ -105,17 +131,17 @@ main.container {
   margin: 0 0 1.5rem 0;
   padding-left: 1.5rem;
   border-left: 3px solid var(--accent-color);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .bible-verse cite {
   display: block;
   font-size: 0.95rem;
   font-style: normal;
-  font-weight: bold;
+  font-weight: 600;
   margin-top: 0.5rem;
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Forms */
@@ -138,28 +164,29 @@ main.container {
 
 .form-label {
   display: block;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: var(--text-main);
+  letter-spacing: 0.01em;
 }
 
 .form-control {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
   font-family: inherit;
   font-size: 1rem;
   color: var(--text-main);
   background-color: #fff;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .form-control:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(74, 108, 111, 0.2);
+  box-shadow: 0 0 0 3px rgba(74, 108, 111, 0.12);
 }
 
 textarea.form-control {
@@ -168,17 +195,20 @@ textarea.form-control {
 
 /* Buttons */
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 0.95rem;
+  font-weight: 600;
   text-align: center;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   border: none;
-  transition: background-color 0.2s, opacity 0.2s;
+  transition: all var(--transition-base);
   font-family: inherit;
   text-decoration: none;
+  letter-spacing: 0.01em;
 }
 
 .btn-primary {
@@ -186,31 +216,40 @@ textarea.form-control {
   color: #ffffff;
   width: 100%;
   margin-top: 1rem;
+  box-shadow: var(--shadow-xs);
 }
 
 .btn-primary:hover {
-  opacity: 0.9;
+  opacity: 0.92;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-xs);
 }
 
 .btn-secondary {
   background-color: var(--disclaimer-bg);
   color: var(--text-main);
-  border: 1px solid #d0d7d9;
+  border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background-color: #dce3e5;
+  background-color: #e3e9eb;
+  border-color: #c8d0d2;
 }
 
 /* Animations */
 .fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -253,3 +292,4 @@ textarea.form-control {
 .text-error {
   color: var(--error-color);
 }
+

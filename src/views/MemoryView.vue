@@ -670,22 +670,24 @@ const typeCompleted = computed(() => {
 <style scoped>
 .page-header {
   text-align: center;
-  padding: 3rem 1rem 1rem;
+  padding: 3.5rem 1.5rem 1.5rem;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .page-title {
+  font-family: 'Inter', sans-serif;
   font-size: 2.5rem;
   color: var(--accent-color);
   margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 .error-banner {
   background-color: var(--error-bg);
   color: var(--error-color);
   padding: 0.75rem 1rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   margin-top: 1rem;
   font-weight: 500;
   font-size: 0.95rem;
@@ -697,48 +699,58 @@ const typeCompleted = computed(() => {
 }
 
 .dashboard-header {
-  background-color: var(--text-main);
+  background: linear-gradient(135deg, var(--text-main) 0%, #404040 100%);
   color: #ffffff;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   text-align: center;
 }
 
 .dashboard-header h2 {
   margin: 0;
+  font-family: 'Inter', sans-serif;
   font-size: 1.8rem;
+  font-weight: 700;
   color: #ffffff;
+  letter-spacing: -0.01em;
 }
 
 .tabs {
   display: flex;
   overflow-x: auto;
-  border-bottom: 1px solid var(--border-color);
-  background: #fafafa;
+  background: var(--disclaimer-bg);
+  padding: 0.35rem;
+  border-bottom: none;
+  border-radius: var(--radius-md);
+  margin: 1rem 1.5rem 0;
+  gap: 0.25rem;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 1rem;
-  background: none;
+  padding: 0.65rem 1rem;
+  background: transparent;
   border: none;
-  border-bottom: 3px solid transparent;
-  font-size: 0.95rem;
+  border-bottom: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   color: var(--text-light);
-  transition: all 0.2s ease;
-  font-family: inherit;
+  transition: all var(--transition-base);
 }
 
 .tab-btn:hover {
   color: var(--text-main);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .tab-active {
   color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+  border-bottom-color: transparent;
   background-color: #ffffff;
+  box-shadow: var(--shadow-sm);
 }
 
 .tab-content {
@@ -750,10 +762,12 @@ const typeCompleted = computed(() => {
   font-size: 1.4rem;
   line-height: 2.2;
   color: var(--text-main);
+  padding: 0.5rem 0;
 }
 
 .game-instructions {
   text-align: center;
+  font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   color: var(--text-light);
   margin-bottom: 1.5rem;
@@ -769,6 +783,7 @@ const typeCompleted = computed(() => {
 }
 
 .toolbar span {
+  font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   color: var(--text-light);
   margin-right: 0.5rem;
@@ -777,12 +792,13 @@ const typeCompleted = computed(() => {
 .toolbar-btn {
   background: var(--disclaimer-bg);
   border: 1px solid #d0d7d9;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  font-size: 0.9rem;
-  font-family: inherit;
-  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all var(--transition-base);
 }
 
 .toolbar-btn:hover,
@@ -791,6 +807,7 @@ const typeCompleted = computed(() => {
   border-color: var(--accent-color);
   color: var(--accent-color);
   font-weight: 600;
+  box-shadow: var(--shadow-xs);
 }
 
 /* Vanish Game */
@@ -802,7 +819,7 @@ const typeCompleted = computed(() => {
 .vanish-word-hidden {
   color: #d1d5db;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color var(--transition-fast);
 }
 
 .vanish-word-hidden:hover {
@@ -820,15 +837,16 @@ const typeCompleted = computed(() => {
   font-family: Georgia, "Times New Roman", serif;
   font-size: inherit;
   color: var(--accent-color);
-  border-radius: 4px 4px 0 0;
-  padding: 0 2px;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  padding: 2px 4px;
+  transition: all var(--transition-base);
 }
 
 .fill-input:focus {
   outline: none;
   border-bottom-color: var(--accent-color);
   background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .fill-correct {
@@ -857,17 +875,20 @@ const typeCompleted = computed(() => {
 .scramble-btn {
   background: #ffffff;
   border: 1px solid #d1d5db;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius-full);
   cursor: pointer;
   font-size: 1.1rem;
   font-family: Georgia, "Times New Roman", serif;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-xs);
 }
 
 .scramble-btn:hover:not(:disabled) {
   border-color: var(--accent-color);
   background: #f8fafc;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .scramble-btn-used {
@@ -876,6 +897,7 @@ const typeCompleted = computed(() => {
   border-color: #e5e7eb;
   cursor: default;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: none;
 }
 
 .scramble-error {
@@ -908,7 +930,7 @@ const typeCompleted = computed(() => {
 /* First Letter Game */
 .first-letter-word {
   cursor: help;
-  transition: color 0.2s ease;
+  transition: color var(--transition-fast);
 }
 
 .first-letter-word:hover {
@@ -919,12 +941,13 @@ const typeCompleted = computed(() => {
 .type-display-box {
   background-color: var(--disclaimer-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1.5rem 2rem;
+  border-radius: var(--radius-md);
+  padding: 1.75rem 2rem;
   min-height: 140px;
   margin-bottom: 1.5rem;
   white-space: pre-wrap;
   word-break: break-word;
+  box-shadow: var(--shadow-xs);
 }
 
 .type-char-correct {
@@ -935,7 +958,7 @@ const typeCompleted = computed(() => {
 .type-char-error {
   color: var(--error-color);
   background-color: var(--error-bg);
-  border-radius: 2px;
+  border-radius: 3px;
   padding: 0 2px;
 }
 

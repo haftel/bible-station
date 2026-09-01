@@ -44,39 +44,41 @@
 
 <style scoped>
 .hero-header {
-  background-color: var(--accent-color);
+  background: linear-gradient(135deg, var(--accent-color) 0%, #3d5b5e 100%);
   color: #ffffff;
   text-align: center;
-  padding: 5rem 1rem;
-  margin-bottom: 3rem;
+  padding: 6rem 1.5rem 5.5rem;
+  margin-bottom: 3.5rem;
 }
 
 .hero-title {
   font-size: 3.5rem;
   color: #ffffff;
-  margin: 0 0 1rem 0;
-  letter-spacing: -0.5px;
+  margin: 0 0 1.25rem 0;
+  letter-spacing: -1px;
+  font-weight: 700;
 }
 
 .hero-subtitle {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.25rem;
-  font-weight: 300;
-  max-width: 600px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.2rem;
+  font-weight: 400;
+  max-width: 560px;
   margin: 0 auto;
+  line-height: 1.7;
 }
 
 .home-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 1.5rem 3rem;
+  padding: 0 1.5rem 3.5rem;
 }
 
 .welcome-section {
   text-align: center;
-  max-width: 700px;
+  max-width: 680px;
   margin: 0 auto 4rem auto;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: var(--text-light);
   line-height: 1.8;
 }
@@ -84,8 +86,9 @@
 .welcome-section strong {
   display: block;
   color: var(--accent-color);
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.3px;
 }
 
 .mission-grid {
@@ -103,26 +106,28 @@
 
 .feature-card {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 2.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  border-top: 4px solid var(--accent-color);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
   display: flex;
   flex-direction: column;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.07);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 .feature-title {
   margin-top: 0;
   margin-bottom: 1rem;
   color: var(--accent-color);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
 }
 
 .feature-content {
@@ -135,14 +140,15 @@
 .feature-content p {
   margin: 0 0 1.5rem 0;
   color: var(--text-light);
-  font-size: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
 }
 
 .feature-links {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .feature-btn {
@@ -151,48 +157,58 @@
   color: #ffffff;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 0.65rem 1.25rem;
-  border-radius: 6px;
-  transition: opacity 0.2s ease;
+  font-size: 0.9rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-xs);
+  letter-spacing: 0.01em;
 }
 
 .feature-btn:hover {
-  opacity: 0.9;
+  opacity: 0.92;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .feature-link-sub {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--accent-color);
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity var(--transition-fast);
+}
+
+.feature-link-sub:hover {
+  opacity: 0.7;
 }
 
 .hero-verse-banner {
   background-color: var(--disclaimer-bg);
-  border-radius: 12px;
-  padding: 3rem 2rem;
+  border-radius: var(--radius-lg);
+  padding: 3.5rem 2.5rem;
   text-align: center;
   margin-bottom: 2rem;
 }
 
 .hero-bible-verse {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-style: italic;
   color: var(--accent-color);
   margin: 0;
   padding: 0;
-  line-height: 1.5;
+  line-height: 1.6;
   border-left: none;
 }
 
 .hero-bible-verse cite {
   display: block;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-style: normal;
-  font-weight: bold;
+  font-weight: 600;
   margin-top: 1.5rem;
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 </style>

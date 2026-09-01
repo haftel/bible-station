@@ -208,15 +208,17 @@ onMounted(() => {
 <style scoped>
 .page-header {
   text-align: center;
-  padding: 3rem 1rem 1rem;
+  padding: 3.5rem 1.5rem 1.5rem;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .page-title {
   font-size: 2.5rem;
+  font-weight: 700;
   color: var(--accent-color);
   margin-bottom: 1rem;
+  letter-spacing: -0.5px;
 }
 
 /* Title row with copy link button */
@@ -230,8 +232,10 @@ onMounted(() => {
   margin-top: 0;
   margin-bottom: 0.2rem;
   color: var(--text-main);
-  font-size: 1.75rem;
+  font-size: 1.65rem;
+  font-weight: 700;
   flex: 1;
+  letter-spacing: -0.3px;
 }
 
 .copy-link-btn {
@@ -240,12 +244,12 @@ onMounted(() => {
   border: none;
   cursor: pointer;
   color: var(--text-light);
-  padding: 0.35rem;
-  border-radius: 4px;
+  padding: 0.4rem;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s, background-color 0.2s;
+  transition: all var(--transition-base);
   flex-shrink: 0;
 }
 
@@ -256,18 +260,19 @@ onMounted(() => {
 
 .copied-tooltip {
   position: absolute;
-  top: -2rem;
+  top: -2.25rem;
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--accent-color);
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
   white-space: nowrap;
   pointer-events: none;
   animation: tooltipFade 2s ease-in-out forwards;
+  box-shadow: var(--shadow-sm);
 }
 
 @keyframes tooltipFade {
@@ -277,14 +282,15 @@ onMounted(() => {
 
 .post-meta {
   color: var(--text-light);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin-bottom: 1.5rem;
+  font-weight: 400;
 }
 
 .post-content p {
   margin-bottom: 1rem;
   color: var(--text-main);
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .post-content p:last-child {
@@ -297,9 +303,9 @@ onMounted(() => {
 }
 
 @keyframes highlightFlash {
-  0% { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02); }
-  15% { box-shadow: 0 0 0 3px rgba(74, 108, 111, 0.25); }
-  100% { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02); }
+  0% { box-shadow: var(--shadow-sm); }
+  15% { box-shadow: 0 0 0 3px rgba(74, 108, 111, 0.2); }
+  100% { box-shadow: var(--shadow-sm); }
 }
 
 /* Pagination */
@@ -307,7 +313,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   padding: 1rem 0 3rem;
 }
 
@@ -319,22 +325,23 @@ onMounted(() => {
   height: 2.25rem;
   padding: 0 0.5rem;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background-color: var(--card-bg);
   color: var(--text-main);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  transition: all var(--transition-base);
 }
 
 .pagination-btn:hover:not(:disabled):not(.pagination-btn-active) {
   background-color: var(--disclaimer-bg);
-  border-color: #d0d7d9;
+  border-color: #c8d0d2;
 }
 
 .pagination-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
@@ -344,6 +351,7 @@ onMounted(() => {
   color: #ffffff;
   font-weight: 600;
   cursor: default;
+  box-shadow: var(--shadow-xs);
 }
 
 .pagination-arrow {
@@ -354,13 +362,13 @@ onMounted(() => {
 
 @media (max-width: 600px) {
   .pagination {
-    gap: 0.25rem;
+    gap: 0.2rem;
   }
 
   .pagination-btn {
     min-width: 2rem;
     height: 2rem;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 }
 </style>

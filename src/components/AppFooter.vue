@@ -7,11 +7,12 @@
 <style scoped>
 .app-footer {
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 3.5rem 1.5rem;
   color: var(--text-light);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin-top: auto;
-  border-top: 1px solid var(--border-color);
+  background-color: var(--disclaimer-bg);
+  letter-spacing: 0.01em;
 }
 
 .app-footer p {

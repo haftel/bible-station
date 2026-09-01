@@ -76,12 +76,13 @@ const closeMenu = () => {
 
 <style scoped>
 .navbar {
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(234, 234, 234, 0.6);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .navbar-container {
@@ -107,26 +108,26 @@ const closeMenu = () => {
 }
 
 .brand-title {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--accent-color);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 .nav-item {
   text-decoration: none;
   color: var(--text-light);
   font-weight: 500;
-  font-size: 0.95rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
   position: relative;
 }
 
@@ -159,7 +160,7 @@ const closeMenu = () => {
   height: 2px;
   background-color: var(--text-main);
   border-radius: 2px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-smooth);
 }
 
 @media (max-width: 768px) {
@@ -172,23 +173,26 @@ const closeMenu = () => {
     top: 64px;
     left: 0;
     right: 0;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-color);
     flex-direction: column;
-    padding: 1rem;
-    gap: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1rem;
+    gap: 0.25rem;
+    box-shadow: var(--shadow-lg);
     display: none;
   }
 
   .nav-links-open {
     display: flex;
-    animation: fadeIn 0.2s ease-in-out;
+    animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .nav-item {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-sm);
   }
 
   .nav-toggle.is-active .bar:nth-child(1) {

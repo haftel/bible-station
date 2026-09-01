@@ -45,7 +45,7 @@ bible-station/
 ├── src/
 │   ├── assets/
 │   │   └── styles/
-│   │       └── main.css          # Design tokens, reset, typography & utility styles
+│   │       └── main.css          # Design tokens (colors, shadows, radii, transitions), Inter font, reset & utilities
 │   ├── components/
 │   │   ├── Navbar.vue            # Responsive global top navigation bar
 │   │   └── AppFooter.vue         # Global application footer
@@ -76,6 +76,9 @@ bible-station/
 ### Prerequisites
 - Node.js (version 20.x recommended)
 - npm (version 10.x or higher)
+
+### External Dependencies
+- **[Inter](https://fonts.google.com/specimen/Inter)** typeface loaded via Google Fonts CDN (weights 400, 500, 600, 700) for UI typography. Georgia serif remains for scripture text.
 
 ### Installation
 
