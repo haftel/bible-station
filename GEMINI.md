@@ -27,13 +27,13 @@ This document defines the strict constitutional rules and operational mandates g
 ### Rule 4: Visual Fidelity & Aesthetic Standards
 - **Mandate**: The user interface must preserve the refined typography, curated color palette, and layout aesthetic established in the reference design and guidelines.
 - **Design Tokens**:
-  - Background: `--bg-color: #fcfcfc`
-  - Text Primary: `--text-main: #333333`
-  - Text Muted: `--text-light: #666666`
-  - Accent Color: `--accent-color: #4a6c6f` (Primary Slate Teal)
-  - Secondary Accent: `--secondary-color: #5c7a6b` (Positive Muted Green)
-  - Callout/Disclaimer: `--disclaimer-bg: #eef2f3`
-- **Typography**: Georgia serif for scripture passages and game text; system sans-serif for UI, navigation, and controls.
+  - Background: `--bg-color: #f7f5f0` (Warm Cream)
+  - Text Primary: `--text-main: #2c2c2c`
+  - Text Muted: `--text-light: #6b6560`
+  - Accent Color: `--accent-color: #3d6b6e` (Warm Teal)
+  - Secondary Accent: `--secondary-color: #5a7a68` (Warm Sage)
+  - Callout/Disclaimer: `--disclaimer-bg: #f0ece4`
+- **Typography**: Playfair Display serif for page headings and display text; Georgia serif for scripture passages and game text; Inter sans-serif for UI, navigation, and controls.
 - **Forbidden Clichés**: Avoid unprompted dark theme purple glow, gradient text fills, icon-stuffed bento boxes, or jarring decorative gimmicks.
 
 ### Rule 5: GitHub Pages CI/CD Integrity

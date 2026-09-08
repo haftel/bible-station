@@ -670,17 +670,30 @@ const typeCompleted = computed(() => {
 <style scoped>
 .page-header {
   text-align: center;
-  padding: 3.5rem 1.5rem 1.5rem;
+  padding: 4rem 1.5rem 2rem;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .page-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 2.5rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.75rem;
+  font-weight: 600;
   color: var(--accent-color);
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.page-title::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background-color: var(--accent-color);
+  margin: 1rem auto 0;
+  border-radius: 1px;
+  opacity: 0.6;
 }
 
 .error-banner {
@@ -699,17 +712,17 @@ const typeCompleted = computed(() => {
 }
 
 .dashboard-header {
-  background: linear-gradient(135deg, var(--text-main) 0%, #404040 100%);
+  background: linear-gradient(135deg, #2c2c2c 0%, #3d3a36 50%, #2c2c2c 100%);
   color: #ffffff;
-  padding: 2rem 1.5rem;
+  padding: 2.25rem 1.5rem;
   text-align: center;
 }
 
 .dashboard-header h2 {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 600;
   color: #ffffff;
   letter-spacing: -0.01em;
 }
@@ -721,7 +734,7 @@ const typeCompleted = computed(() => {
   padding: 0.35rem;
   border-bottom: none;
   border-radius: var(--radius-md);
-  margin: 1rem 1.5rem 0;
+  margin: 1.25rem 1.5rem 0;
   gap: 0.25rem;
 }
 
@@ -754,11 +767,11 @@ const typeCompleted = computed(() => {
 }
 
 .tab-content {
-  padding: 2rem;
+  padding: 2.25rem;
 }
 
 .game-text-display {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.4rem;
   line-height: 2.2;
   color: var(--text-main);
@@ -791,7 +804,7 @@ const typeCompleted = computed(() => {
 
 .toolbar-btn {
   background: var(--disclaimer-bg);
-  border: 1px solid #d0d7d9;
+  border: 1px solid var(--border-color);
   padding: 0.45rem 1rem;
   border-radius: var(--radius-full);
   cursor: pointer;
@@ -803,7 +816,7 @@ const typeCompleted = computed(() => {
 
 .toolbar-btn:hover,
 .toolbar-btn-active {
-  background: #dce3e5;
+  background: #e6e1d8;
   border-color: var(--accent-color);
   color: var(--accent-color);
   font-weight: 600;
@@ -817,24 +830,24 @@ const typeCompleted = computed(() => {
 }
 
 .vanish-word-hidden {
-  color: #d1d5db;
+  color: #cdc7be;
   cursor: pointer;
   transition: color var(--transition-fast);
 }
 
 .vanish-word-hidden:hover {
-  color: #9ca3af;
+  color: #a09890;
 }
 
 /* Fill Game */
 .fill-input {
   display: inline-block;
   border: none;
-  border-bottom: 2px solid #9ca3af;
-  background-color: #f3f4f6;
+  border-bottom: 2px solid #a09890;
+  background-color: var(--bg-subtle);
   margin: 0 4px;
   text-align: center;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: inherit;
   color: var(--accent-color);
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
@@ -846,7 +859,7 @@ const typeCompleted = computed(() => {
   outline: none;
   border-bottom-color: var(--accent-color);
   background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(60, 50, 40, 0.06);
 }
 
 .fill-correct {
@@ -874,29 +887,29 @@ const typeCompleted = computed(() => {
 
 .scramble-btn {
   background: #ffffff;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
   padding: 0.5rem 1.1rem;
   border-radius: var(--radius-full);
   cursor: pointer;
   font-size: 1.1rem;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Georgia, 'Times New Roman', serif;
   transition: all var(--transition-base);
   box-shadow: var(--shadow-xs);
 }
 
 .scramble-btn:hover:not(:disabled) {
   border-color: var(--accent-color);
-  background: #f8fafc;
+  background: #faf8f4;
   box-shadow: var(--shadow-sm);
   transform: translateY(-1px);
 }
 
 .scramble-btn-used {
-  background: #f3f4f6;
+  background: var(--bg-subtle);
   color: transparent;
-  border-color: #e5e7eb;
+  border-color: var(--border-color);
   cursor: default;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(60, 50, 40, 0.05);
   transform: none;
 }
 
@@ -923,7 +936,7 @@ const typeCompleted = computed(() => {
 .scramble-target-blank {
   display: inline-block;
   width: 2.5rem;
-  border-bottom: 2px solid #d1d5db;
+  border-bottom: 2px solid var(--border-color);
   margin: 0 0.2rem;
 }
 
@@ -963,11 +976,11 @@ const typeCompleted = computed(() => {
 }
 
 .type-char-future {
-  color: #cbd5e1;
+  color: #cdc7be;
 }
 
 .type-char-punct {
-  color: #94a3b8;
+  color: #a09890;
 }
 
 .feedback-message {

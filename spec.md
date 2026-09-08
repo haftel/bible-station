@@ -30,32 +30,36 @@ graph TD
 - **Build Tool**: Vite
 - **Routing**: Vue Router 4 using HTML5 Web History (`createWebHistory(import.meta.env.BASE_URL)`). Clean direct URLs without hashtags (`/devotionals`, `/memory`, `/verses-for-feelings`).
 - **GitHub Pages Fallback**: Single-Page Application redirect via `public/404.html` and `index.html` to support direct deep linking and page reloads on static GitHub Pages hosting.
-- **Styling**: Vanilla CSS utilizing CSS Custom Properties (Design Tokens), zero heavy CSS frameworks. Google Fonts `Inter` for UI typography.
+- **Styling**: Vanilla CSS utilizing CSS Custom Properties (Design Tokens), zero heavy CSS frameworks. Google Fonts `Inter` and `Playfair Display` for typography.
 
 ---
 
 ## 2. Design System & Style Tokens
 
-### 2.1 Color Palette
-- `--bg-color: #fcfcfc` (Primary page background)
-- `--text-main: #333333` (Primary body text)
-- `--text-light: #666666` (Secondary text, subtitles, meta information)
-- `--accent-color: #4a6c6f` (Primary Slate Teal: headers, primary buttons, borders)
-- `--secondary-color: #5c7a6b` (Positive/Uplifting Muted Green: positive emotion accents)
-- `--disclaimer-bg: #eef2f3` (Callout container background)
+### 2.1 Color Palette ("Warm Sanctuary")
+- `--bg-color: #f7f5f0` (Primary page background — warm cream)
+- `--bg-subtle: #f2efe8` (Subtle background for alternating sections)
+- `--text-main: #2c2c2c` (Primary body text — deep charcoal)
+- `--text-light: #6b6560` (Secondary text, subtitles, meta — warm gray)
+- `--accent-color: #3d6b6e` (Primary Warm Teal: headers, primary buttons, borders)
+- `--secondary-color: #5a7a68` (Positive/Uplifting Warm Sage: positive emotion accents)
+- `--disclaimer-bg: #f0ece4` (Callout container background — warm cream)
 - `--card-bg: #ffffff` (Card background)
-- `--border-color: #eaeaea` (Standard border)
+- `--border-color: #e8e4de` (Standard border — warm gray)
 - `--success-color: #166534` / `--success-bg: #dcfce7` (Correct input feedback)
 - `--error-color: #991b1b` / `--error-bg: #fee2e2` (Error input feedback)
 
 ### 2.2 Elevation & Shape Tokens
-- `--shadow-xs` through `--shadow-xl`: Layered multi-stop box-shadows for subtle material depth
+- `--shadow-xs` through `--shadow-xl`: Layered multi-stop box-shadows with warm-tinted `rgba(60, 50, 40, ...)` for subtle material depth
+- `--shadow-glow: 0 4px 16px -2px rgba(61, 107, 110, 0.15)`: Warm teal glow for primary button hover
 - `--radius-sm: 8px`, `--radius-md: 12px`, `--radius-lg: 16px`, `--radius-xl: 24px`, `--radius-full: 9999px` (pill)
 - `--transition-fast: 0.15s`, `--transition-base: 0.2s`, `--transition-smooth: 0.3s` (all using `cubic-bezier(0.4, 0, 0.2, 1)`)
 
 ### 2.3 Typography
-- **UI & Navigation Font**: `'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` (loaded via Google Fonts in `index.html`, weights 400/500/600/700)
-- **Scripture & Devotional Text Font**: `Georgia, "Times New Roman", serif`
+- **Heading & Display Font**: `'Playfair Display', Georgia, 'Times New Roman', serif` — aliased as `var(--heading-font)` (loaded via Google Fonts in `index.html`, weights 400/500/600/700, includes italic)
+- **UI & Navigation Font**: `'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` — aliased as `var(--body-font)` (loaded via Google Fonts in `index.html`, weights 400/500/600/700)
+- **Scripture & Devotional Text Font**: `Georgia, 'Times New Roman', serif` — aliased as `var(--scripture-font)`
+- **Decorative Elements**: Page titles include a centered decorative underline (40px × 2px accent-colored rule via `::after` pseudo-element).
 
 ### 2.4 Animations
 - **Fade In**: `@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }` (0.35s, cubic-bezier)
@@ -68,9 +72,9 @@ graph TD
 
 ### 3.1 Navigation Bar (`src/components/Navbar.vue`)
 - Positioned persistently at the top of all views.
-- **Glass-morphism**: Semi-transparent background (`rgba(255,255,255,0.82)`) with `backdrop-filter: blur(12px)` for modern frosted-glass effect.
+- **Glass-morphism**: Semi-transparent warm-tinted background (`rgba(247, 245, 240, 0.85)`) with `backdrop-filter: blur(12px)` for frosted-glass effect.
 - **Brand Logo**: Inline SVG open-bible icon (black outline, `--accent-color` stroke) next to the brand title.
-- **Brand Title**: "Bible Station" linking to `/`.
+- **Brand Title**: "Bible Station" in `Playfair Display` serif, linking to `/`.
 - **Favicon**: `public/favicon.svg` — same open-bible SVG with a `#fcfcfc` rounded-rect background for dark-mode browser tab visibility.
 - **Navigation Links**:
   1. `Home` (`/`)

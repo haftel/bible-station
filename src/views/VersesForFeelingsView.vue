@@ -103,41 +103,53 @@ const getAnotherVerse = () => {
 <style scoped>
 .page-header {
   text-align: center;
-  padding: 3.5rem 1.5rem 1.5rem;
+  padding: 4rem 1.5rem 2rem;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .page-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.75rem;
+  font-weight: 600;
   color: var(--accent-color);
   margin-bottom: 0.6rem;
   margin-top: 0;
   letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.page-title::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background-color: var(--accent-color);
+  margin: 1rem auto 0;
+  border-radius: 1px;
+  opacity: 0.6;
 }
 
 .page-subtitle {
   font-family: 'Inter', sans-serif;
   color: var(--text-light);
   font-size: 1.1rem;
-  line-height: 1.6;
-  margin-top: 0;
+  line-height: 1.7;
+  margin-top: 0.75rem;
   margin-bottom: 2.5rem;
 }
 
 .super-section {
-  margin-bottom: 3rem;
+  margin-bottom: 3.5rem;
 }
 
 .super-section-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', Georgia, serif;
   margin-top: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   color: var(--accent-color);
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
   letter-spacing: -0.3px;
 }
@@ -157,7 +169,7 @@ const getAnotherVerse = () => {
 
 .category-card {
   margin-bottom: 0;
-  padding: 1.75rem;
+  padding: 2rem;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
@@ -167,14 +179,14 @@ const getAnotherVerse = () => {
 }
 
 .category-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', Georgia, serif;
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   color: var(--text-main);
   font-size: 1.2rem;
   font-weight: 600;
   border-bottom: 2px solid var(--border-color);
-  padding-bottom: 0.6rem;
+  padding-bottom: 0.75rem;
 }
 
 /* Verse Display Area */
@@ -182,8 +194,8 @@ const getAnotherVerse = () => {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 2.75rem 2.5rem;
-  margin-bottom: 2.5rem;
+  padding: 3rem 2.5rem;
+  margin-bottom: 3rem;
   box-shadow: var(--shadow-md);
   text-align: center;
   scroll-margin-top: 5rem;
@@ -202,6 +214,8 @@ const getAnotherVerse = () => {
   background-color: var(--secondary-color);
 }
 
+
+
 .verse-theme-negative {
   border-left: 5px solid var(--primary-color);
 }
@@ -215,15 +229,17 @@ const getAnotherVerse = () => {
 }
 
 .verse-text {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: 1.45rem;
   font-style: italic;
   color: var(--accent-color);
   margin: 0 auto 1.75rem;
   max-width: 600px;
-  line-height: 1.75;
+  line-height: 1.8;
   border-left: none;
   padding-left: 0;
+
+
 }
 
 .verse-reference {
@@ -233,6 +249,8 @@ const getAnotherVerse = () => {
   font-weight: 700;
   margin-bottom: 1.75rem;
   letter-spacing: -0.2px;
+
+
 }
 
 .another-btn {
@@ -251,7 +269,7 @@ const getAnotherVerse = () => {
 .another-btn:hover {
   opacity: 0.92;
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 16px -2px rgba(61, 107, 110, 0.2);
 }
 
 .another-btn:active {
@@ -270,7 +288,7 @@ const getAnotherVerse = () => {
   background-color: var(--disclaimer-bg);
   border: 1px solid var(--border-color);
   color: var(--text-main);
-  padding: 0.6rem 0.5rem;
+  padding: 0.65rem 0.5rem;
   border-radius: var(--radius-full);
   font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
@@ -285,7 +303,7 @@ const getAnotherVerse = () => {
   color: white;
   border-color: var(--accent-color);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px -2px rgba(61, 107, 110, 0.18);
 }
 
 .mood-btn-active {
@@ -293,5 +311,13 @@ const getAnotherVerse = () => {
   color: white;
   border-color: var(--accent-color);
   box-shadow: var(--shadow-xs);
+}
+
+@media (max-width: 600px) {
+  .verse-container {
+    padding: 2.5rem 1.5rem;
+  }
+
+
 }
 </style>

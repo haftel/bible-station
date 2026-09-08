@@ -208,17 +208,30 @@ onMounted(() => {
 <style scoped>
 .page-header {
   text-align: center;
-  padding: 3.5rem 1.5rem 1.5rem;
+  padding: 4rem 1.5rem 2rem;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.75rem;
+  font-weight: 600;
   color: var(--accent-color);
   margin-bottom: 1rem;
   letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.page-title::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background-color: var(--accent-color);
+  margin: 1rem auto 0;
+  border-radius: 1px;
+  opacity: 0.6;
 }
 
 /* Title row with copy link button */
@@ -231,11 +244,13 @@ onMounted(() => {
 .post-title {
   margin-top: 0;
   margin-bottom: 0.2rem;
+  font-family: 'Playfair Display', Georgia, serif;
   color: var(--text-main);
   font-size: 1.65rem;
-  font-weight: 700;
+  font-weight: 600;
   flex: 1;
   letter-spacing: -0.3px;
+  line-height: 1.3;
 }
 
 .copy-link-btn {
@@ -283,14 +298,14 @@ onMounted(() => {
 .post-meta {
   color: var(--text-light);
   font-size: 0.85rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   font-weight: 400;
 }
 
 .post-content p {
   margin-bottom: 1rem;
   color: var(--text-main);
-  line-height: 1.75;
+  line-height: 1.8;
 }
 
 .post-content p:last-child {
@@ -304,7 +319,7 @@ onMounted(() => {
 
 @keyframes highlightFlash {
   0% { box-shadow: var(--shadow-sm); }
-  15% { box-shadow: 0 0 0 3px rgba(74, 108, 111, 0.2); }
+  15% { box-shadow: 0 0 0 3px rgba(61, 107, 110, 0.2); }
   100% { box-shadow: var(--shadow-sm); }
 }
 
@@ -337,7 +352,7 @@ onMounted(() => {
 
 .pagination-btn:hover:not(:disabled):not(.pagination-btn-active) {
   background-color: var(--disclaimer-bg);
-  border-color: #c8d0d2;
+  border-color: #cdc7be;
 }
 
 .pagination-btn:disabled {

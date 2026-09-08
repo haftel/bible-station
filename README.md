@@ -78,7 +78,9 @@ bible-station/
 - npm (version 10.x or higher)
 
 ### External Dependencies
-- **[Inter](https://fonts.google.com/specimen/Inter)** typeface loaded via Google Fonts CDN (weights 400, 500, 600, 700) for UI typography. Georgia serif remains for scripture text.
+- **[Inter](https://fonts.google.com/specimen/Inter)** typeface loaded via Google Fonts CDN (weights 400, 500, 600, 700) for UI and body typography.
+- **[Playfair Display](https://fonts.google.com/specimen/Playfair+Display)** typeface loaded via Google Fonts CDN (weights 400, 500, 600, 700 + italic) for headings and display typography.
+- Georgia serif remains for scripture text.
 
 ### Installation
 

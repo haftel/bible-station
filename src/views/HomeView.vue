@@ -44,50 +44,55 @@
 
 <style scoped>
 .hero-header {
-  background: linear-gradient(135deg, var(--accent-color) 0%, #3d5b5e 100%);
+  background: linear-gradient(135deg, #3d6b6e 0%, #2d5254 50%, #3a5f55 100%);
   color: #ffffff;
   text-align: center;
-  padding: 6rem 1.5rem 5.5rem;
-  margin-bottom: 3.5rem;
+  padding: 7rem 1.5rem 6rem;
+  margin-bottom: 4rem;
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 4rem;
   color: #ffffff;
-  margin: 0 0 1.25rem 0;
+  margin: 0 0 1.5rem 0;
   letter-spacing: -1px;
-  font-weight: 700;
+  font-weight: 600;
+  line-height: 1.1;
 }
 
 .hero-subtitle {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 1.2rem;
   font-weight: 400;
-  max-width: 560px;
+  max-width: 520px;
   margin: 0 auto;
-  line-height: 1.7;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
 }
 
 .home-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 1.5rem 3.5rem;
+  padding: 0 1.5rem 4rem;
 }
 
 .welcome-section {
   text-align: center;
-  max-width: 680px;
-  margin: 0 auto 4rem auto;
+  max-width: 660px;
+  margin: 0 auto 4.5rem auto;
   font-size: 1.1rem;
   color: var(--text-light);
-  line-height: 1.8;
+  line-height: 1.85;
 }
 
 .welcome-section strong {
   display: block;
+  font-family: 'Playfair Display', Georgia, serif;
   color: var(--accent-color);
-  font-size: 1.4rem;
-  margin-bottom: 0.75rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
   letter-spacing: -0.3px;
 }
 
@@ -95,7 +100,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
-  margin-bottom: 4rem;
+  margin-bottom: 4.5rem;
 }
 
 @media (min-width: 600px) {
@@ -107,9 +112,10 @@
 .feature-card {
   background: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 2.5rem;
+  padding: 2.75rem 2.25rem;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
+  border-top: 3px solid var(--accent-color);
   text-align: center;
   transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
   display: flex;
@@ -123,10 +129,11 @@
 
 .feature-title {
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  font-family: 'Playfair Display', Georgia, serif;
   color: var(--accent-color);
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 600;
   letter-spacing: -0.3px;
 }
 
@@ -138,17 +145,17 @@
 }
 
 .feature-content p {
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1.75rem 0;
   color: var(--text-light);
   font-size: 0.95rem;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .feature-links {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.75rem;
 }
 
 .feature-btn {
@@ -158,7 +165,7 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
-  padding: 0.7rem 1.5rem;
+  padding: 0.75rem 1.75rem;
   border-radius: var(--radius-full);
   transition: all var(--transition-base);
   box-shadow: var(--shadow-xs);
@@ -167,7 +174,7 @@
 
 .feature-btn:hover {
   opacity: 0.92;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 16px -2px rgba(61, 107, 110, 0.2);
   transform: translateY(-1px);
 }
 
@@ -186,29 +193,46 @@
 .hero-verse-banner {
   background-color: var(--disclaimer-bg);
   border-radius: var(--radius-lg);
-  padding: 3.5rem 2.5rem;
+  padding: 4rem 2.5rem;
   text-align: center;
   margin-bottom: 2rem;
 }
 
 .hero-bible-verse {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.35rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
   font-style: italic;
   color: var(--accent-color);
   margin: 0;
   padding: 0;
-  line-height: 1.6;
+  line-height: 1.7;
   border-left: none;
 }
 
 .hero-bible-verse cite {
   display: block;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 0.95rem;
   font-style: normal;
   font-weight: 600;
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
   color: var(--text-main);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 600px) {
+  .hero-title {
+    font-size: 2.75rem;
+  }
+  
+  .hero-header {
+    padding: 5rem 1.25rem 4rem;
+  }
+
+  .hero-verse-banner {
+    padding: 3rem 1.5rem;
+  }
+
+
 }
 </style>

@@ -76,10 +76,10 @@ const closeMenu = () => {
 
 <style scoped>
 .navbar {
-  background-color: rgba(255, 255, 255, 0.82);
+  background-color: rgba(247, 245, 240, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(234, 234, 234, 0.6);
+  border-bottom: 1px solid rgba(232, 228, 222, 0.6);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -108,8 +108,9 @@ const closeMenu = () => {
 }
 
 .brand-title {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 600;
   color: var(--accent-color);
   letter-spacing: -0.3px;
 }
@@ -173,7 +174,7 @@ const closeMenu = () => {
     top: 64px;
     left: 0;
     right: 0;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(247, 245, 240, 0.97);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-color);
