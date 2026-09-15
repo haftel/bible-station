@@ -154,7 +154,7 @@ graph TD
     - `custom`: Paste Custom Text
   - Custom Textarea (visible only when `custom` is selected).
   - Load Verse button: Fetches verse via `https://bible-api.com/{ref}?translation={trans}` or secondary API (`bolls.life` fallback for copyrighted translations with NIV mapped to modern `NIV2011`) or uses custom text, cleans whitespace/headings, and initializes the dashboard.
-- **Interactive Game Dashboard** (5 Tabs):
+- **Interactive Game Dashboard** (6 Tabs):
   1. **Vanish Mode**:
      - Toolbar buttons: `0%`, `25%`, `50%`, `75%`, `100%`.
      - Randomly blanks out selected % of words with underscores.
@@ -177,6 +177,12 @@ graph TD
      - "Hide Verse (Type from Memory)" / "Show Verse to Learn" toggle.
      - Character styling: typed correct (bold green), typed incorrect (red background), upcoming chars (muted grey or hidden depending on mode), punctuation (slate).
      - Full completion celebration message when 100% typed correctly.
+  6. **Type First Letters Mode**:
+     - Memory-only word-level first-letter typing challenge: user types only the first letter of each word.
+     - Correct letter instantly reveals the full word in green and advances to the next word.
+     - Incorrect letter flashes red (400ms) without revealing the correct letter; word resets to pending.
+     - "Show Word" hint button reveals the current word (styled in italic teal accent) when the user is stumped.
+     - Full completion celebration message when all words are completed.
 
 ### 4.4 Verses for Feelings View (`/verses-for-feelings` -> `src/views/VersesForFeelingsView.vue`)
 - **Header**: Title "Scripture for Every Season", subtitle.

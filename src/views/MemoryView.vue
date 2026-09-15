@@ -240,6 +240,55 @@
             </p>
           </div>
         </div>
+
+        <!-- Tab 6: Type First Letters -->
+        <div v-show="currentTab === 'type-first'" class="tab-content">
+          <p class="game-instructions">Type the first letter of each word. Correct letters reveal the full word.</p>
+
+          <!-- Word Display Box -->
+          <div class="game-text-display type-display-box">
+            <span
+              v-for="(item, idx) in typeFirstWordStates"
+              :key="idx"
+              :class="[
+                'type-first-word',
+                {
+                  'type-first-correct': item.status === 'correct',
+                  'type-first-revealed': item.status === 'revealed',
+                  'type-first-error': item.status === 'error',
+                  'hidden': item.status === 'pending'
+                }
+              ]"
+            >
+              <template v-if="item.status === 'correct' || item.status === 'revealed'">{{ item.word }}</template>
+              <template v-else-if="item.status === 'error'">{{ item.errorChar }}</template>
+            </span>
+          </div>
+
+          <!-- Input and Hint Controls -->
+          <div v-if="!typeFirstCompleted" class="type-first-controls">
+            <input
+              ref="typeFirstInputRef"
+              v-model="typeFirstInput"
+              @input="handleTypeFirstInput"
+              type="text"
+              maxlength="1"
+              autocomplete="off"
+              autocapitalize="off"
+              placeholder="Type the first letter…"
+              class="form-control type-first-input"
+            />
+            <button @click="revealCurrentWord" class="btn btn-secondary type-first-hint-btn" title="Reveal the current word">
+              Show Word
+            </button>
+          </div>
+
+          <div class="text-center mt-4">
+            <p v-if="typeFirstCompleted" class="feedback-message text-success fade-in">
+              🎉 Perfect! You completed the verse!
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -263,7 +312,8 @@ const tabs = [
   { id: 'fill', label: 'Fill in Blanks' },
   { id: 'scramble', label: 'Scramble' },
   { id: 'first-letter', label: 'First Letter' },
-  { id: 'type', label: 'Type Full' }
+  { id: 'type', label: 'Type Full' },
+  { id: 'type-first', label: 'Type First Letters' }
 ]
 const currentTab = ref('vanish')
 
@@ -275,6 +325,11 @@ const switchTab = (tabId) => {
   if (tabId === 'type') {
     nextTick(() => {
       typeInputRef.value?.focus()
+    })
+  }
+  if (tabId === 'type-first') {
+    nextTick(() => {
+      typeFirstInputRef.value?.focus()
     })
   }
 }
@@ -422,6 +477,7 @@ const initializeDashboard = () => {
   initScramble()
   initFirstLetter()
   initType()
+  initTypeFirst()
 }
 
 // ==================== 1. VANISH MODE ====================
@@ -665,6 +721,80 @@ const typeCompleted = computed(() => {
   }
   return false
 })
+
+// ==================== 6. TYPE FIRST LETTERS MODE ====================
+const typeFirstInput = ref('')
+const typeFirstInputRef = ref(null)
+const typeFirstCurrentIndex = ref(0)
+const typeFirstWordStates = ref([])
+
+const getFirstAlpha = (word) => {
+  for (const char of word) {
+    if (/[a-zA-Z0-9]/.test(char)) return char.toLowerCase()
+  }
+  return ''
+}
+
+const initTypeFirst = () => {
+  typeFirstInput.value = ''
+  typeFirstCurrentIndex.value = 0
+  const rawWords = currentVerse.value.split(/\s+/).filter((w) => w.length > 0)
+  typeFirstWordStates.value = rawWords.map((word) => ({
+    word,
+    status: 'pending',
+    errorChar: ''
+  }))
+}
+
+const typeFirstCompleted = computed(() => {
+  if (typeFirstWordStates.value.length === 0) return false
+  return typeFirstWordStates.value.every((w) => w.status === 'correct' || w.status === 'revealed')
+})
+
+const handleTypeFirstInput = () => {
+  const char = typeFirstInput.value.trim().toLowerCase()
+  typeFirstInput.value = ''
+
+  if (!char || typeFirstCompleted.value) return
+
+  const idx = typeFirstCurrentIndex.value
+  if (idx >= typeFirstWordStates.value.length) return
+
+  const wordObj = typeFirstWordStates.value[idx]
+  const expectedChar = getFirstAlpha(wordObj.word)
+
+  if (char === expectedChar) {
+    wordObj.status = 'correct'
+    typeFirstCurrentIndex.value++
+    nextTick(() => {
+      typeFirstInputRef.value?.focus()
+    })
+  } else {
+    wordObj.status = 'error'
+    wordObj.errorChar = char
+    setTimeout(() => {
+      if (wordObj.status === 'error') {
+        wordObj.status = 'pending'
+        wordObj.errorChar = ''
+      }
+    }, 400)
+    nextTick(() => {
+      typeFirstInputRef.value?.focus()
+    })
+  }
+}
+
+const revealCurrentWord = () => {
+  if (typeFirstCompleted.value) return
+  const idx = typeFirstCurrentIndex.value
+  if (idx >= typeFirstWordStates.value.length) return
+
+  typeFirstWordStates.value[idx].status = 'revealed'
+  typeFirstCurrentIndex.value++
+  nextTick(() => {
+    typeFirstInputRef.value?.focus()
+  })
+}
 </script>
 
 <style scoped>
@@ -987,5 +1117,55 @@ const typeCompleted = computed(() => {
   margin-top: 1rem;
   font-weight: bold;
   font-size: 1.1rem;
+}
+
+/* Type First Letters Game */
+.type-first-word {
+  display: inline-block;
+  margin-right: 0.45rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.15rem;
+  line-height: 2;
+  letter-spacing: 0.03em;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.type-first-correct {
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.type-first-revealed {
+  color: var(--accent-color);
+  font-weight: bold;
+  font-style: italic;
+}
+
+.type-first-error {
+  color: var(--error-color);
+  background-color: var(--error-bg);
+  border-radius: 3px;
+  padding: 0 3px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.type-first-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.type-first-input {
+  flex: 1;
+  max-width: 300px;
+  font-size: 1.15rem;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+.type-first-hint-btn {
+  white-space: nowrap;
+  font-size: 0.9rem;
 }
 </style>

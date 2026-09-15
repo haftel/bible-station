@@ -11,12 +11,13 @@ Live Site: [https://biblestation.org](https://biblestation.org)
 - **🌐 Single Page Application with Global Navigation**: Fast, smooth client-side routing across all sections with clean direct URLs and responsive mobile navigation.
 - **🏠 Home & Welcome**: Overview of the mission, quick feature access cards, and inspiring hero scripture banner.
 - **📜 Devotionals**: Thoughtful devotional reflections and scripture applications, paginated (10 per page) with shareable deep links to individual posts.
-- **🧠 Scripture Memory Tool**: Interactive scripture memorization suite with automated verse fetching via `bible-api.com` and fallback APIs (NIV, ESV, CSB, NASB, NKJV, NLT, NET, AMP, WEB, KJV, BBE, ASV, YLT) and Custom text paste, offering 5 distinct practice modes:
+- **🧠 Scripture Memory Tool**: Interactive scripture memorization suite with automated verse fetching via `bible-api.com` and fallback APIs (NIV, ESV, CSB, NASB, NKJV, NLT, NET, AMP, WEB, KJV, BBE, ASV, YLT) and Custom text paste, offering 6 distinct practice modes:
   1. **Vanish Mode**: Eraser slider (0% to 100%) with interactive click-to-reveal word blanks.
   2. **Fill in the Blanks**: Customizable blank percentage (25% to 100%) with automated answer validation and visual feedback.
   3. **Scramble Mode**: Word bank with randomly shuffled word buttons to reconstruct verses sequentially.
   4. **First Letter Mode**: Displays initial letters with word length placeholders and hover tooltip cheats.
   5. **Type Full Mode**: Letter-by-letter live comparison typing engine with color-coded feedback and memory challenge toggle.
+  6. **Type First Letters Mode**: Type only the first letter of each word to reveal it — incorrect guesses flash red without showing the answer, with a "Show Word" hint button for when you're stumped.
 - **🕊️ Bible Verses for Feelings**: Comprehensive catalog of 240 modern NIV verses across **30 emotional states** grouped into **10 categories** (Uplifting and Heavy feelings), complete with dynamic color accenting and random verse generation.
 
 ---
@@ -57,7 +58,7 @@ bible-station/
 │   ├── views/
 │   │   ├── HomeView.vue          # Landing page & hero
 │   │   ├── DevotionalsView.vue   # Devotionals feed
-│   │   ├── MemoryView.vue        # 5-mode interactive scripture memorizer
+│   │   ├── MemoryView.vue        # 6-mode interactive scripture memorizer
 │   │   └── VersesForFeelingsView.vue # Categorized verses by emotion
 │   ├── App.vue                   # Root application component
 │   └── main.js                   # Application entrypoint
