@@ -214,25 +214,25 @@
           </div>
           <p class="game-instructions">(Pro tip: Don't worry about punctuation or spaces—just type the letters!)</p>
 
-          <!-- Real-time Interactive Text Display -->
-          <div class="game-text-display type-display-box">
+          <!-- Inline Typing Display — captures keystrokes directly -->
+          <div
+            ref="typeBoxRef"
+            class="game-text-display type-display-box"
+            tabindex="0"
+            @keydown="handleTypeKeydown"
+            @focus="typeBoxFocused = true"
+            @blur="typeBoxFocused = false"
+          >
             <span
               v-for="(charObj, idx) in typeDisplayCharacters"
               :key="idx"
               :class="charObj.cssClass"
-            >
-              {{ charObj.char }}
-            </span>
+            >{{ charObj.char }}</span>
+            <span v-if="!typeCompleted && typeBoxFocused" class="type-cursor">|</span>
+            <div v-if="!typeBoxFocused && !typeCompleted && typedChars.length === 0" class="type-focus-hint" @click="focusTypeBox">
+              Click here or press any key to start typing…
+            </div>
           </div>
-
-          <!-- Functional input box -->
-          <textarea
-            ref="typeInputRef"
-            v-model="typedInput"
-            rows="3"
-            placeholder="Start typing the letters here..."
-            class="form-control"
-          ></textarea>
 
           <div class="text-center mt-4">
             <p v-if="typeCompleted" class="feedback-message text-success fade-in">
@@ -245,8 +245,21 @@
         <div v-show="currentTab === 'type-first'" class="tab-content">
           <p class="game-instructions">Type the first letter of each word. Correct letters reveal the full word.</p>
 
-          <!-- Word Display Box -->
-          <div class="game-text-display type-display-box">
+          <div v-if="!typeFirstCompleted" class="text-center mb-2">
+            <button @click="revealCurrentWord" class="btn btn-secondary type-first-hint-btn" title="Reveal the current word">
+              Show Word
+            </button>
+          </div>
+
+          <!-- Inline Word Display — captures keystrokes directly -->
+          <div
+            ref="typeFirstBoxRef"
+            class="game-text-display type-display-box"
+            tabindex="0"
+            @keydown="handleTypeFirstKeydown"
+            @focus="typeFirstBoxFocused = true"
+            @blur="typeFirstBoxFocused = false"
+          >
             <span
               v-for="(item, idx) in typeFirstWordStates"
               :key="idx"
@@ -263,24 +276,10 @@
               <template v-if="item.status === 'correct' || item.status === 'revealed'">{{ item.word }}</template>
               <template v-else-if="item.status === 'error'">{{ item.errorChar }}</template>
             </span>
-          </div>
-
-          <!-- Input and Hint Controls -->
-          <div v-if="!typeFirstCompleted" class="type-first-controls">
-            <input
-              ref="typeFirstInputRef"
-              v-model="typeFirstInput"
-              @input="handleTypeFirstInput"
-              type="text"
-              maxlength="1"
-              autocomplete="off"
-              autocapitalize="off"
-              placeholder="Type the first letter…"
-              class="form-control type-first-input"
-            />
-            <button @click="revealCurrentWord" class="btn btn-secondary type-first-hint-btn" title="Reveal the current word">
-              Show Word
-            </button>
+            <span v-if="!typeFirstCompleted && typeFirstBoxFocused" class="type-cursor">|</span>
+            <div v-if="!typeFirstBoxFocused && !typeFirstCompleted && typeFirstCurrentIndex === 0" class="type-focus-hint" @click="focusTypeFirstBox">
+              Click here or press any key to start typing…
+            </div>
           </div>
 
           <div class="text-center mt-4">
@@ -324,12 +323,12 @@ const switchTab = (tabId) => {
   currentTab.value = tabId
   if (tabId === 'type') {
     nextTick(() => {
-      typeInputRef.value?.focus()
+      typeBoxRef.value?.focus()
     })
   }
   if (tabId === 'type-first') {
     nextTick(() => {
-      typeFirstInputRef.value?.focus()
+      typeFirstBoxRef.value?.focus()
     })
   }
 }
@@ -647,38 +646,92 @@ const initFirstLetter = () => {
 
 // ==================== 5. TYPE FULL MODE ====================
 const typeMode = ref('show')
-const typedInput = ref('')
-const typeInputRef = ref(null)
+const typedChars = ref([])     // Array of typed characters (letters only)
+const typeBoxRef = ref(null)
+const typeBoxFocused = ref(false)
 
 const initType = () => {
   typeMode.value = 'show'
-  typedInput.value = ''
+  typedChars.value = []
 }
 
 const toggleTypeMode = () => {
   typeMode.value = typeMode.value === 'show' ? 'hide' : 'show'
   nextTick(() => {
-    typeInputRef.value?.focus()
+    typeBoxRef.value?.focus()
   })
+}
+
+const focusTypeBox = () => {
+  typeBoxRef.value?.focus()
+}
+
+// Build a map of alphanumeric positions in the verse for efficient lookup
+const verseAlphaMap = computed(() => {
+  const verse = currentVerse.value || ''
+  const positions = [] // array of { verseIndex, char (lowercase) }
+  for (let i = 0; i < verse.length; i++) {
+    if (/[a-zA-Z0-9]/.test(verse[i])) {
+      positions.push({ verseIndex: i, char: verse[i].toLowerCase() })
+    }
+  }
+  return positions
+})
+
+const handleTypeKeydown = (event) => {
+  // Ignore modifier combos (Ctrl+C, Cmd+A, etc.)
+  if (event.ctrlKey || event.metaKey || event.altKey) return
+
+  const key = event.key
+
+  if (key === 'Backspace') {
+    event.preventDefault()
+    if (typedChars.value.length > 0) {
+      typedChars.value.pop()
+    }
+    return
+  }
+
+  // Ignore non-printable keys
+  if (key.length !== 1) return
+  event.preventDefault()
+
+  // Only accept alphanumeric input
+  if (!/[a-zA-Z0-9]/.test(key)) return
+
+  const alphaMap = verseAlphaMap.value
+  const typedChar = key.toLowerCase()
+  const currentLen = typedChars.value.length
+
+  // If the last typed character was wrong, replace it instead of appending
+  if (currentLen > 0 && currentLen <= alphaMap.length) {
+    const lastIdx = currentLen - 1
+    const lastExpected = alphaMap[lastIdx].char
+    const lastTyped = typedChars.value[lastIdx]
+    if (lastTyped !== lastExpected) {
+      // Replace the wrong character
+      typedChars.value[lastIdx] = typedChar
+      return
+    }
+  }
+
+  // If already completed, don't accept more input
+  if (currentLen >= alphaMap.length) return
+
+  typedChars.value.push(typedChar)
 }
 
 const typeDisplayCharacters = computed(() => {
   if (!currentVerse.value) return []
 
   const verse = currentVerse.value
-  const cleanedTyped = typedInput.value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+  const typed = typedChars.value
+  const alphaMap = verseAlphaMap.value
 
-  // Find activeIndex in currentVerse
+  // Determine activeIndex in the verse string (the position of the next untyped alphanumeric char)
   let activeIndex = verse.length
-  let tempCount = 0
-  for (let i = 0; i < verse.length; i++) {
-    if (/[a-zA-Z0-9]/.test(verse[i])) {
-      if (tempCount === cleanedTyped.length) {
-        activeIndex = i
-        break
-      }
-      tempCount++
-    }
+  if (typed.length < alphaMap.length) {
+    activeIndex = alphaMap[typed.length].verseIndex
   }
 
   const result = []
@@ -690,10 +743,10 @@ const typeDisplayCharacters = computed(() => {
     let cssClass = ''
 
     if (isAlphanum) {
-      if (i < activeIndex) {
-        const targetChar = char.toLowerCase()
-        const userChar = cleanedTyped[typedIdx]
-        cssClass = userChar === targetChar ? 'type-char-correct' : 'type-char-error'
+      if (typedIdx < typed.length) {
+        const expectedChar = char.toLowerCase()
+        const userChar = typed[typedIdx]
+        cssClass = userChar === expectedChar ? 'type-char-correct' : 'type-char-error'
         typedIdx++
       } else {
         cssClass = typeMode.value === 'show' ? 'type-char-future' : 'hidden'
@@ -714,17 +767,16 @@ const typeDisplayCharacters = computed(() => {
 
 const typeCompleted = computed(() => {
   if (!currentVerse.value) return false
-  const cleanedTyped = typedInput.value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
-  const targetCleanedLength = currentVerse.value.replace(/[^a-zA-Z0-9]/g, '').length
-  if (cleanedTyped.length === targetCleanedLength && targetCleanedLength > 0) {
+  const alphaMap = verseAlphaMap.value
+  if (typedChars.value.length === alphaMap.length && alphaMap.length > 0) {
     return !typeDisplayCharacters.value.some((c) => c.cssClass === 'type-char-error')
   }
   return false
 })
 
 // ==================== 6. TYPE FIRST LETTERS MODE ====================
-const typeFirstInput = ref('')
-const typeFirstInputRef = ref(null)
+const typeFirstBoxRef = ref(null)
+const typeFirstBoxFocused = ref(false)
 const typeFirstCurrentIndex = ref(0)
 const typeFirstWordStates = ref([])
 
@@ -736,7 +788,6 @@ const getFirstAlpha = (word) => {
 }
 
 const initTypeFirst = () => {
-  typeFirstInput.value = ''
   typeFirstCurrentIndex.value = 0
   const rawWords = currentVerse.value.split(/\s+/).filter((w) => w.length > 0)
   typeFirstWordStates.value = rawWords.map((word) => ({
@@ -751,11 +802,21 @@ const typeFirstCompleted = computed(() => {
   return typeFirstWordStates.value.every((w) => w.status === 'correct' || w.status === 'revealed')
 })
 
-const handleTypeFirstInput = () => {
-  const char = typeFirstInput.value.trim().toLowerCase()
-  typeFirstInput.value = ''
+const focusTypeFirstBox = () => {
+  typeFirstBoxRef.value?.focus()
+}
 
-  if (!char || typeFirstCompleted.value) return
+const handleTypeFirstKeydown = (event) => {
+  // Ignore modifier combos
+  if (event.ctrlKey || event.metaKey || event.altKey) return
+
+  // Ignore non-printable keys
+  if (event.key.length !== 1) return
+  event.preventDefault()
+
+  const char = event.key.toLowerCase()
+  if (!/[a-zA-Z0-9]/.test(char)) return
+  if (typeFirstCompleted.value) return
 
   const idx = typeFirstCurrentIndex.value
   if (idx >= typeFirstWordStates.value.length) return
@@ -766,9 +827,6 @@ const handleTypeFirstInput = () => {
   if (char === expectedChar) {
     wordObj.status = 'correct'
     typeFirstCurrentIndex.value++
-    nextTick(() => {
-      typeFirstInputRef.value?.focus()
-    })
   } else {
     wordObj.status = 'error'
     wordObj.errorChar = char
@@ -778,9 +836,6 @@ const handleTypeFirstInput = () => {
         wordObj.errorChar = ''
       }
     }, 400)
-    nextTick(() => {
-      typeFirstInputRef.value?.focus()
-    })
   }
 }
 
@@ -792,7 +847,7 @@ const revealCurrentWord = () => {
   typeFirstWordStates.value[idx].status = 'revealed'
   typeFirstCurrentIndex.value++
   nextTick(() => {
-    typeFirstInputRef.value?.focus()
+    typeFirstBoxRef.value?.focus()
   })
 }
 </script>
@@ -1111,6 +1166,49 @@ const revealCurrentWord = () => {
 
 .type-char-punct {
   color: #a09890;
+}
+
+.type-display-box:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(61, 107, 110, 0.12);
+}
+
+.type-display-box {
+  position: relative;
+  cursor: text;
+}
+
+.type-cursor {
+  display: inline;
+  color: var(--accent-color);
+  font-weight: 300;
+  animation: blink-cursor 1s step-end infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.type-focus-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(247, 245, 240, 0.85);
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: var(--text-light);
+  cursor: text;
+  transition: opacity var(--transition-base);
+}
+
+.type-focus-hint:hover {
+  background: rgba(247, 245, 240, 0.7);
+  color: var(--accent-color);
 }
 
 .feedback-message {

@@ -172,15 +172,21 @@ graph TD
      - Displays the first alphanumeric character of each word, replacing remaining characters with `_`.
      - Hovering over a word displays the full word as a tooltip.
   5. **Type Full Mode**:
-     - Real-time character-by-character validation box.
+     - Inline typing directly in the verse display box (no separate textarea).
+     - The display box is focusable (`tabindex="0"`) and captures keystrokes via `@keydown`.
      - Automatically skips spaces and punctuation in typing matching logic.
      - "Hide Verse (Type from Memory)" / "Show Verse to Learn" toggle.
      - Character styling: typed correct (bold green), typed incorrect (red background), upcoming chars (muted grey or hidden depending on mode), punctuation (slate).
+     - **Error correction**: incorrect characters are shown in red; typing the correct letter replaces the wrong one in-place (no Backspace required, though Backspace is also supported).
+     - Blinking cursor indicator (`|`) at the current typing position when the box is focused.
+     - "Click here to start typing" overlay hint when the box is unfocused and no characters have been typed.
      - Full completion celebration message when 100% typed correctly.
   6. **Type First Letters Mode**:
      - Memory-only word-level first-letter typing challenge: user types only the first letter of each word.
+     - Inline keystroke capture on the display box (no separate input field).
      - Correct letter instantly reveals the full word in green and advances to the next word.
      - Incorrect letter flashes red (400ms) without revealing the correct letter; word resets to pending.
+     - Blinking cursor and "Click here to start typing" focus hint (same pattern as Type Full).
      - "Show Word" hint button reveals the current word (styled in italic teal accent) when the user is stumped.
      - Full completion celebration message when all words are completed.
 
