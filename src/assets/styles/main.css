@@ -283,6 +283,18 @@ textarea.form-control {
   border-color: #cdc7be;
 }
 
+.btn-reset {
+  background-color: transparent;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+  font-weight: 600;
+}
+
+.btn-reset:hover {
+  background-color: var(--accent-color);
+  color: #ffffff;
+}
+
 /* ========================================
    Animations
    ======================================== */
