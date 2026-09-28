@@ -230,7 +230,7 @@
             >{{ charObj.char }}</span>
             <span v-if="!typeCompleted && typeBoxFocused" class="type-cursor">|</span>
             <div v-if="!typeBoxFocused && !typeCompleted && typedChars.length === 0" class="type-focus-hint" @click="focusTypeBox">
-              Click here or press any key to start typing…
+              Click here to start typing…
             </div>
           </div>
 
@@ -238,6 +238,13 @@
             <p v-if="typeCompleted" class="feedback-message text-success fade-in">
               🎉 Perfect! You typed the verse perfectly.
             </p>
+            <button
+              v-if="typedChars.length > 0"
+              @click="initType(); nextTick(() => typeBoxRef?.focus())"
+              class="btn btn-reset"
+            >
+              ↻ Reset
+            </button>
           </div>
         </div>
 
@@ -246,8 +253,8 @@
           <p class="game-instructions">Type the first letter of each word. Correct letters reveal the full word.</p>
 
           <div v-if="!typeFirstCompleted" class="text-center mb-2">
-            <button @click="revealCurrentWord" class="btn btn-secondary type-first-hint-btn" title="Reveal the current word">
-              Show Word
+            <button @click="revealCurrentWord" class="btn btn-secondary type-first-hint-btn" title="Reveal the next word">
+              Show Next Word
             </button>
           </div>
 
@@ -278,7 +285,7 @@
             </span>
             <span v-if="!typeFirstCompleted && typeFirstBoxFocused" class="type-cursor">|</span>
             <div v-if="!typeFirstBoxFocused && !typeFirstCompleted && typeFirstCurrentIndex === 0" class="type-focus-hint" @click="focusTypeFirstBox">
-              Click here or press any key to start typing…
+              Click here to start typing…
             </div>
           </div>
 
@@ -286,6 +293,13 @@
             <p v-if="typeFirstCompleted" class="feedback-message text-success fade-in">
               🎉 Perfect! You completed the verse!
             </p>
+            <button
+              v-if="typeFirstCurrentIndex > 0"
+              @click="initTypeFirst(); nextTick(() => typeFirstBoxRef?.focus())"
+              class="btn btn-reset"
+            >
+              ↻ Reset
+            </button>
           </div>
         </div>
       </div>
@@ -322,11 +336,13 @@ const cleanString = (str) => str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
 const switchTab = (tabId) => {
   currentTab.value = tabId
   if (tabId === 'type') {
+    initType()
     nextTick(() => {
       typeBoxRef.value?.focus()
     })
   }
   if (tabId === 'type-first') {
+    initTypeFirst()
     nextTick(() => {
       typeFirstBoxRef.value?.focus()
     })
