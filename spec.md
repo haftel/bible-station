@@ -138,8 +138,7 @@ graph TD
 - **Configuration Card**:
   - Reference input: Text field (e.g. `John 3:16`, `Psalm 23:1`).
   - Translation dropdown:
-    - `niv`: New International Version (NIV, modern 2011 edition, default)
-    - `esv`: English Standard Version (ESV)
+    - `esv`: English Standard Version (ESV, default)
     - `csb`: Christian Standard Bible (CSB)
     - `nasb`: New American Standard Bible (NASB)
     - `nkjv`: New King James Version (NKJV)
@@ -153,7 +152,7 @@ graph TD
     - `ylt`: Young's Literal Translation
     - `custom`: Paste Custom Text
   - Custom Textarea (visible only when `custom` is selected).
-  - Load Verse button: Fetches verse via `https://bible-api.com/{ref}?translation={trans}` or secondary API (`bolls.life` fallback for copyrighted translations with NIV mapped to modern `NIV2011`) or uses custom text, cleans whitespace/headings, and initializes the dashboard.
+  - Load Verse button: Fetches verse via `https://bible-api.com/{ref}?translation={trans}` or secondary API (`bolls.life` fallback for copyrighted translations) or uses custom text, cleans whitespace/headings, and initializes the dashboard.
 - **Interactive Game Dashboard** (6 Tabs):
   1. **Vanish Mode**:
      - Toolbar buttons: `0%`, `25%`, `50%`, `75%`, `100%`.
