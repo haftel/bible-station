@@ -27,7 +27,6 @@
                 v-model="selectedTranslation"
                 class="form-control"
               >
-                <option value="niv">New International Version (NIV)</option>
                 <option value="esv">English Standard Version (ESV)</option>
                 <option value="csb">Christian Standard Bible (CSB)</option>
                 <option value="nasb">New American Standard Bible (NASB)</option>
@@ -311,7 +310,7 @@
 import { ref, computed, nextTick } from 'vue'
 
 const referenceInput = ref('John 3:16')
-const selectedTranslation = ref('niv')
+const selectedTranslation = ref('esv')
 const customText = ref('')
 const isLoading = ref(false)
 const errorMessage = ref('')
@@ -381,12 +380,10 @@ const fetchVerse = async () => {
     let isFallback = false
     let fallbackTranslation = ''
 
-    const bollsTranslations = ['niv', 'esv', 'csb', 'nasb', 'nkjv', 'nlt', 'net', 'amp']
+    const bollsTranslations = ['esv', 'csb', 'nasb', 'nkjv', 'nlt', 'net', 'amp']
     if (bollsTranslations.includes(apiTranslation)) {
       if (apiTranslation === 'csb') {
         fallbackTranslation = 'CSB17'
-      } else if (apiTranslation === 'niv') {
-        fallbackTranslation = 'NIV2011'
       } else {
         fallbackTranslation = apiTranslation.toUpperCase()
       }
