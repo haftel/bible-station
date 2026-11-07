@@ -193,15 +193,13 @@
         <div v-show="currentTab === 'first-letter'" class="tab-content">
           <p class="game-instructions">Read aloud using only the first letters as hints. Tap a word to peek!</p>
           <div class="game-text-display tracking-wide">
-            <span
-              v-for="(item, idx) in firstLetterWords"
-              :key="idx"
-              class="first-letter-word"
-              :class="{ revealed: item.revealed }"
-              @click="toggleFirstLetterReveal(idx)"
-            >
-              {{ item.revealed ? item.original : item.masked }}{{ ' ' }}
-            </span>
+            <template v-for="(item, idx) in firstLetterWords" :key="idx">
+              <span
+                class="first-letter-word"
+                :class="{ revealed: item.revealed }"
+                @click="toggleFirstLetterReveal(idx)"
+              >{{ item.revealed ? item.original : item.masked }}</span>{{ ' ' }}
+            </template>
           </div>
         </div>
 
