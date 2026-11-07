@@ -20,28 +20,94 @@
                 class="form-control"
               />
             </div>
-            <div class="form-col">
-              <label for="translation-select" class="form-label">Translation</label>
-              <select
+            <div class="form-col translation-dropdown-container" ref="translationDropdownRef">
+              <label id="translation-select-label" class="form-label">Translation</label>
+              
+              <!-- Dropdown Trigger Button -->
+              <button
+                type="button"
                 id="translation-select"
-                v-model="selectedTranslation"
-                class="form-control"
+                class="form-control translation-trigger-btn"
+                :class="{ 'is-active': isTranslationDropdownOpen }"
+                @click="toggleTranslationDropdown"
+                @keydown.down.prevent="openAndFocusSearch"
+                aria-haspopup="listbox"
+                :aria-expanded="isTranslationDropdownOpen"
+                aria-labelledby="translation-select-label"
               >
-                <option value="niv2011">New International Version (NIV)</option>
-                <option value="kjv">King James Version (KJV)</option>
-                <option value="esv">English Standard Version (ESV)</option>
-                <option value="nlt">New Living Translation (NLT)</option>
-                <option value="nkjv">New King James Version (NKJV)</option>
-                <option value="csb">Christian Standard Bible (CSB)</option>
-                <option value="nasb">New American Standard Bible (NASB - 1995)</option>
-                <option value="niv1984">New International Version (NIV - 1984)</option>
-                <option value="amp">Amplified Bible (AMP)</option>
-                <option value="net">New English Translation (NET)</option>
-                <option value="web">World English Bible (WEB)</option>
-                <option value="asv">American Standard Version (ASV)</option>
-                <option value="bbe">Bible in Basic English (BBE)</option>
-                <option value="custom">Paste Custom Text</option>
-              </select>
+                <span class="trigger-label">{{ selectedTranslationLabel }}</span>
+                <span class="trigger-chevron" aria-hidden="true">
+                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </button>
+
+              <!-- Dropdown Popover Menu -->
+              <div
+                v-if="isTranslationDropdownOpen"
+                class="translation-dropdown-menu fade-in"
+                role="listbox"
+                aria-labelledby="translation-select-label"
+              >
+                <!-- Search Input Field -->
+                <div class="translation-search-box">
+                  <span class="search-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </span>
+                  <input
+                    ref="translationSearchInputRef"
+                    v-model="translationSearchQuery"
+                    type="text"
+                    class="translation-search-input"
+                    placeholder="Search name or code (e.g. NASB, KJV)..."
+                    autocomplete="off"
+                    @keydown.esc.stop="closeTranslationDropdown"
+                    @keydown.down.prevent="navigateOption(1)"
+                    @keydown.up.prevent="navigateOption(-1)"
+                    @keydown.enter.prevent="selectHighlightedOption"
+                  />
+                  <button
+                    v-if="translationSearchQuery"
+                    type="button"
+                    class="clear-search-btn"
+                    title="Clear search"
+                    @click="translationSearchQuery = ''; translationSearchInputRef?.focus()"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <!-- Scrollable Translation Options List -->
+                <ul class="translation-options-list">
+                  <li
+                    v-for="(item, idx) in filteredTranslations"
+                    :key="item.id"
+                    :class="[
+                      'translation-option-item',
+                      {
+                        'is-selected': selectedTranslation === item.id,
+                        'is-highlighted': highlightedIndex === idx
+                      }
+                    ]"
+                    role="option"
+                    :aria-selected="selectedTranslation === item.id"
+                    @click="selectTranslation(item.id)"
+                    @mouseenter="highlightedIndex = idx"
+                  >
+                    <div class="option-main">
+                      <span class="option-title">{{ item.label }}</span>
+                    </div>
+                    <span v-if="selectedTranslation === item.id" class="option-checkmark" aria-hidden="true">✓</span>
+                  </li>
+                  <li v-if="filteredTranslations.length === 0" class="translation-no-results">
+                    No translations found matching "{{ translationSearchQuery }}"
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
@@ -307,7 +373,24 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+
+const translations = [
+  { id: 'niv2011', label: 'New International Version (NIV)', name: 'New International Version', abbr: 'NIV', year: '2011' },
+  { id: 'kjv', label: 'King James Version (KJV)', name: 'King James Version', abbr: 'KJV' },
+  { id: 'esv', label: 'English Standard Version (ESV)', name: 'English Standard Version', abbr: 'ESV' },
+  { id: 'nlt', label: 'New Living Translation (NLT)', name: 'New Living Translation', abbr: 'NLT' },
+  { id: 'nkjv', label: 'New King James Version (NKJV)', name: 'New King James Version', abbr: 'NKJV' },
+  { id: 'csb', label: 'Christian Standard Bible (CSB)', name: 'Christian Standard Bible', abbr: 'CSB' },
+  { id: 'nasb', label: 'New American Standard Bible (NASB - 1995)', name: 'New American Standard Bible', abbr: 'NASB', year: '1995' },
+  { id: 'niv1984', label: 'New International Version (NIV - 1984)', name: 'New International Version', abbr: 'NIV', year: '1984' },
+  { id: 'amp', label: 'Amplified Bible (AMP)', name: 'Amplified Bible', abbr: 'AMP' },
+  { id: 'net', label: 'New English Translation (NET)', name: 'New English Translation', abbr: 'NET' },
+  { id: 'web', label: 'World English Bible (WEB)', name: 'World English Bible', abbr: 'WEB' },
+  { id: 'asv', label: 'American Standard Version (ASV)', name: 'American Standard Version', abbr: 'ASV' },
+  { id: 'bbe', label: 'Bible in Basic English (BBE)', name: 'Bible in Basic English', abbr: 'BBE' },
+  { id: 'custom', label: 'Paste Custom Text', name: 'Paste Custom Text', abbr: 'Custom' }
+]
 
 const referenceInput = ref('John 3:16')
 const selectedTranslation = ref('niv2011')
@@ -315,6 +398,91 @@ const customText = ref('')
 const isLoading = ref(false)
 const errorMessage = ref('')
 const hasLoadedVerse = ref(false)
+
+// Translation Dropdown Search State
+const isTranslationDropdownOpen = ref(false)
+const translationSearchQuery = ref('')
+const translationDropdownRef = ref(null)
+const translationSearchInputRef = ref(null)
+const highlightedIndex = ref(0)
+
+const selectedTranslationLabel = computed(() => {
+  const found = translations.find(t => t.id === selectedTranslation.value)
+  return found ? found.label : selectedTranslation.value
+})
+
+const filteredTranslations = computed(() => {
+  const q = translationSearchQuery.value.trim().toLowerCase()
+  if (!q) return translations
+  return translations.filter(t => {
+    return (
+      t.label.toLowerCase().includes(q) ||
+      t.name.toLowerCase().includes(q) ||
+      t.abbr.toLowerCase().includes(q) ||
+      (t.year && t.year.includes(q)) ||
+      t.id.toLowerCase().includes(q)
+    )
+  })
+})
+
+const toggleTranslationDropdown = () => {
+  if (isTranslationDropdownOpen.value) {
+    closeTranslationDropdown()
+  } else {
+    openTranslationDropdown()
+  }
+}
+
+const openTranslationDropdown = () => {
+  isTranslationDropdownOpen.value = true
+  translationSearchQuery.value = ''
+  highlightedIndex.value = Math.max(0, filteredTranslations.value.findIndex(t => t.id === selectedTranslation.value))
+  nextTick(() => {
+    translationSearchInputRef.value?.focus()
+  })
+}
+
+const openAndFocusSearch = () => {
+  if (!isTranslationDropdownOpen.value) {
+    openTranslationDropdown()
+  }
+}
+
+const closeTranslationDropdown = () => {
+  isTranslationDropdownOpen.value = false
+  translationSearchQuery.value = ''
+}
+
+const selectTranslation = (id) => {
+  selectedTranslation.value = id
+  closeTranslationDropdown()
+}
+
+const navigateOption = (delta) => {
+  const total = filteredTranslations.value.length
+  if (total === 0) return
+  highlightedIndex.value = (highlightedIndex.value + delta + total) % total
+}
+
+const selectHighlightedOption = () => {
+  if (filteredTranslations.value.length > 0 && highlightedIndex.value >= 0 && highlightedIndex.value < filteredTranslations.value.length) {
+    selectTranslation(filteredTranslations.value[highlightedIndex.value].id)
+  }
+}
+
+const handleClickOutside = (event) => {
+  if (translationDropdownRef.value && !translationDropdownRef.value.contains(event.target)) {
+    closeTranslationDropdown()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 const currentVerse = ref('')
 const currentRef = ref('')
@@ -1345,5 +1513,165 @@ const revealCurrentWord = () => {
 .type-first-hint-btn {
   white-space: nowrap;
   font-size: 0.9rem;
+}
+
+/* Translation Searchable Dropdown */
+.translation-dropdown-container {
+  position: relative;
+}
+
+.translation-trigger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  background-color: #fff;
+  user-select: none;
+}
+
+.translation-trigger-btn.is-active {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(61, 107, 110, 0.12);
+}
+
+.trigger-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trigger-chevron {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-light);
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.translation-trigger-btn.is-active .trigger-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-color);
+}
+
+.translation-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  max-height: 330px;
+  display: flex;
+  flex-direction: column;
+}
+
+.translation-search-box {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 0.85rem;
+  background: var(--disclaimer-bg);
+  border-bottom: 1px solid var(--border-color);
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.search-icon {
+  color: var(--text-light);
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.translation-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  outline: none;
+  min-width: 0;
+}
+
+.translation-search-input::placeholder {
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+.clear-search-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0 0.25rem;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-search-btn:hover {
+  color: var(--text-main);
+}
+
+.translation-options-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.translation-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--text-main);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.translation-option-item:hover,
+.translation-option-item.is-highlighted {
+  background-color: #f3efe6;
+  color: var(--accent-color);
+}
+
+.translation-option-item.is-selected {
+  font-weight: 600;
+  color: var(--accent-color);
+  background-color: rgba(61, 107, 110, 0.08);
+}
+
+.option-main {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.option-checkmark {
+  color: var(--accent-color);
+  font-weight: bold;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.translation-no-results {
+  padding: 1.25rem 1rem;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  font-style: italic;
 }
 </style>

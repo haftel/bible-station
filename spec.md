@@ -137,7 +137,7 @@ graph TD
 - **Header**: Title "Scripture Memorizer" and subtitle.
 - **Configuration Card**:
   - Reference input: Text field (e.g. `John 3:16`, `Psalm 23:1`).
-  - Translation dropdown (ordered from most to least common with NIV first and default):
+  - Searchable Translation dropdown (instant search by full name, abbreviation like 'NASB', or year; ordered from most to least common with NIV first and default):
     - `niv2011`: New International Version (NIV, default)
     - `kjv`: King James Version (KJV)
     - `esv`: English Standard Version (ESV)
