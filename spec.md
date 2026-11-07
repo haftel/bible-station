@@ -151,7 +151,6 @@ graph TD
     - `kjv`: King James Version
     - `bbe`: Bible in Basic English
     - `asv`: American Standard Version
-    - `ylt`: Young's Literal Translation
     - `custom`: Paste Custom Text
   - Custom Textarea (visible only when `custom` is selected).
   - Load Verse button: Fetches verse via client-side NIV datasets (`public/data/translations/niv2011/` and `public/data/translations/niv1984/`, mapped via `bible-api.com` reference parsing with no verse numbers or section headings), or `https://bible-api.com/{ref}?translation={trans}`, or secondary API (`bolls.life` fallback for other copyrighted translations), or uses custom text, cleans whitespace/headings, and initializes the dashboard.

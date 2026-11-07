@@ -40,7 +40,6 @@
                 <option value="kjv">King James Version (KJV)</option>
                 <option value="bbe">Bible in Basic English (BBE)</option>
                 <option value="asv">American Standard Version (ASV)</option>
-                <option value="ylt">Young's Literal Translation (YLT)</option>
                 <option value="custom">Paste Custom Text</option>
               </select>
             </div>

@@ -11,7 +11,7 @@ Live Site: [https://biblestation.org](https://biblestation.org)
 - **🌐 Single Page Application with Global Navigation**: Fast, smooth client-side routing across all sections with clean direct URLs and responsive mobile navigation.
 - **🏠 Home & Welcome**: Overview of the mission, quick feature access cards, and inspiring hero scripture banner.
 - **📜 Devotionals**: Thoughtful devotional reflections and scripture applications, paginated (10 per page) with shareable deep links to individual posts.
-- **🧠 Scripture Memory Tool**: Interactive scripture memorization suite with automated verse fetching for **New International Version (NIV, default)**, **New International Version (NIV - 1984)**, and **New American Standard Bible (NASB - 1995)** (served cleanly without verse numbers or section headings), alongside `bible-api.com` and fallback APIs (ESV, CSB, NKJV, NLT, NET, AMP, WEB, KJV, BBE, ASV, YLT) and Custom text paste, offering 6 distinct practice modes:
+- **🧠 Scripture Memory Tool**: Interactive scripture memorization suite with automated verse fetching for **New International Version (NIV, default)**, **New International Version (NIV - 1984)**, and **New American Standard Bible (NASB - 1995)** (served cleanly without verse numbers or section headings), alongside `bible-api.com` and fallback APIs (ESV, CSB, NKJV, NLT, NET, AMP, WEB, KJV, BBE, ASV) and Custom text paste, offering 6 distinct practice modes:
   1. **Vanish Mode**: Eraser slider (0% to 100%) with interactive click-to-reveal word blanks.
   2. **Fill in the Blanks**: Customizable blank percentage (25% to 100%) with automated answer validation and visual feedback.
   3. **Scramble Mode**: Word bank with randomly shuffled word buttons to reconstruct verses sequentially.
