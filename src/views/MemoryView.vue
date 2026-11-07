@@ -27,11 +27,11 @@
                 v-model="selectedTranslation"
                 class="form-control"
               >
-                <option value="niv2011">New International Version – NIV (2011)</option>
-                <option value="niv1984">New International Version – NIV (1984)</option>
+                <option value="niv2011">New International Version (NIV)</option>
+                <option value="niv1984">New International Version (NIV - 1984)</option>
                 <option value="esv">English Standard Version (ESV)</option>
                 <option value="csb">Christian Standard Bible (CSB)</option>
-                <option value="nasb">New American Standard Bible (NASB)</option>
+                <option value="nasb">New American Standard Bible (NASB - 1995)</option>
                 <option value="nkjv">New King James Version (NKJV)</option>
                 <option value="nlt">New Living Translation (NLT)</option>
                 <option value="net">New English Translation (NET)</option>

@@ -138,11 +138,11 @@ graph TD
 - **Configuration Card**:
   - Reference input: Text field (e.g. `John 3:16`, `Psalm 23:1`).
   - Translation dropdown:
-    - `niv2011`: New International Version – NIV (2011, default)
-    - `niv1984`: New International Version – NIV (1984)
+    - `niv2011`: New International Version (NIV, default)
+    - `niv1984`: New International Version (NIV - 1984)
     - `esv`: English Standard Version (ESV)
     - `csb`: Christian Standard Bible (CSB)
-    - `nasb`: New American Standard Bible (NASB)
+    - `nasb`: New American Standard Bible (NASB - 1995)
     - `nkjv`: New King James Version (NKJV)
     - `nlt`: New Living Translation (NLT)
     - `net`: New English Translation (NET)
