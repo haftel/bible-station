@@ -27,6 +27,8 @@
                 v-model="selectedTranslation"
                 class="form-control"
               >
+                <option value="niv2011">New International Version – NIV (2011)</option>
+                <option value="niv1984">New International Version – NIV (1984)</option>
                 <option value="esv">English Standard Version (ESV)</option>
                 <option value="csb">Christian Standard Bible (CSB)</option>
                 <option value="nasb">New American Standard Bible (NASB)</option>
@@ -309,7 +311,7 @@
 import { ref, computed, nextTick } from 'vue'
 
 const referenceInput = ref('John 3:16')
-const selectedTranslation = ref('esv')
+const selectedTranslation = ref('niv2011')
 const customText = ref('')
 const isLoading = ref(false)
 const errorMessage = ref('')
@@ -347,6 +349,9 @@ const switchTab = (tabId) => {
   }
 }
 
+// In-memory cache for loaded NIV books
+const nivCache = {}
+
 // ==================== FETCH VERSE ====================
 const fetchVerse = async () => {
   errorMessage.value = ''
@@ -375,6 +380,57 @@ const fetchVerse = async () => {
   }
 
   try {
+    if (selectedTranslation.value === 'niv2011' || selectedTranslation.value === 'niv1984') {
+      const nivFolder = selectedTranslation.value === 'niv2011' ? 'niv2011' : 'niv1984'
+      const response = await fetch(`https://bible-api.com/${encodeURIComponent(refQuery)}?translation=web`)
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      if (data.verses && data.verses.length > 0) {
+        const baseUrl = import.meta.env.BASE_URL || '/'
+        const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
+        const booksNeeded = [...new Set(data.verses.map(v => v.book_id))]
+        const bookDataMap = {}
+
+        for (const bookId of booksNeeded) {
+          const cacheKey = `${nivFolder}_${bookId}`
+          if (nivCache[cacheKey]) {
+            bookDataMap[bookId] = nivCache[cacheKey]
+          } else {
+            const res = await fetch(`${cleanBase}data/translations/${nivFolder}/${bookId}.json`)
+            if (!res.ok) {
+              throw new Error(`Could not load ${nivFolder.toUpperCase()} text for book ${bookId}`)
+            }
+            const bookJson = await res.json()
+            nivCache[cacheKey] = bookJson
+            bookDataMap[bookId] = bookJson
+          }
+        }
+
+        const textParts = []
+        for (const v of data.verses) {
+          const bookData = bookDataMap[v.book_id]
+          const verseText = bookData?.[String(v.chapter)]?.[String(v.verse)]
+          if (verseText) {
+            textParts.push(verseText)
+          } else {
+            throw new Error(`Verse not found in ${nivFolder === 'niv2011' ? 'NIV (2011)' : 'NIV (1984)'}: ${v.book_name} ${v.chapter}:${v.verse}`)
+          }
+        }
+
+        currentVerse.value = textParts.join(' ').trim().replace(/\s+/g, ' ')
+        currentRef.value = data.reference
+        hasLoadedVerse.value = true
+        initializeDashboard()
+        return
+      } else {
+        throw new Error('No verses returned for this reference.')
+      }
+    }
+
     let apiTranslation = selectedTranslation.value
     let isFallback = false
     let fallbackTranslation = ''
