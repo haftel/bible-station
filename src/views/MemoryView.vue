@@ -11,12 +11,12 @@
         <form @submit.prevent="fetchVerse">
           <div class="form-row">
             <div class="form-col">
-              <label for="reference-input" class="form-label">Reference (e.g., John 3:16)</label>
+              <label for="reference-input" class="form-label">Reference (e.g., John 3:16 or 1 John 1)</label>
               <input
                 id="reference-input"
                 v-model="referenceInput"
                 type="text"
-                placeholder="Enter verse reference"
+                placeholder="Enter verse or full chapter (e.g., John 3:16, 1 John 1)"
                 class="form-control"
               />
             </div>
@@ -596,18 +596,23 @@ for (const b of ALL_BOOKS) {
 
 const parseBibleReference = (str) => {
   const clean = str.trim().replace(/\s+/g, ' ')
-  const m = clean.match(/^((?:[1-3]\s+)?[a-zA-Z\s]+?)\s*(\d+)[\s:]+(\d+)(?:\s*-\s*(\d+))?$/)
+  // Matches "1 John 1", "John 3:16", "Romans 8:28-30", "Psalm 23"
+  const m = clean.match(/^((?:[1-3]\s+)?[a-zA-Z\s]+?)\s*(\d+)(?:[\s:]+(\d+)(?:\s*-\s*(\d+))?)?$/)
   if (!m) return null
   const rawBook = m[1].trim().toLowerCase().replace(/\./g, '')
   const book = aliasLookup[rawBook] || aliasLookup[rawBook.replace(/\s+/g, '')]
   if (!book) return null
   const chapter = parseInt(m[2], 10)
-  const startVerse = parseInt(m[3], 10)
-  const endVerse = m[4] ? parseInt(m[4], 10) : startVerse
-  const refDisplay = startVerse === endVerse
-    ? `${book.name} ${chapter}:${startVerse}`
-    : `${book.name} ${chapter}:${startVerse}-${endVerse}`
-  return { id: book.id, num: book.num, name: book.name, chapter, startVerse, endVerse, refDisplay }
+  const hasVerse = !!m[3]
+  const isFullChapter = !hasVerse
+  const startVerse = hasVerse ? parseInt(m[3], 10) : 1
+  const endVerse = hasVerse ? (m[4] ? parseInt(m[4], 10) : startVerse) : null
+  const refDisplay = isFullChapter
+    ? `${book.name} ${chapter}`
+    : (startVerse === endVerse
+        ? `${book.name} ${chapter}:${startVerse}`
+        : `${book.name} ${chapter}:${startVerse}-${endVerse}`)
+  return { id: book.id, num: book.num, name: book.name, chapter, startVerse, endVerse, isFullChapter, refDisplay }
 }
 
 const cleanBollsVerseText = (rawText) => {
@@ -684,14 +689,32 @@ const fetchVerse = async () => {
         nivCache[cacheKey] = bookJson
       }
 
+      const chapterData = bookJson[String(parsed.chapter)]
+      if (!chapterData) {
+        throw new Error(`Chapter ${parsed.chapter} not found in ${parsed.name}.`)
+      }
+
       const textParts = []
-      for (let v = parsed.startVerse; v <= parsed.endVerse; v++) {
-        const vText = bookJson[String(parsed.chapter)]?.[String(v)]
-        if (vText) {
-          textParts.push(vText)
-        } else {
-          throw new Error(`Verse ${parsed.name} ${parsed.chapter}:${v} not found in ${selectedTranslation.value === 'niv2011' ? 'NIV' : 'NIV (1984)'}.`)
+      if (parsed.isFullChapter) {
+        const verseNumbers = Object.keys(chapterData).sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
+        for (const vNum of verseNumbers) {
+          if (chapterData[vNum]) {
+            textParts.push(chapterData[vNum])
+          }
         }
+      } else {
+        for (let v = parsed.startVerse; v <= parsed.endVerse; v++) {
+          const vText = chapterData[String(v)]
+          if (vText) {
+            textParts.push(vText)
+          } else {
+            throw new Error(`Verse ${parsed.name} ${parsed.chapter}:${v} not found in ${selectedTranslation.value === 'niv2011' ? 'NIV' : 'NIV (1984)'}.`)
+          }
+        }
+      }
+
+      if (textParts.length === 0) {
+        throw new Error(`No verses found for ${parsed.refDisplay}.`)
       }
 
       currentVerse.value = textParts.join(' ').trim().replace(/\s+/g, ' ')
@@ -726,9 +749,15 @@ const fetchVerse = async () => {
         throw new Error('Invalid response format from scripture service.')
       }
 
-      const verses = bollsData.filter(v => v.verse >= parsed.startVerse && v.verse <= parsed.endVerse)
+      let verses = bollsData
+      if (!parsed.isFullChapter) {
+        verses = bollsData.filter(v => v.verse >= parsed.startVerse && v.verse <= parsed.endVerse)
+      }
       if (verses.length === 0) {
-        throw new Error(`Verse range ${parsed.chapter}:${parsed.startVerse}-${parsed.endVerse} not found in ${parsed.name}.`)
+        throw new Error(parsed.isFullChapter
+          ? `No verses found for ${parsed.name} chapter ${parsed.chapter}.`
+          : `Verse range ${parsed.chapter}:${parsed.startVerse}-${parsed.endVerse} not found in ${parsed.name}.`
+        )
       }
 
       const cleanedParts = verses.map(v => cleanBollsVerseText(v.text))
