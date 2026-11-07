@@ -191,15 +191,16 @@
 
         <!-- Tab 4: First Letters Game -->
         <div v-show="currentTab === 'first-letter'" class="tab-content">
-          <p class="game-instructions">Read aloud using only the first letters as hints. (Hover over a word to cheat!)</p>
+          <p class="game-instructions">Read aloud using only the first letters as hints. Tap a word to peek!</p>
           <div class="game-text-display tracking-wide">
             <span
               v-for="(item, idx) in firstLetterWords"
               :key="idx"
               class="first-letter-word"
-              :title="item.original"
+              :class="{ revealed: item.revealed }"
+              @click="toggleFirstLetterReveal(idx)"
             >
-              {{ item.masked }}{{ ' ' }}
+              {{ item.revealed ? item.original : item.masked }}{{ ' ' }}
             </span>
           </div>
         </div>
@@ -652,9 +653,14 @@ const initFirstLetter = () => {
     }
     return {
       original: word,
-      masked
+      masked,
+      revealed: false
     }
   })
+}
+
+const toggleFirstLetterReveal = (idx) => {
+  firstLetterWords.value[idx].revealed = !firstLetterWords.value[idx].revealed
 }
 
 // ==================== 5. TYPE FULL MODE ====================
@@ -1140,12 +1146,20 @@ const revealCurrentWord = () => {
 
 /* First Letter Game */
 .first-letter-word {
-  cursor: help;
-  transition: color var(--transition-fast);
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+  border-radius: var(--radius-sm);
+  padding: 0.05em 0.15em;
+  margin: 0 -0.15em;
 }
 
 .first-letter-word:hover {
+  background-color: var(--disclaimer-bg);
+}
+
+.first-letter-word.revealed {
   color: var(--accent-color);
+  background-color: var(--disclaimer-bg);
 }
 
 /* Type Full Game */

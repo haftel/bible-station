@@ -169,7 +169,7 @@ graph TD
      - "Reset Scramble" button restarts the challenge.
   4. **First Letter Mode**:
      - Displays the first alphanumeric character of each word, replacing remaining characters with `_`.
-     - Hovering over a word displays the full word as a tooltip.
+     - Clicking/tapping a word toggles inline reveal of the full word (works on both desktop and mobile).
   5. **Type Full Mode**:
      - Inline typing directly in the verse display box (no separate textarea).
      - The display box is focusable (`tabindex="0"`) and captures keystrokes via `@keydown`.
