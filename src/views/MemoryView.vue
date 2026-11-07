@@ -28,18 +28,18 @@
                 class="form-control"
               >
                 <option value="niv2011">New International Version (NIV)</option>
-                <option value="niv1984">New International Version (NIV - 1984)</option>
+                <option value="kjv">King James Version (KJV)</option>
                 <option value="esv">English Standard Version (ESV)</option>
+                <option value="nlt">New Living Translation (NLT)</option>
+                <option value="nkjv">New King James Version (NKJV)</option>
                 <option value="csb">Christian Standard Bible (CSB)</option>
                 <option value="nasb">New American Standard Bible (NASB - 1995)</option>
-                <option value="nkjv">New King James Version (NKJV)</option>
-                <option value="nlt">New Living Translation (NLT)</option>
-                <option value="net">New English Translation (NET)</option>
+                <option value="niv1984">New International Version (NIV - 1984)</option>
                 <option value="amp">Amplified Bible (AMP)</option>
+                <option value="net">New English Translation (NET)</option>
                 <option value="web">World English Bible (WEB)</option>
-                <option value="kjv">King James Version (KJV)</option>
-                <option value="bbe">Bible in Basic English (BBE)</option>
                 <option value="asv">American Standard Version (ASV)</option>
+                <option value="bbe">Bible in Basic English (BBE)</option>
                 <option value="custom">Paste Custom Text</option>
               </select>
             </div>
