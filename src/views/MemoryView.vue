@@ -516,6 +516,120 @@ const switchTab = (tabId) => {
   }
 }
 
+// Bible Books Metadata & Client-Side Parser
+const ALL_BOOKS = [
+  { id: 'GEN', num: 1, name: 'Genesis', aliases: ['gen', 'genesis', 'ge', 'gn'] },
+  { id: 'EXO', num: 2, name: 'Exodus', aliases: ['ex', 'exo', 'exod', 'exodus'] },
+  { id: 'LEV', num: 3, name: 'Leviticus', aliases: ['lev', 'leviticus', 'le', 'lv'] },
+  { id: 'NUM', num: 4, name: 'Numbers', aliases: ['num', 'numbers', 'nu', 'nm', 'nb'] },
+  { id: 'DEU', num: 5, name: 'Deuteronomy', aliases: ['deut', 'deu', 'deuteronomy', 'dt'] },
+  { id: 'JOS', num: 6, name: 'Joshua', aliases: ['josh', 'jos', 'joshua'] },
+  { id: 'JDG', num: 7, name: 'Judges', aliases: ['judg', 'jdg', 'judges', 'jgs'] },
+  { id: 'RUT', num: 8, name: 'Ruth', aliases: ['ruth', 'rut', 'rth'] },
+  { id: '1SA', num: 9, name: '1 Samuel', aliases: ['1sam', '1 sam', '1 samuel', '1sa', '1 s', '1s'] },
+  { id: '2SA', num: 10, name: '2 Samuel', aliases: ['2sam', '2 sam', '2 samuel', '2sa', '2 s', '2s'] },
+  { id: '1KI', num: 11, name: '1 Kings', aliases: ['1ki', '1 ki', '1 kings', '1k', '1 k'] },
+  { id: '2KI', num: 12, name: '2 Kings', aliases: ['2ki', '2 ki', '2 kings', '2k', '2 k'] },
+  { id: '1CH', num: 13, name: '1 Chronicles', aliases: ['1ch', '1 ch', '1 chron', '1 chronicles', '1chr'] },
+  { id: '2CH', num: 14, name: '2 Chronicles', aliases: ['2ch', '2 ch', '2 chron', '2 chronicles', '2chr'] },
+  { id: 'EZR', num: 15, name: 'Ezra', aliases: ['ezr', 'ezra'] },
+  { id: 'NEH', num: 16, name: 'Nehemiah', aliases: ['neh', 'nehemiah'] },
+  { id: 'EST', num: 17, name: 'Esther', aliases: ['est', 'esth', 'esther'] },
+  { id: 'JOB', num: 18, name: 'Job', aliases: ['job', 'jb'] },
+  { id: 'PSA', num: 19, name: 'Psalms', aliases: ['ps', 'psa', 'psalm', 'psalms', 'psm', 'pss'] },
+  { id: 'PRO', num: 20, name: 'Proverbs', aliases: ['pro', 'prov', 'proverbs', 'prv'] },
+  { id: 'ECC', num: 21, name: 'Ecclesiastes', aliases: ['ecc', 'eccl', 'ecclesiastes', 'qoh'] },
+  { id: 'SNG', num: 22, name: 'Song of Solomon', aliases: ['song', 'sng', 'song of solomon', 'song of songs', 'sos', 'canticle'] },
+  { id: 'ISA', num: 23, name: 'Isaiah', aliases: ['isa', 'is', 'isaiah'] },
+  { id: 'JER', num: 24, name: 'Jeremiah', aliases: ['jer', 'jeremiah', 'jr'] },
+  { id: 'LAM', num: 25, name: 'Lamentations', aliases: ['lam', 'lamentations'] },
+  { id: 'EZK', num: 26, name: 'Ezekiel', aliases: ['ezk', 'ezek', 'ezekiel'] },
+  { id: 'DAN', num: 27, name: 'Daniel', aliases: ['dan', 'daniel', 'dn'] },
+  { id: 'HOS', num: 28, name: 'Hosea', aliases: ['hos', 'hosea'] },
+  { id: 'JOL', num: 29, name: 'Joel', aliases: ['jol', 'joel', 'jl'] },
+  { id: 'AMO', num: 30, name: 'Amos', aliases: ['amo', 'amos', 'am'] },
+  { id: 'OBA', num: 31, name: 'Obadiah', aliases: ['oba', 'obad', 'obadiah', 'ob'] },
+  { id: 'JON', num: 32, name: 'Jonah', aliases: ['jon', 'jonah', 'jnh'] },
+  { id: 'MIC', num: 33, name: 'Micah', aliases: ['mic', 'micah'] },
+  { id: 'NAM', num: 34, name: 'Nahum', aliases: ['nam', 'nah', 'nahum'] },
+  { id: 'HAB', num: 35, name: 'Habakkuk', aliases: ['hab', 'habakkuk'] },
+  { id: 'ZEP', num: 36, name: 'Zephaniah', aliases: ['zep', 'zeph', 'zephaniah'] },
+  { id: 'HAG', num: 37, name: 'Haggai', aliases: ['hag', 'haggai'] },
+  { id: 'ZEC', num: 38, name: 'Zechariah', aliases: ['zec', 'zech', 'zechariah'] },
+  { id: 'MAL', num: 39, name: 'Malachi', aliases: ['mal', 'malachi'] },
+  { id: 'MAT', num: 40, name: 'Matthew', aliases: ['mat', 'matt', 'matthew', 'mt'] },
+  { id: 'MRK', num: 41, name: 'Mark', aliases: ['mrk', 'mk', 'mark'] },
+  { id: 'LUK', num: 42, name: 'Luke', aliases: ['luk', 'lk', 'luke'] },
+  { id: 'JHN', num: 43, name: 'John', aliases: ['jhn', 'jn', 'john'] },
+  { id: 'ACT', num: 44, name: 'Acts', aliases: ['act', 'acts'] },
+  { id: 'ROM', num: 45, name: 'Romans', aliases: ['rom', 'ro', 'rm', 'romans'] },
+  { id: '1CO', num: 46, name: '1 Corinthians', aliases: ['1co', '1 co', '1 cor', '1 corinthians', '1cor'] },
+  { id: '2CO', num: 47, name: '2 Corinthians', aliases: ['2co', '2 co', '2 cor', '2 corinthians', '2cor'] },
+  { id: 'GAL', num: 48, name: 'Galatians', aliases: ['gal', 'galatians'] },
+  { id: 'EPH', num: 49, name: 'Ephesians', aliases: ['eph', 'ephesians'] },
+  { id: 'PHP', num: 50, name: 'Philippians', aliases: ['php', 'phil', 'philippians'] },
+  { id: 'COL', num: 51, name: 'Colossians', aliases: ['col', 'colossians'] },
+  { id: '1TH', num: 52, name: '1 Thessalonians', aliases: ['1th', '1 th', '1 thess', '1 thessalonians', '1thess'] },
+  { id: '2TH', num: 53, name: '2 Thessalonians', aliases: ['2th', '2 th', '2 thess', '2 thessalonians', '2thess'] },
+  { id: '1TI', num: 54, name: '1 Timothy', aliases: ['1ti', '1 ti', '1 tim', '1 timothy', '1tim'] },
+  { id: '2TI', num: 55, name: '2 Timothy', aliases: ['2ti', '2 ti', '2 tim', '2 timothy', '2tim'] },
+  { id: 'TIT', num: 56, name: 'Titus', aliases: ['tit', 'titus'] },
+  { id: 'PHM', num: 57, name: 'Philemon', aliases: ['phm', 'philem', 'philemon'] },
+  { id: 'HEB', num: 58, name: 'Hebrews', aliases: ['heb', 'hebrews'] },
+  { id: 'JAS', num: 59, name: 'James', aliases: ['jas', 'james', 'jm'] },
+  { id: '1PE', num: 60, name: '1 Peter', aliases: ['1pe', '1 pe', '1 pet', '1 peter', '1pet'] },
+  { id: '2PE', num: 61, name: '2 Peter', aliases: ['2pe', '2 pe', '2 pet', '2 peter', '2pet'] },
+  { id: '1JN', num: 62, name: '1 John', aliases: ['1jn', '1 jn', '1 john', '1john'] },
+  { id: '2JN', num: 63, name: '2 John', aliases: ['2jn', '2 jn', '2 john', '2john'] },
+  { id: '3JN', num: 64, name: '3 John', aliases: ['3jn', '3 jn', '3 john', '3john'] },
+  { id: 'JUD', num: 65, name: 'Jude', aliases: ['jud', 'jude', 'jd'] },
+  { id: 'REV', num: 66, name: 'Revelation', aliases: ['rev', 'revelation', 'rv'] }
+]
+
+const aliasLookup = {}
+for (const b of ALL_BOOKS) {
+  for (const a of b.aliases) {
+    aliasLookup[a.toLowerCase()] = b
+    aliasLookup[a.replace(/\s+/g, '').toLowerCase()] = b
+  }
+}
+
+const parseBibleReference = (str) => {
+  const clean = str.trim().replace(/\s+/g, ' ')
+  const m = clean.match(/^((?:[1-3]\s+)?[a-zA-Z\s]+?)\s*(\d+)[\s:]+(\d+)(?:\s*-\s*(\d+))?$/)
+  if (!m) return null
+  const rawBook = m[1].trim().toLowerCase().replace(/\./g, '')
+  const book = aliasLookup[rawBook] || aliasLookup[rawBook.replace(/\s+/g, '')]
+  if (!book) return null
+  const chapter = parseInt(m[2], 10)
+  const startVerse = parseInt(m[3], 10)
+  const endVerse = m[4] ? parseInt(m[4], 10) : startVerse
+  const refDisplay = startVerse === endVerse
+    ? `${book.name} ${chapter}:${startVerse}`
+    : `${book.name} ${chapter}:${startVerse}-${endVerse}`
+  return { id: book.id, num: book.num, name: book.name, chapter, startVerse, endVerse, refDisplay }
+}
+
+const cleanBollsVerseText = (rawText) => {
+  const parts = rawText.split(/<br\s*\/?>/i)
+  let i = 0
+  while (i < parts.length - 1) {
+    const current = parts[i].trim()
+    const next = parts[i + 1].trim()
+    const endsWithPunct = /[.,;:'"!?”)\]]$/.test(current)
+    const nextStartsUpper = /^[A-Z“"‘'0-9]/.test(next)
+    if (!endsWithPunct && nextStartsUpper) {
+      i++ // Skip heading
+    } else {
+      break
+    }
+  }
+  let text = parts.slice(i).join(' ')
+  text = text.replace(/<sup[^>]*>.*?<\/sup>/gi, '')
+  text = text.replace(/^<b>.*?<\/b>\s*/i, '')
+  return text.replace(/<[^>]*>?/gm, '').trim()
+}
+
 // In-memory cache for loaded NIV books
 const nivCache = {}
 
@@ -547,158 +661,101 @@ const fetchVerse = async () => {
   }
 
   try {
+    const parsed = parseBibleReference(refQuery)
+    if (!parsed) {
+      throw new Error(`Could not parse "${refQuery}". Please enter a reference like "John 3:16" or "Romans 8:28-30".`)
+    }
+
+    // 1. NIV (2011) and NIV (1984) via local clean JSON
     if (selectedTranslation.value === 'niv2011' || selectedTranslation.value === 'niv1984') {
       const nivFolder = selectedTranslation.value === 'niv2011' ? 'niv2011' : 'niv1984'
-      const response = await fetch(`https://bible-api.com/${encodeURIComponent(refQuery)}?translation=web`)
-      const data = await response.json()
+      const cacheKey = `${nivFolder}_${parsed.id}`
+      let bookJson = nivCache[cacheKey]
 
-      if (data.error) {
-        throw new Error(data.error)
-      }
-
-      if (data.verses && data.verses.length > 0) {
+      if (!bookJson) {
         const baseUrl = import.meta.env.BASE_URL || '/'
         const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
-        const booksNeeded = [...new Set(data.verses.map(v => v.book_id))]
-        const bookDataMap = {}
-
-        for (const bookId of booksNeeded) {
-          const cacheKey = `${nivFolder}_${bookId}`
-          if (nivCache[cacheKey]) {
-            bookDataMap[bookId] = nivCache[cacheKey]
-          } else {
-            const res = await fetch(`${cleanBase}data/translations/${nivFolder}/${bookId}.json`)
-            if (!res.ok) {
-              throw new Error(`Could not load ${nivFolder.toUpperCase()} text for book ${bookId}`)
-            }
-            const bookJson = await res.json()
-            nivCache[cacheKey] = bookJson
-            bookDataMap[bookId] = bookJson
-          }
+        const localUrl = `${cleanBase}data/translations/${nivFolder}/${parsed.id}.json`
+        const res = await fetch(localUrl)
+        if (!res.ok) {
+          throw new Error(`Failed to load ${selectedTranslation.value.toUpperCase()} data for ${parsed.name}.`)
         }
-
-        const textParts = []
-        for (const v of data.verses) {
-          const bookData = bookDataMap[v.book_id]
-          const verseText = bookData?.[String(v.chapter)]?.[String(v.verse)]
-          if (verseText) {
-            textParts.push(verseText)
-          } else {
-            throw new Error(`Verse not found in ${nivFolder === 'niv2011' ? 'NIV (2011)' : 'NIV (1984)'}: ${v.book_name} ${v.chapter}:${v.verse}`)
-          }
-        }
-
-        currentVerse.value = textParts.join(' ').trim().replace(/\s+/g, ' ')
-        currentRef.value = data.reference
-        hasLoadedVerse.value = true
-        initializeDashboard()
-        return
-      } else {
-        throw new Error('No verses returned for this reference.')
+        bookJson = await res.json()
+        nivCache[cacheKey] = bookJson
       }
-    }
 
-    let apiTranslation = selectedTranslation.value
-    let isFallback = false
-    let fallbackTranslation = ''
-
-    const bollsTranslations = ['esv', 'csb', 'nasb', 'nkjv', 'nlt', 'net', 'amp']
-    if (bollsTranslations.includes(apiTranslation)) {
-      if (apiTranslation === 'csb') {
-        fallbackTranslation = 'CSB17'
-      } else {
-        fallbackTranslation = apiTranslation.toUpperCase()
-      }
-      apiTranslation = 'web' // Use WEB to parse the reference and verses
-      isFallback = true
-    }
-
-    const response = await fetch(`https://bible-api.com/${encodeURIComponent(refQuery)}?translation=${apiTranslation}`)
-    const data = await response.json()
-
-    if (data.error) {
-      throw new Error(data.error)
-    }
-
-    if (isFallback && data.verses && data.verses.length > 0) {
-      // Map bible-api book_id to bolls.life numeric index
-      const bookMap = {
-        "GEN": 1, "EXO": 2, "LEV": 3, "NUM": 4, "DEU": 5, "JOS": 6, "JDG": 7, "RUT": 8, "1SA": 9, "2SA": 10,
-        "1KI": 11, "2KI": 12, "1CH": 13, "2CH": 14, "EZR": 15, "NEH": 16, "EST": 17, "JOB": 18, "PSA": 19, "PRO": 20,
-        "ECC": 21, "SNG": 22, "ISA": 23, "JER": 24, "LAM": 25, "EZK": 26, "DAN": 27, "HOS": 28, "JOL": 29, "AMO": 30,
-        "OBA": 31, "JON": 32, "MIC": 33, "NAM": 34, "HAB": 35, "ZEP": 36, "HAG": 37, "ZEC": 38, "MAL": 39,
-        "MAT": 40, "MRK": 41, "LUK": 42, "JHN": 43, "ACT": 44, "ROM": 45, "1CO": 46, "2CO": 47, "GAL": 48, "EPH": 49,
-        "PHP": 50, "COL": 51, "1TH": 52, "2TH": 53, "1TI": 54, "2TI": 55, "TIT": 56, "PHM": 57, "HEB": 58, "JAS": 59,
-        "1PE": 60, "2PE": 61, "1JN": 62, "2JN": 63, "3JN": 64, "JUD": 65, "REV": 66
-      }
-      
-      const bookIdStr = data.verses[0].book_id
-      const bookIndex = bookMap[bookIdStr]
-
-      if (bookIndex) {
-        const chaptersNeeded = [...new Set(data.verses.map(v => v.chapter))]
-        let fallbackTextParts = []
-
-        for (let chapter of chaptersNeeded) {
-          const bollsResp = await fetch(`https://bolls.life/get-chapter/${fallbackTranslation}/${bookIndex}/${chapter}/`)
-          if (!bollsResp.ok) continue
-          
-          const bollsData = await bollsResp.json()
-          if (Array.isArray(bollsData)) {
-            const requiredVersesForChapter = new Set(data.verses.filter(v => v.chapter === chapter).map(v => v.verse))
-            
-            const chapterText = bollsData
-              .filter(v => requiredVersesForChapter.has(v.verse))
-              .map(v => {
-                // Strip headings (often prepended before a <br/> with no punctuation)
-                const parts = v.text.split(/<br\s*\/?>/i)
-                let i = 0
-                while (i < parts.length - 1) {
-                  const current = parts[i].trim()
-                  const next = parts[i + 1].trim()
-                  const endsWithPunct = /[.,;:'"!?”)\]]$/.test(current)
-                  const nextStartsUpper = /^[A-Z“"‘'0-9]/.test(next)
-                  
-                  if (!endsWithPunct && nextStartsUpper) {
-                    i++ // Skip heading
-                  } else {
-                    break
-                  }
-                }
-                // Rejoin the actual verse lines and strip remaining HTML tags
-                let rawText = parts.slice(i).join(' ')
-                // Remove <sup> tags and their contents (footnotes/cross-refs)
-                rawText = rawText.replace(/<sup[^>]*>.*?<\/sup>/gi, '')
-                // Remove bold headings/superscriptions at start of verse
-                rawText = rawText.replace(/^<b>.*?<\/b>\s*/i, '')
-                // Remove remaining HTML tags
-                return rawText.replace(/<[^>]*>?/gm, '').trim()
-              })
-              .join(' ')
-              
-            if (chapterText) {
-              fallbackTextParts.push(chapterText)
-            }
-          }
-        }
-        
-        if (fallbackTextParts.length > 0) {
-          data.text = fallbackTextParts.join(' ')
+      const textParts = []
+      for (let v = parsed.startVerse; v <= parsed.endVerse; v++) {
+        const vText = bookJson[String(parsed.chapter)]?.[String(v)]
+        if (vText) {
+          textParts.push(vText)
         } else {
-          throw new Error(`Could not fetch ${fallbackTranslation} text from secondary API.`)
+          throw new Error(`Verse ${parsed.name} ${parsed.chapter}:${v} not found in ${selectedTranslation.value === 'niv2011' ? 'NIV' : 'NIV (1984)'}.`)
         }
       }
-    } else if (data.verses && data.verses.length > 0) {
-      // Re-assemble standard API verses explicitly to prevent missing spaces
+
+      currentVerse.value = textParts.join(' ').trim().replace(/\s+/g, ' ')
+      currentRef.value = parsed.refDisplay
+      hasLoadedVerse.value = true
+      initializeDashboard()
+      return
+    }
+
+    // 2. Bolls.life translations (NASB 1995, ESV, CSB, NKJV, NLT, NET, AMP, KJV, ASV, WEB)
+    const bollsMap = {
+      esv: 'ESV',
+      csb: 'CSB17',
+      nasb: 'NASB',
+      nkjv: 'NKJV',
+      nlt: 'NLT',
+      net: 'NET',
+      amp: 'AMP',
+      kjv: 'KJV',
+      asv: 'ASV',
+      web: 'WEB'
+    }
+
+    const bollsTrans = bollsMap[selectedTranslation.value]
+    if (bollsTrans) {
+      const bollsResp = await fetch(`https://bolls.life/get-chapter/${bollsTrans}/${parsed.num}/${parsed.chapter}/`)
+      if (!bollsResp.ok) {
+        throw new Error(`Could not fetch chapter from scripture service (status ${bollsResp.status}).`)
+      }
+      const bollsData = await bollsResp.json()
+      if (!Array.isArray(bollsData)) {
+        throw new Error('Invalid response format from scripture service.')
+      }
+
+      const verses = bollsData.filter(v => v.verse >= parsed.startVerse && v.verse <= parsed.endVerse)
+      if (verses.length === 0) {
+        throw new Error(`Verse range ${parsed.chapter}:${parsed.startVerse}-${parsed.endVerse} not found in ${parsed.name}.`)
+      }
+
+      const cleanedParts = verses.map(v => cleanBollsVerseText(v.text))
+      currentVerse.value = cleanedParts.join(' ').trim().replace(/\s+/g, ' ')
+      currentRef.value = parsed.refDisplay
+      hasLoadedVerse.value = true
+      initializeDashboard()
+      return
+    }
+
+    // 3. Fallback for any other translation (e.g. BBE)
+    const response = await fetch(`https://bible-api.com/${encodeURIComponent(refQuery)}?translation=${selectedTranslation.value}`)
+    if (!response.ok) {
+      throw new Error(`Scripture service returned status ${response.status}.`)
+    }
+    const data = await response.json()
+    if (data.error) throw new Error(data.error)
+    if (data.verses && data.verses.length > 0) {
       data.text = data.verses.map(v => v.text.trim()).join(' ')
     }
-
     currentVerse.value = data.text.trim().replace(/\s+/g, ' ')
-    currentRef.value = data.reference
+    currentRef.value = data.reference || parsed.refDisplay
     hasLoadedVerse.value = true
     initializeDashboard()
   } catch (err) {
-    errorMessage.value = "Could not fetch that verse automatically. Ensure the reference is valid, or use 'Paste Custom Text' for other versions."
+    console.error('fetchVerse error:', err)
+    errorMessage.value = err.message || "Could not fetch that verse automatically. Ensure the reference is valid, or use 'Paste Custom Text' for other versions."
   } finally {
     isLoading.value = false
   }
