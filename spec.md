@@ -136,23 +136,32 @@ graph TD
 ### 4.3 Scripture Memorizer View (`/memory` -> `src/views/MemoryView.vue`)
 - **Header**: Title "Scripture Memorizer" and subtitle.
 - **Configuration Card**:
-  - Reference input: Text field supporting single verses (e.g. `John 3:16`), verse ranges (e.g. `Romans 8:28-30`), and full chapters (e.g. `1 John 1`, `Psalm 23`).
-  - Searchable Translation dropdown (instant search by full name, abbreviation like 'NASB', or year; ordered from most to least common with NIV first and default):
-    - `niv2011`: New International Version (NIV, default)
-    - `kjv`: King James Version (KJV)
-    - `esv`: English Standard Version (ESV)
-    - `nlt`: New Living Translation (NLT)
-    - `nkjv`: New King James Version (NKJV)
-    - `csb`: Christian Standard Bible (CSB)
-    - `nasb`: New American Standard Bible (NASB - 1995)
-    - `niv1984`: New International Version (NIV - 1984)
-    - `amp`: Amplified Bible (AMP)
-    - `net`: New English Translation (NET)
-    - `web`: World English Bible (WEB)
-    - `asv`: American Standard Version (ASV)
-    - `bbe`: Bible in Basic English (BBE)
-    - `custom`: Paste Custom Text
-  - Custom Textarea (visible only when `custom` is selected).
+  - **Input Mode Segmented Selector**: Prominent top toggle allowing users to seamlessly switch between two dedicated source modes:
+    - **Bible Translation** (default): For reference lookup with supported translations.
+    - **Paste Custom Text**: For practicing with any custom translation, study notes, or passage not present in the catalog.
+  - **Bible Translation Mode**:
+    - Reference input: Text field supporting single verses (e.g. `John 3:16`), verse ranges (e.g. `Romans 8:28-30`), and full chapters (e.g. `1 John 1`, `Psalm 23`).
+    - Searchable Translation dropdown (instant search by full name, abbreviation like 'NASB', or year; ordered from most to least common with NIV first and default):
+      - `niv2011`: New International Version (NIV, default)
+      - `kjv`: King James Version (KJV)
+      - `esv`: English Standard Version (ESV)
+      - `nlt`: New Living Translation (NLT)
+      - `nkjv`: New King James Version (NKJV)
+      - `csb`: Christian Standard Bible (CSB)
+      - `nasb`: New American Standard Bible (NASB - 1995)
+      - `niv1984`: New International Version (NIV - 1984)
+      - `amp`: Amplified Bible (AMP)
+      - `net`: New English Translation (NET)
+      - `web`: World English Bible (WEB)
+      - `asv`: American Standard Version (ASV)
+      - `bbe`: Bible in Basic English (BBE)
+    - Pinned Dropdown Footer: *"Can't find your translation? Paste custom text →"* button for direct access.
+    - Dropdown Empty Search State: When a search returns no matching translations, offers a direct *"Paste custom text instead →"* action.
+    - Contextual Helper Line: Helpful note underneath the dropdown (*"Can't find your translation? Paste custom text instead"*).
+  - **Paste Custom Text Mode**:
+    - Reference / Title input: Text field for passage title or reference (e.g. `John 3:16` or `Romans 8:28`).
+    - Custom Scripture Textarea: Multi-line text field allowing immediate pasting of any text.
+    - "Switch to Bible Translations" action to return to translation lookup anytime.
   - Load Verse button: Fetches verses or full chapters via client-side reference parsing, sourcing clean text (without verse numbers or section headings) from local NIV datasets (`public/data/translations/niv2011/` and `public/data/translations/niv1984/`) or direct scripture service (`bolls.life` for NASB 1995, ESV, KJV, etc.), or uses custom text, cleans whitespace/headings, and initializes the dashboard.
 - **Interactive Game Dashboard** (6 Modes):
   - **Responsive Mode Navigation**:

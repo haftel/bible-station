@@ -8,132 +8,229 @@
     <main class="container">
       <!-- Configuration Card -->
       <div class="post">
-        <form @submit.prevent="fetchVerse">
-          <div class="form-row">
-            <div class="form-col">
-              <label for="reference-input" class="form-label">Reference (e.g., John 3:16 or 1 John 1)</label>
-              <input
-                id="reference-input"
-                v-model="referenceInput"
-                type="text"
-                placeholder="Enter verse or full chapter (e.g., John 3:16, 1 John 1)"
-                class="form-control"
-              />
-            </div>
-            <div class="form-col translation-dropdown-container" ref="translationDropdownRef">
-              <label id="translation-select-label" class="form-label">Translation</label>
-              
-              <!-- Dropdown Trigger Button -->
-              <button
-                type="button"
-                id="translation-select"
-                class="form-control translation-trigger-btn"
-                :class="{ 'is-active': isTranslationDropdownOpen }"
-                @click="toggleTranslationDropdown"
-                @keydown.down.prevent="openAndFocusSearch"
-                aria-haspopup="listbox"
-                :aria-expanded="isTranslationDropdownOpen"
-                aria-labelledby="translation-select-label"
-              >
-                <span class="trigger-label">{{ selectedTranslationLabel }}</span>
-                <span class="trigger-chevron" aria-hidden="true">
-                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </button>
+        <!-- Input Mode Selector -->
+        <div class="input-mode-segmented-control" role="tablist" aria-label="Scripture source">
+          <button
+            type="button"
+            class="mode-pill-btn"
+            :class="{ 'is-active': inputMode === 'translation' }"
+            role="tab"
+            :aria-selected="inputMode === 'translation'"
+            @click="setInputMode('translation')"
+          >
+            <svg class="mode-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <span>Bible Translation</span>
+          </button>
+          <button
+            type="button"
+            class="mode-pill-btn"
+            :class="{ 'is-active': inputMode === 'custom' }"
+            role="tab"
+            :aria-selected="inputMode === 'custom'"
+            @click="setInputMode('custom')"
+          >
+            <svg class="mode-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+            </svg>
+            <span>Paste Custom Text</span>
+          </button>
+        </div>
 
-              <!-- Dropdown Popover Menu -->
-              <div
-                v-if="isTranslationDropdownOpen"
-                class="translation-dropdown-menu fade-in"
-                role="listbox"
-                aria-labelledby="translation-select-label"
-              >
-                <!-- Search Input Field -->
-                <div class="translation-search-box">
-                  <span class="search-icon" aria-hidden="true">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="11" cy="11" r="8"></circle>
-                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <form @submit.prevent="fetchVerse">
+          <!-- Translation Mode Form Fields -->
+          <div v-if="inputMode === 'translation'" class="fade-in">
+            <div class="form-row">
+              <div class="form-col">
+                <label for="reference-input" class="form-label">Reference (e.g., John 3:16 or 1 John 1)</label>
+                <input
+                  id="reference-input"
+                  v-model="referenceInput"
+                  type="text"
+                  placeholder="Enter verse(s) or full chapter (e.g., John 3:16, 1 John 1)"
+                  class="form-control"
+                />
+              </div>
+              <div class="form-col translation-dropdown-container" ref="translationDropdownRef">
+                <label id="translation-select-label" class="form-label">Translation</label>
+                
+                <!-- Dropdown Trigger Button -->
+                <button
+                  type="button"
+                  id="translation-select"
+                  class="form-control translation-trigger-btn"
+                  :class="{ 'is-active': isTranslationDropdownOpen }"
+                  @click="toggleTranslationDropdown"
+                  @keydown.down.prevent="openAndFocusSearch"
+                  aria-haspopup="listbox"
+                  :aria-expanded="isTranslationDropdownOpen"
+                  aria-labelledby="translation-select-label"
+                >
+                  <span class="trigger-label">{{ selectedTranslationLabel }}</span>
+                  <span class="trigger-chevron" aria-hidden="true">
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </span>
-                  <input
-                    ref="translationSearchInputRef"
-                    v-model="translationSearchQuery"
-                    type="text"
-                    class="translation-search-input"
-                    placeholder="Search name or code (e.g. NASB, KJV)..."
-                    autocomplete="off"
-                    @keydown.esc.stop="closeTranslationDropdown"
-                    @keydown.down.prevent="navigateOption(1)"
-                    @keydown.up.prevent="navigateOption(-1)"
-                    @keydown.enter.prevent="selectHighlightedOption"
-                  />
-                  <button
-                    v-if="translationSearchQuery"
-                    type="button"
-                    class="clear-search-btn"
-                    title="Clear search"
-                    @click="translationSearchQuery = ''; translationSearchInputRef?.focus()"
-                  >
-                    ×
-                  </button>
+                </button>
+
+                <!-- Dropdown Popover Menu -->
+                <div
+                  v-if="isTranslationDropdownOpen"
+                  class="translation-dropdown-menu fade-in"
+                  role="listbox"
+                  aria-labelledby="translation-select-label"
+                >
+                  <!-- Search Input Field -->
+                  <div class="translation-search-box">
+                    <span class="search-icon" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                    </span>
+                    <input
+                      ref="translationSearchInputRef"
+                      v-model="translationSearchQuery"
+                      type="text"
+                      class="translation-search-input"
+                      placeholder="Search name or code (e.g. NASB, KJV)..."
+                      autocomplete="off"
+                      @keydown.esc.stop="closeTranslationDropdown"
+                      @keydown.down.prevent="navigateOption(1)"
+                      @keydown.up.prevent="navigateOption(-1)"
+                      @keydown.enter.prevent="selectHighlightedOption"
+                    />
+                    <button
+                      v-if="translationSearchQuery"
+                      type="button"
+                      class="clear-search-btn"
+                      title="Clear search"
+                      @click="translationSearchQuery = ''; translationSearchInputRef?.focus()"
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  <!-- Scrollable Translation Options List -->
+                  <ul class="translation-options-list">
+                    <li
+                      v-for="(item, idx) in filteredTranslations"
+                      :key="item.id"
+                      :class="[
+                        'translation-option-item',
+                        {
+                          'is-selected': selectedTranslation === item.id,
+                          'is-highlighted': highlightedIndex === idx
+                        }
+                      ]"
+                      role="option"
+                      :aria-selected="selectedTranslation === item.id"
+                      @click="selectTranslation(item.id)"
+                      @mouseenter="highlightedIndex = idx"
+                    >
+                      <div class="option-main">
+                        <span class="option-title">{{ item.label }}</span>
+                      </div>
+                      <span v-if="selectedTranslation === item.id" class="option-checkmark" aria-hidden="true">✓</span>
+                    </li>
+                    <li v-if="filteredTranslations.length === 0" class="translation-no-results">
+                      <p class="no-results-msg">No translations found matching "{{ translationSearchQuery }}"</p>
+                      <button
+                        type="button"
+                        class="btn-switch-custom-inline"
+                        @click="switchToCustomFromDropdown"
+                      >
+                        Paste custom text instead &rarr;
+                      </button>
+                    </li>
+                  </ul>
+
+                  <!-- Pinned Translation Dropdown Footer -->
+                  <div class="translation-dropdown-footer">
+                    <button
+                      type="button"
+                      class="dropdown-footer-custom-btn"
+                      @click="switchToCustomFromDropdown"
+                    >
+                      <span class="footer-btn-lead">Can't find your translation?</span>
+                      <span class="footer-btn-cta">Paste custom text &rarr;</span>
+                    </button>
+                  </div>
                 </div>
 
-                <!-- Scrollable Translation Options List -->
-                <ul class="translation-options-list">
-                  <li
-                    v-for="(item, idx) in filteredTranslations"
-                    :key="item.id"
-                    :class="[
-                      'translation-option-item',
-                      {
-                        'is-selected': selectedTranslation === item.id,
-                        'is-highlighted': highlightedIndex === idx
-                      }
-                    ]"
-                    role="option"
-                    :aria-selected="selectedTranslation === item.id"
-                    @click="selectTranslation(item.id)"
-                    @mouseenter="highlightedIndex = idx"
+                <!-- Helper text under translation dropdown -->
+                <div class="translation-helper-line">
+                  <span>Can't find your translation?</span>
+                  <button
+                    type="button"
+                    class="inline-text-action"
+                    @click="setInputMode('custom')"
                   >
-                    <div class="option-main">
-                      <span class="option-title">{{ item.label }}</span>
-                    </div>
-                    <span v-if="selectedTranslation === item.id" class="option-checkmark" aria-hidden="true">✓</span>
-                  </li>
-                  <li v-if="filteredTranslations.length === 0" class="translation-no-results">
-                    No translations found matching "{{ translationSearchQuery }}"
-                  </li>
-                </ul>
+                    Paste custom text instead
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Custom Text Area -->
-          <div v-if="selectedTranslation === 'custom'" class="fade-in mt-4">
-            <label for="custom-text-input" class="form-label">Custom Verse Text</label>
-            <textarea
-              id="custom-text-input"
-              v-model="customText"
-              rows="3"
-              placeholder="Paste your verse text here..."
-              class="form-control"
-            ></textarea>
+          <!-- Custom Text Mode Form Fields -->
+          <div v-else class="custom-input-section fade-in">
+            <div class="form-row">
+              <div class="form-col">
+                <label for="reference-input-custom" class="form-label">
+                  Reference or Passage Title (e.g., John 3:16 or My Memory Verse)
+                </label>
+                <input
+                  id="reference-input-custom"
+                  v-model="referenceInput"
+                  type="text"
+                  placeholder="Enter verse reference or passage title..."
+                  class="form-control"
+                />
+              </div>
+            </div>
+
+            <div class="custom-text-field">
+              <div class="field-label-group">
+                <label for="custom-text-input" class="form-label">Custom Verse Text</label>
+                <span class="field-subtitle">Paste from any Bible translation, study notes, or language</span>
+              </div>
+              <textarea
+                id="custom-text-input"
+                ref="customTextareaRef"
+                v-model="customText"
+                rows="4"
+                placeholder="Paste or type your scripture text here..."
+                class="form-control custom-textarea"
+              ></textarea>
+            </div>
           </div>
 
           <div v-if="errorMessage" class="error-banner fade-in">
             {{ errorMessage }}
           </div>
 
-          <button
-            type="submit"
-            :disabled="isLoading"
-            class="btn btn-primary"
-          >
-            {{ isLoading ? 'Loading...' : 'Load Verse' }}
-          </button>
+          <div class="form-actions mt-4">
+            <button
+              type="submit"
+              :disabled="isLoading"
+              class="btn btn-primary"
+            >
+              {{ isLoading ? 'Loading...' : (inputMode === 'custom' ? 'Load Custom Verse' : 'Load Verse') }}
+            </button>
+            <button
+              v-if="inputMode === 'custom'"
+              type="button"
+              class="btn btn-secondary switch-back-btn"
+              @click="setInputMode('translation')"
+            >
+              &larr; Switch to Bible Translations
+            </button>
+          </div>
         </form>
       </div>
 
@@ -446,9 +543,11 @@ const translations = [
   { id: 'net', label: 'New English Translation (NET)', name: 'New English Translation', abbr: 'NET' },
   { id: 'web', label: 'World English Bible (WEB)', name: 'World English Bible', abbr: 'WEB' },
   { id: 'asv', label: 'American Standard Version (ASV)', name: 'American Standard Version', abbr: 'ASV' },
-  { id: 'bbe', label: 'Bible in Basic English (BBE)', name: 'Bible in Basic English', abbr: 'BBE' },
-  { id: 'custom', label: 'Paste Custom Text', name: 'Paste Custom Text', abbr: 'Custom' }
+  { id: 'bbe', label: 'Bible in Basic English (BBE)', name: 'Bible in Basic English', abbr: 'BBE' }
 ]
+
+const inputMode = ref('translation') // 'translation' | 'custom'
+const customTextareaRef = ref(null)
 
 const referenceInput = ref('John 3:16')
 const selectedTranslation = ref('niv2011')
@@ -456,6 +555,21 @@ const customText = ref('')
 const isLoading = ref(false)
 const errorMessage = ref('')
 const hasLoadedVerse = ref(false)
+
+const setInputMode = (mode) => {
+  inputMode.value = mode
+  errorMessage.value = ''
+  if (mode === 'custom') {
+    nextTick(() => {
+      customTextareaRef.value?.focus()
+    })
+  }
+}
+
+const switchToCustomFromDropdown = () => {
+  closeTranslationDropdown()
+  setInputMode('custom')
+}
 
 // Translation Dropdown Search State
 const isTranslationDropdownOpen = ref(false)
@@ -702,16 +816,18 @@ const fetchVerse = async () => {
   const refQuery = referenceInput.value.trim()
 
   if (!refQuery) {
-    errorMessage.value = 'Please enter a Bible reference.'
+    errorMessage.value = inputMode.value === 'custom'
+      ? 'Please enter a reference or passage title.'
+      : 'Please enter a Bible reference.'
     return
   }
 
   isLoading.value = true
 
-  if (selectedTranslation.value === 'custom') {
+  if (inputMode.value === 'custom') {
     const rawCustom = customText.value.trim()
     if (!rawCustom) {
-      errorMessage.value = 'Please paste your text in the custom field.'
+      errorMessage.value = 'Please paste your scripture text.'
       isLoading.value = false
       return
     }
@@ -1953,7 +2069,191 @@ const revealCurrentWord = () => {
   text-align: center;
   color: var(--text-light);
   font-size: 0.9rem;
+}
+
+.no-results-msg {
+  margin: 0 0 0.65rem 0;
   font-style: italic;
+}
+
+.btn-switch-custom-inline {
+  display: inline-block;
+  padding: 0.45rem 0.9rem;
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-switch-custom-inline:hover {
+  background-color: #2a4b4d;
+}
+
+/* Input Mode Segmented Control */
+.input-mode-segmented-control {
+  display: flex;
+  background-color: var(--disclaimer-bg);
+  border: 1px solid var(--border-color);
+  padding: 0.35rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  gap: 0.35rem;
+}
+
+.mode-pill-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.mode-pill-btn:hover {
+  color: var(--text-main);
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.mode-pill-btn.is-active {
+  background-color: #ffffff;
+  color: var(--accent-color);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.mode-icon {
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+/* Translation Helper Line */
+.translation-helper-line {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+  font-size: 0.82rem;
+  color: var(--text-light);
+  flex-wrap: wrap;
+}
+
+.inline-text-action {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent-color);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  transition: color var(--transition-fast);
+}
+
+.inline-text-action:hover {
+  color: #2a4b4d;
+}
+
+/* Translation Dropdown Footer */
+.translation-dropdown-footer {
+  border-top: 1px solid var(--border-color);
+  background-color: #faf8f5;
+  padding: 0.5rem 0.75rem;
+  flex-shrink: 0;
+}
+
+.dropdown-footer-custom-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.65rem;
+  background-color: #ffffff;
+  border: 1px dashed var(--accent-color);
+  border-radius: var(--radius-sm);
+  color: var(--accent-color);
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dropdown-footer-custom-btn:hover {
+  background-color: rgba(61, 107, 110, 0.08);
+  border-color: var(--accent-color);
+}
+
+.footer-btn-lead {
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+.footer-btn-cta {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+/* Custom Text Mode Section */
+.custom-input-section {
+  width: 100%;
+}
+
+.custom-text-field {
+  margin-top: 1rem;
+}
+
+.field-label-group {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.field-label-group .form-label {
+  margin-bottom: 0;
+}
+
+.field-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-light);
+}
+
+.custom-textarea {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 110px;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.switch-back-btn {
+  font-size: 0.9rem;
+  padding: 0.8rem 1.25rem;
 }
 
 /* Mobile Tabs Dropdown */
@@ -2014,6 +2314,21 @@ const revealCurrentWord = () => {
 
 /* Responsive Media Queries */
 @media (max-width: 768px) {
+  .mode-pill-btn {
+    font-size: 0.88rem;
+    padding: 0.6rem 0.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+
   .desktop-tabs {
     display: none !important;
   }
