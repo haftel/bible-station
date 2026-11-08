@@ -143,8 +143,8 @@
           <h2>{{ currentRef }}</h2>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="tabs" role="tablist">
+        <!-- Navigation Tabs (Desktop) -->
+        <div class="tabs desktop-tabs" role="tablist">
           <button
             v-for="tab in tabs"
             :key="tab.id"
@@ -155,6 +155,28 @@
           >
             {{ tab.label }}
           </button>
+        </div>
+
+        <!-- Navigation Dropdown (Mobile) -->
+        <div class="mobile-tabs-dropdown">
+          <label for="mobile-mode-select" class="mobile-mode-label">Practice Mode</label>
+          <div class="mobile-select-wrapper">
+            <select
+              id="mobile-mode-select"
+              class="mobile-mode-select"
+              :value="currentTab"
+              @change="switchTab($event.target.value)"
+            >
+              <option v-for="tab in tabs" :key="tab.id" :value="tab.id">
+                {{ tab.label }}
+              </option>
+            </select>
+            <span class="mobile-select-chevron" aria-hidden="true">
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
         </div>
 
         <!-- Tab 1: Vanish (Eraser Game) -->
@@ -284,18 +306,36 @@
             ref="typeBoxRef"
             class="game-text-display type-display-box"
             tabindex="0"
+            @click="focusTypeBox"
             @keydown="handleTypeKeydown"
-            @focus="typeBoxFocused = true"
-            @blur="typeBoxFocused = false"
+            @focus="focusTypeBox"
+            @blur="handleTypeBlur"
           >
+            <!-- Invisible input for mobile keyboard invocation & text capture -->
+            <input
+              ref="typeInputRef"
+              type="text"
+              class="invisible-typing-input"
+              autocapitalize="none"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+              inputmode="text"
+              aria-label="Type verse text"
+              :disabled="typeCompleted"
+              @input="handleTypeInput"
+              @keydown="handleTypeKeydown"
+              @focus="typeBoxFocused = true"
+              @blur="typeBoxFocused = false"
+            />
             <span
               v-for="(charObj, idx) in typeDisplayCharacters"
               :key="idx"
               :class="charObj.cssClass"
             >{{ charObj.char }}</span>
             <span v-if="!typeCompleted && typeBoxFocused" class="type-cursor">|</span>
-            <div v-if="!typeBoxFocused && !typeCompleted && typedChars.length === 0" class="type-focus-hint" @click="focusTypeBox">
-              Click here to start typing…
+            <div v-if="!typeBoxFocused && !typeCompleted && typedChars.length === 0" class="type-focus-hint" @click.stop="focusTypeBox">
+              Click or tap here to start typing…
             </div>
           </div>
 
@@ -305,7 +345,7 @@
             </p>
             <button
               v-if="typedChars.length > 0"
-              @click="initType(); nextTick(() => typeBoxRef?.focus())"
+              @click="initType(); nextTick(() => focusTypeBox())"
               class="btn btn-reset"
             >
               ↻ Reset
@@ -328,10 +368,28 @@
             ref="typeFirstBoxRef"
             class="game-text-display type-display-box"
             tabindex="0"
+            @click="focusTypeFirstBox"
             @keydown="handleTypeFirstKeydown"
-            @focus="typeFirstBoxFocused = true"
-            @blur="typeFirstBoxFocused = false"
+            @focus="focusTypeFirstBox"
+            @blur="handleTypeFirstBlur"
           >
+            <!-- Invisible input for mobile keyboard invocation & text capture -->
+            <input
+              ref="typeFirstInputRef"
+              type="text"
+              class="invisible-typing-input"
+              autocapitalize="none"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+              inputmode="text"
+              aria-label="Type first letters"
+              :disabled="typeFirstCompleted"
+              @input="handleTypeFirstInput"
+              @keydown="handleTypeFirstKeydown"
+              @focus="typeFirstBoxFocused = true"
+              @blur="typeFirstBoxFocused = false"
+            />
             <span
               v-for="(item, idx) in typeFirstWordStates"
               :key="idx"
@@ -349,8 +407,8 @@
               <template v-else-if="item.status === 'error'">{{ item.errorChar }}</template>
             </span>
             <span v-if="!typeFirstCompleted && typeFirstBoxFocused" class="type-cursor">|</span>
-            <div v-if="!typeFirstBoxFocused && !typeFirstCompleted && typeFirstCurrentIndex === 0" class="type-focus-hint" @click="focusTypeFirstBox">
-              Click here to start typing…
+            <div v-if="!typeFirstBoxFocused && !typeFirstCompleted && typeFirstCurrentIndex === 0" class="type-focus-hint" @click.stop="focusTypeFirstBox">
+              Click or tap here to start typing…
             </div>
           </div>
 
@@ -360,7 +418,7 @@
             </p>
             <button
               v-if="typeFirstCurrentIndex > 0"
-              @click="initTypeFirst(); nextTick(() => typeFirstBoxRef?.focus())"
+              @click="initTypeFirst(); nextTick(() => focusTypeFirstBox())"
               class="btn btn-reset"
             >
               ↻ Reset
@@ -505,13 +563,13 @@ const switchTab = (tabId) => {
   if (tabId === 'type') {
     initType()
     nextTick(() => {
-      typeBoxRef.value?.focus()
+      focusTypeBox()
     })
   }
   if (tabId === 'type-first') {
     initTypeFirst()
     nextTick(() => {
-      typeFirstBoxRef.value?.focus()
+      focusTypeFirstBox()
     })
   }
 }
@@ -974,7 +1032,11 @@ const toggleFirstLetterReveal = (idx) => {
 const typeMode = ref('show')
 const typedChars = ref([])     // Array of typed characters (letters only)
 const typeBoxRef = ref(null)
+const typeInputRef = ref(null)
 const typeBoxFocused = ref(false)
+
+let lastTypeProcessTime = 0
+let lastTypeProcessChar = ''
 
 const initType = () => {
   typeMode.value = 'show'
@@ -984,12 +1046,19 @@ const initType = () => {
 const toggleTypeMode = () => {
   typeMode.value = typeMode.value === 'show' ? 'hide' : 'show'
   nextTick(() => {
-    typeBoxRef.value?.focus()
+    focusTypeBox()
   })
 }
 
 const focusTypeBox = () => {
-  typeBoxRef.value?.focus()
+  typeBoxFocused.value = true
+  typeInputRef.value?.focus()
+}
+
+const handleTypeBlur = (e) => {
+  if (e.relatedTarget !== typeInputRef.value && e.relatedTarget !== typeBoxRef.value) {
+    typeBoxFocused.value = false
+  }
 }
 
 // Build a map of alphanumeric positions in the verse for efficient lookup
@@ -1004,29 +1073,28 @@ const verseAlphaMap = computed(() => {
   return positions
 })
 
-const handleTypeKeydown = (event) => {
-  // Ignore modifier combos (Ctrl+C, Cmd+A, etc.)
-  if (event.ctrlKey || event.metaKey || event.altKey) return
-
-  const key = event.key
-
-  if (key === 'Backspace') {
-    event.preventDefault()
-    if (typedChars.value.length > 0) {
-      typedChars.value.pop()
+const checkTypeComplete = () => {
+  nextTick(() => {
+    if (typeCompleted.value) {
+      typeInputRef.value?.blur()
+      typeBoxFocused.value = false
     }
+  })
+}
+
+const processTypeChar = (char) => {
+  if (!char) return
+  char = char.toLowerCase()
+  if (!/[a-zA-Z0-9]/.test(char)) return
+
+  const now = Date.now()
+  if (now - lastTypeProcessTime < 40 && lastTypeProcessChar === char) {
     return
   }
-
-  // Ignore non-printable keys
-  if (key.length !== 1) return
-  event.preventDefault()
-
-  // Only accept alphanumeric input
-  if (!/[a-zA-Z0-9]/.test(key)) return
+  lastTypeProcessTime = now
+  lastTypeProcessChar = char
 
   const alphaMap = verseAlphaMap.value
-  const typedChar = key.toLowerCase()
   const currentLen = typedChars.value.length
 
   // If the last typed character was wrong, replace it instead of appending
@@ -1036,7 +1104,8 @@ const handleTypeKeydown = (event) => {
     const lastTyped = typedChars.value[lastIdx]
     if (lastTyped !== lastExpected) {
       // Replace the wrong character
-      typedChars.value[lastIdx] = typedChar
+      typedChars.value[lastIdx] = char
+      checkTypeComplete()
       return
     }
   }
@@ -1044,7 +1113,61 @@ const handleTypeKeydown = (event) => {
   // If already completed, don't accept more input
   if (currentLen >= alphaMap.length) return
 
-  typedChars.value.push(typedChar)
+  typedChars.value.push(char)
+  checkTypeComplete()
+}
+
+const processTypeBackspace = () => {
+  const now = Date.now()
+  if (now - lastTypeProcessTime < 40 && lastTypeProcessChar === 'Backspace') {
+    return
+  }
+  lastTypeProcessTime = now
+  lastTypeProcessChar = 'Backspace'
+
+  if (typedChars.value.length > 0) {
+    typedChars.value.pop()
+  }
+}
+
+const handleTypeKeydown = (event) => {
+  // Ignore modifier combos (Ctrl+C, Cmd+A, etc.)
+  if (event.ctrlKey || event.metaKey || event.altKey) return
+
+  const key = event.key
+
+  if (key === 'Backspace') {
+    event.preventDefault()
+    processTypeBackspace()
+    return
+  }
+
+  // Ignore non-printable keys
+  if (key.length !== 1) return
+
+  // Only accept alphanumeric input
+  if (!/[a-zA-Z0-9]/.test(key)) return
+
+  event.preventDefault()
+  processTypeChar(key)
+}
+
+const handleTypeInput = (event) => {
+  const inputType = event.inputType
+  if (inputType === 'deleteContentBackward') {
+    processTypeBackspace()
+  } else if (event.data) {
+    for (const char of event.data) {
+      processTypeChar(char)
+    }
+  } else if (event.target && event.target.value) {
+    for (const char of event.target.value) {
+      processTypeChar(char)
+    }
+  }
+  if (event.target) {
+    event.target.value = ''
+  }
 }
 
 const typeDisplayCharacters = computed(() => {
@@ -1102,9 +1225,13 @@ const typeCompleted = computed(() => {
 
 // ==================== 6. TYPE FIRST LETTERS MODE ====================
 const typeFirstBoxRef = ref(null)
+const typeFirstInputRef = ref(null)
 const typeFirstBoxFocused = ref(false)
 const typeFirstCurrentIndex = ref(0)
 const typeFirstWordStates = ref([])
+
+let lastTypeFirstProcessTime = 0
+let lastTypeFirstProcessChar = ''
 
 const getFirstAlpha = (word) => {
   for (const char of word) {
@@ -1129,20 +1256,37 @@ const typeFirstCompleted = computed(() => {
 })
 
 const focusTypeFirstBox = () => {
-  typeFirstBoxRef.value?.focus()
+  typeFirstBoxFocused.value = true
+  typeFirstInputRef.value?.focus()
 }
 
-const handleTypeFirstKeydown = (event) => {
-  // Ignore modifier combos
-  if (event.ctrlKey || event.metaKey || event.altKey) return
+const handleTypeFirstBlur = (e) => {
+  if (e.relatedTarget !== typeFirstInputRef.value && e.relatedTarget !== typeFirstBoxRef.value) {
+    typeFirstBoxFocused.value = false
+  }
+}
 
-  // Ignore non-printable keys
-  if (event.key.length !== 1) return
-  event.preventDefault()
+const checkTypeFirstComplete = () => {
+  nextTick(() => {
+    if (typeFirstCompleted.value) {
+      typeFirstInputRef.value?.blur()
+      typeFirstBoxFocused.value = false
+    }
+  })
+}
 
-  const char = event.key.toLowerCase()
+const processTypeFirstChar = (char) => {
+  if (!char) return
+  char = char.toLowerCase()
   if (!/[a-zA-Z0-9]/.test(char)) return
   if (typeFirstCompleted.value) return
+
+  const now = Date.now()
+  if (now - lastTypeFirstProcessTime < 40 && lastTypeFirstProcessChar === char) {
+    return
+  }
+  lastTypeFirstProcessTime = now
+  lastTypeFirstProcessChar = char
 
   const idx = typeFirstCurrentIndex.value
   if (idx >= typeFirstWordStates.value.length) return
@@ -1153,6 +1297,7 @@ const handleTypeFirstKeydown = (event) => {
   if (char === expectedChar) {
     wordObj.status = 'correct'
     typeFirstCurrentIndex.value++
+    checkTypeFirstComplete()
   } else {
     wordObj.status = 'error'
     wordObj.errorChar = char
@@ -1165,6 +1310,33 @@ const handleTypeFirstKeydown = (event) => {
   }
 }
 
+const handleTypeFirstKeydown = (event) => {
+  // Ignore modifier combos
+  if (event.ctrlKey || event.metaKey || event.altKey) return
+
+  // Ignore non-printable keys
+  if (event.key.length !== 1) return
+  if (!/[a-zA-Z0-9]/.test(event.key)) return
+
+  event.preventDefault()
+  processTypeFirstChar(event.key)
+}
+
+const handleTypeFirstInput = (event) => {
+  if (event.data) {
+    for (const char of event.data) {
+      processTypeFirstChar(char)
+    }
+  } else if (event.target && event.target.value) {
+    for (const char of event.target.value) {
+      processTypeFirstChar(char)
+    }
+  }
+  if (event.target) {
+    event.target.value = ''
+  }
+}
+
 const revealCurrentWord = () => {
   if (typeFirstCompleted.value) return
   const idx = typeFirstCurrentIndex.value
@@ -1172,8 +1344,9 @@ const revealCurrentWord = () => {
 
   typeFirstWordStates.value[idx].status = 'revealed'
   typeFirstCurrentIndex.value++
+  checkTypeFirstComplete()
   nextTick(() => {
-    typeFirstBoxRef.value?.focus()
+    focusTypeFirstBox()
   })
 }
 </script>
@@ -1525,9 +1698,31 @@ const revealCurrentWord = () => {
   50% { opacity: 0; }
 }
 
+.invisible-typing-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 1;
+  cursor: text;
+  border: none;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px; /* Prevents auto-zoom on iOS */
+  padding: 0;
+  margin: 0;
+}
+
+.invisible-typing-input:disabled {
+  pointer-events: none;
+}
+
 .type-focus-hint {
   position: absolute;
   inset: 0;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1759,5 +1954,95 @@ const revealCurrentWord = () => {
   color: var(--text-light);
   font-size: 0.9rem;
   font-style: italic;
+}
+
+/* Mobile Tabs Dropdown */
+.mobile-tabs-dropdown {
+  display: none;
+  margin: 1.25rem 1.5rem 0;
+}
+
+.mobile-mode-label {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mobile-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.mobile-mode-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 2.5rem 0.85rem 1.15rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.mobile-mode-select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(61, 107, 110, 0.12);
+}
+
+.mobile-select-chevron {
+  position: absolute;
+  right: 1.15rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--accent-color);
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  .desktop-tabs {
+    display: none !important;
+  }
+
+  .mobile-tabs-dropdown {
+    display: block;
+    margin: 1.25rem 1rem 0;
+  }
+
+  .tab-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .type-display-box {
+    padding: 1.25rem 1rem;
+    min-height: 120px;
+  }
+
+  .game-text-display {
+    font-size: 1.2rem;
+    line-height: 2;
+  }
+
+  .dashboard-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .dashboard-header h2 {
+    font-size: 1.5rem;
+  }
 }
 </style>
