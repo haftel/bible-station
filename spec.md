@@ -154,7 +154,15 @@ graph TD
     - `custom`: Paste Custom Text
   - Custom Textarea (visible only when `custom` is selected).
   - Load Verse button: Fetches verses or full chapters via client-side reference parsing, sourcing clean text (without verse numbers or section headings) from local NIV datasets (`public/data/translations/niv2011/` and `public/data/translations/niv1984/`) or direct scripture service (`bolls.life` for NASB 1995, ESV, KJV, etc.), or uses custom text, cleans whitespace/headings, and initializes the dashboard.
-- **Interactive Game Dashboard** (6 Tabs):
+- **Interactive Game Dashboard** (6 Modes):
+  - **Responsive Mode Navigation**:
+    - **Desktop (> 768px)**: Horizontal tab pill bar (`.desktop-tabs`) with active state highlights.
+    - **Mobile (≤ 768px)**: Dedicated custom-styled dropdown menu (`.mobile-tabs-dropdown`) featuring an accessible `<select>` with custom chevron and 16px font (preventing iOS auto-zoom), cleanly adapting to smartphone viewports.
+  - **Mobile Virtual Keyboard Integration**:
+    - "Type Full" and "Type First Letters" modes embed an invisible `<input>` (`.invisible-typing-input`) overlaid across the display box.
+    - Tapping the display box, tapping the focus hint ("Click or tap here to start typing…"), or switching modes programmatically summons the mobile on-screen keyboard without browser security blocks.
+    - Dual event handling: captures desktop physical keystrokes via `@keydown` and mobile virtual keystrokes via `@input` with deduplication protection.
+    - Input automatically blurs on victory completion, gracefully dismissing the mobile keyboard so the celebration message is fully visible.
   1. **Vanish Mode**:
      - Toolbar buttons: `0%`, `25%`, `50%`, `75%`, `100%`.
      - Randomly blanks out selected % of words with underscores.
@@ -173,22 +181,22 @@ graph TD
      - Clicking/tapping a word toggles inline reveal of the full word (works on both desktop and mobile).
   5. **Type Full Mode**:
      - Inline typing directly in the verse display box (no separate textarea).
-     - The display box is focusable (`tabindex="0"`) and captures keystrokes via `@keydown`.
+     - Keystrokes captured via native invisible input overlay supporting physical desktop keyboards (`@keydown`) and mobile virtual keyboards (`@input`).
      - Automatically skips spaces and punctuation in typing matching logic.
      - "Hide Verse (Type from Memory)" / "Show Verse to Learn" toggle.
      - Character styling: typed correct (bold green), typed incorrect (red background), upcoming chars (muted grey or hidden depending on mode), punctuation (slate).
      - **Error correction**: incorrect characters are shown in red; typing the correct letter replaces the wrong one in-place (no Backspace required, though Backspace is also supported).
      - Blinking cursor indicator (`|`) at the current typing position when the box is focused.
-     - "Click here to start typing" overlay hint when the box is unfocused and no characters have been typed.
-     - Full completion celebration message when 100% typed correctly.
+     - "Click or tap here to start typing…" overlay hint when the box is unfocused and no characters have been typed.
+     - Full completion celebration message when 100% typed correctly, auto-dismissing virtual keyboard.
   6. **Type First Letters Mode**:
      - Memory-only word-level first-letter typing challenge: user types only the first letter of each word.
-     - Inline keystroke capture on the display box (no separate input field).
+     - Inline keystroke capture on the display box with physical and mobile virtual keyboard support.
      - Correct letter instantly reveals the full word in green and advances to the next word.
      - Incorrect letter flashes red (400ms) without revealing the correct letter; word resets to pending.
-     - Blinking cursor and "Click here to start typing" focus hint (same pattern as Type Full).
-     - "Show Word" hint button reveals the current word (styled in italic teal accent) when the user is stumped.
-     - Full completion celebration message when all words are completed.
+     - Blinking cursor and "Click or tap here to start typing…" focus hint (same pattern as Type Full).
+     - "Show Next Word" hint button reveals the current word (styled in italic teal accent) and maintains mobile keyboard focus.
+     - Full completion celebration message when all words are completed, auto-dismissing virtual keyboard.
 
 ### 4.4 Verses for Feelings View (`/verses-for-feelings` -> `src/views/VersesForFeelingsView.vue`)
 - **Header**: Title "Scripture for Every Season", subtitle.
