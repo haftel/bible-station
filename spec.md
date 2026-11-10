@@ -197,7 +197,7 @@ graph TD
      - **Error correction**: incorrect characters are shown in red; typing the correct letter replaces the wrong one in-place (no Backspace required, though Backspace is also supported).
      - Blinking cursor indicator (`|`) at the current typing position when the box is focused.
      - "Click or tap here to start typing…" overlay hint when the box is unfocused and no characters have been typed.
-     - Full completion celebration message when 100% typed correctly, auto-dismissing virtual keyboard.
+     - Full completion celebration message ("Perfect! You typed the verse perfectly.") when 100% typed correctly, auto-dismissing virtual keyboard.
   6. **Type First Letters Mode**:
      - Memory-only word-level first-letter typing challenge: user types only the first letter of each word.
      - Inline keystroke capture on the display box with physical and mobile virtual keyboard support.
@@ -205,7 +205,7 @@ graph TD
      - Incorrect letter flashes red (400ms) without revealing the correct letter; word resets to pending.
      - Blinking cursor and "Click or tap here to start typing…" focus hint (same pattern as Type Full).
      - "Show Next Word" hint button reveals the current word (styled in italic teal accent) and maintains mobile keyboard focus.
-     - Full completion celebration message when all words are completed, auto-dismissing virtual keyboard.
+     - Full completion celebration message ("Perfect! You completed the verse!") when all words are completed, auto-dismissing virtual keyboard.
 
 ### 4.4 Verses for Feelings View (`/verses-for-feelings` -> `src/views/VersesForFeelingsView.vue`)
 - **Header**: Title "Scripture for Every Season", subtitle.

@@ -438,7 +438,7 @@
 
           <div class="text-center mt-4">
             <p v-if="typeCompleted" class="feedback-message text-success fade-in">
-              🎉 Perfect! You typed the verse perfectly.
+              Perfect! You typed the verse perfectly.
             </p>
             <button
               v-if="typedChars.length > 0"
@@ -511,7 +511,7 @@
 
           <div class="text-center mt-4">
             <p v-if="typeFirstCompleted" class="feedback-message text-success fade-in">
-              🎉 Perfect! You completed the verse!
+              Perfect! You completed the verse!
             </p>
             <button
               v-if="typeFirstCurrentIndex > 0"
