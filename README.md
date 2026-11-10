@@ -19,6 +19,12 @@ Live Site: [https://biblestation.org](https://biblestation.org)
   5. **Type Full Mode**: Letter-by-letter live comparison typing engine with color-coded feedback, memory challenge toggle, and mobile virtual keyboard support.
   6. **Type First Letters Mode**: Type only the first letter of each word to reveal it with mobile software keyboard support — incorrect guesses flash red without showing the answer, with a "Show Next Word" hint button for when you're stumped.
 - **🕊️ Bible Verses for Feelings**: Comprehensive catalog of 240 modern NIV verses across **30 emotional states** grouped into **10 categories** (Uplifting and Heavy feelings), complete with dynamic color accenting and random verse generation.
+- **📱 Phone Scripture Memorizer Web App (`/phonememory`)**: Dedicated standalone mobile phone web app experience designed specifically for smartphones. Accessible exclusively via direct URL (`biblestation.org/phonememory`), it hides standard website headers and footers for a distraction-free full viewport, featuring:
+  - Sticky mobile app bar with safe-area insets, reference badge, and instant "Change" trigger.
+  - Ergonomic slide-up bottom sheet drawer with 1-tap quick verse chips (`John 3:16`, `Phil 4:6-7`, `Romans 8:28`, `Psalm 23:1`, etc.), translation selection, and custom text pasting.
+  - Thumb-friendly horizontal mode switcher for all 6 memory modes (Vanish, Blanks, Scramble, 1st Letter, Type Full, Type 1st).
+  - Touch-optimized interaction design (16px inputs to prevent iOS browser zoom, 44px+ touch targets, seamless mobile virtual keyboard typing, and celebration dismiss).
+  - Local storage persistence to automatically save and restore the last practiced verse across visits.
 
 ---
 
@@ -50,6 +56,8 @@ bible-station/
 │   ├── components/
 │   │   ├── Navbar.vue            # Responsive global top navigation bar
 │   │   └── AppFooter.vue         # Global application footer
+│   ├── composables/
+│   │   └── useScriptureMemory.js # Core scripture engine & 6 memory game state machines
 │   ├── data/
 │   │   ├── devotionalsData.js    # Devotional articles data
 │   │   └── feelingsData.js       # 30 feelings categories and 240 modern NIV scripture texts
@@ -59,6 +67,7 @@ bible-station/
 │   │   ├── HomeView.vue          # Landing page & hero
 │   │   ├── DevotionalsView.vue   # Devotionals feed
 │   │   ├── MemoryView.vue        # 6-mode interactive scripture memorizer
+│   │   ├── PhoneMemoryView.vue   # Dedicated phone web app scripture memorizer (/phonememory)
 │   │   └── VersesForFeelingsView.vue # Categorized verses by emotion
 │   ├── App.vue                   # Root application component
 │   └── main.js                   # Application entrypoint

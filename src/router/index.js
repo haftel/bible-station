@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import DevotionalsView from '@/views/DevotionalsView.vue'
 import MemoryView from '@/views/MemoryView.vue'
+import PhoneMemoryView from '@/views/PhoneMemoryView.vue'
 import VersesForFeelingsView from '@/views/VersesForFeelingsView.vue'
 
 const routes = [
@@ -22,6 +23,16 @@ const routes = [
     name: 'Memory',
     component: MemoryView,
     meta: { title: 'Scripture Memorizer - Bible Station' }
+  },
+  {
+    path: '/phonememory',
+    alias: '/phone-memory',
+    name: 'PhoneMemory',
+    component: PhoneMemoryView,
+    meta: {
+      title: 'Scripture Memorizer - Phone App',
+      isPhoneApp: true
+    }
   },
   {
     path: '/verses-for-feelings',
