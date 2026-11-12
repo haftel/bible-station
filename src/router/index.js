@@ -5,6 +5,12 @@ import MemoryView from '@/views/MemoryView.vue'
 import PhoneMemoryView from '@/views/PhoneMemoryView.vue'
 import VersesForFeelingsView from '@/views/VersesForFeelingsView.vue'
 
+const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false
+  const uaMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '')
+  return uaMobile || window.innerWidth <= 767
+}
+
 const routes = [
   {
     path: '/',
@@ -22,17 +28,29 @@ const routes = [
     path: '/memory',
     name: 'Memory',
     component: MemoryView,
-    meta: { title: 'Scripture Memorizer - Bible Station' }
+    meta: { title: 'Scripture Memorizer - Bible Station' },
+    beforeEnter: () => {
+      if (isMobileDevice()) {
+        return { path: '/memory/mobile', replace: true }
+      }
+    }
+  },
+  {
+    path: '/memory/mobile',
+    name: 'MobileMemory',
+    component: PhoneMemoryView,
+    meta: {
+      title: 'Scripture Memorizer - Mobile',
+      isPhoneApp: true
+    }
   },
   {
     path: '/phonememory',
-    alias: '/phone-memory',
-    name: 'PhoneMemory',
-    component: PhoneMemoryView,
-    meta: {
-      title: 'Scripture Memorizer - Phone App',
-      isPhoneApp: true
-    }
+    redirect: '/memory/mobile'
+  },
+  {
+    path: '/phone-memory',
+    redirect: '/memory/mobile'
   },
   {
     path: '/verses-for-feelings',

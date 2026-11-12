@@ -138,6 +138,274 @@ export const cleanBollsVerseText = (rawText) => {
 
 export const cleanString = (str) => str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
 
+// ==================== WORD CHOICE DISTRACTOR BANK ====================
+// Fine-grained grammatical word bank so every option fits the slot's
+// part of speech, tense, number, case, capitalization, and punctuation.
+
+const DISTRACTOR_BANK = {
+  // Articles & Determiners
+  articles: ['the', 'a', 'an', 'this', 'that', 'every', 'each', 'some', 'any', 'no', 'all', 'one'],
+
+  // Pronouns by grammatical case
+  subjectPronouns: ['I', 'you', 'he', 'she', 'it', 'we', 'they', 'who'],
+  objectPronouns: ['me', 'you', 'him', 'her', 'it', 'us', 'them', 'whom'],
+  possessivePronouns: ['my', 'your', 'his', 'her', 'its', 'our', 'their', 'whose'],
+  reflexivePronouns: ['myself', 'yourself', 'himself', 'herself', 'itself', 'ourselves', 'themselves'],
+
+  // Prepositions
+  prepositions: ['in', 'on', 'at', 'to', 'for', 'with', 'by', 'from', 'of',
+    'into', 'through', 'before', 'after', 'above', 'below', 'between',
+    'under', 'over', 'upon', 'among', 'against', 'within', 'without', 'toward', 'beyond', 'beside'],
+
+  // Conjunctions
+  coordinatingConj: ['and', 'but', 'or', 'nor', 'yet', 'so', 'for'],
+  subordinatingConj: ['because', 'although', 'while', 'when', 'if', 'unless', 'until', 'since', 'though', 'whether', 'that', 'as'],
+
+  // Verbs split by tense & form
+  beVerbsPresent: ['am', 'is', 'are', 'be', 'being', 'been'],
+  beVerbsPast: ['was', 'were', 'became', 'remained', 'stood', 'seemed'],
+  modalVerbs: ['will', 'would', 'shall', 'should', 'may', 'might', 'can', 'could', 'must'],
+
+  verbsBase: ['give', 'love', 'know', 'see', 'make', 'come', 'go', 'say', 'take', 'find',
+    'tell', 'hear', 'keep', 'bring', 'trust', 'pray', 'seek', 'follow', 'believe', 'praise',
+    'forgive', 'serve', 'bless', 'fear', 'walk', 'stand', 'call', 'send', 'lead', 'save',
+    'heal', 'teach', 'guide', 'guard', 'deliver', 'comfort', 'strengthen', 'provide', 'protect',
+    'redeem', 'restore', 'declare', 'receive', 'overcome', 'have', 'do', 'live', 'rejoice'],
+
+  verbs3rdSing: ['gives', 'loves', 'knows', 'sees', 'makes', 'comes', 'goes', 'says', 'takes', 'finds',
+    'tells', 'hears', 'keeps', 'brings', 'trusts', 'prays', 'seeks', 'follows', 'believes', 'praises',
+    'forgives', 'serves', 'blesses', 'fears', 'walks', 'stands', 'calls', 'sends', 'leads', 'saves',
+    'heals', 'teaches', 'guides', 'guards', 'delivers', 'comforts', 'strengthens', 'provides', 'protects',
+    'redeems', 'restores', 'declares', 'receives', 'overcomes', 'has', 'does', 'lives', 'rejoices'],
+
+  verbsPast: ['gave', 'loved', 'knew', 'saw', 'made', 'came', 'went', 'said', 'took', 'found',
+    'told', 'heard', 'kept', 'brought', 'trusted', 'prayed', 'sought', 'followed', 'believed', 'praised',
+    'forgave', 'served', 'blessed', 'feared', 'walked', 'stood', 'called', 'sent', 'led', 'saved',
+    'healed', 'taught', 'guided', 'guarded', 'delivered', 'comforted', 'strengthened', 'provided', 'protected',
+    'redeemed', 'restored', 'declared', 'received', 'overcame', 'had', 'did', 'lived', 'created'],
+
+  verbsGerund: ['giving', 'loving', 'knowing', 'seeing', 'making', 'coming', 'going', 'saying',
+    'keeping', 'seeking', 'trusting', 'praising', 'forgiving', 'serving', 'blessing', 'walking',
+    'standing', 'calling', 'sending', 'leading', 'saving', 'healing', 'teaching', 'guiding',
+    'living', 'believing', 'rejoicing', 'praying', 'waiting', 'hoping'],
+
+  // Nouns split by proper / singular / plural
+  properNouns: ['God', 'Lord', 'Jesus', 'Christ', 'Spirit', 'Father', 'Son',
+    'Almighty', 'Savior', 'Messiah', 'Creator', 'Redeemer', 'Shepherd'],
+
+  singularNouns: ['word', 'name', 'heart', 'soul', 'spirit', 'mind', 'body',
+    'love', 'grace', 'mercy', 'faith', 'hope', 'peace', 'joy', 'truth',
+    'life', 'death', 'light', 'darkness', 'glory', 'power', 'strength',
+    'heaven', 'earth', 'world', 'kingdom', 'people', 'man', 'woman',
+    'sin', 'righteousness', 'salvation', 'wisdom', 'knowledge', 'understanding',
+    'way', 'path', 'hand', 'face', 'day', 'night', 'time', 'place',
+    'son', 'servant', 'king', 'prophet', 'priest', 'angel',
+    'house', 'temple', 'city', 'land', 'water', 'bread', 'blood', 'cross',
+    'promise', 'covenant', 'blessing', 'prayer', 'worship', 'praise',
+    'law', 'scripture', 'testimony', 'creation', 'purpose', 'shepherd'],
+
+  pluralNouns: ['words', 'hearts', 'souls', 'minds', 'nations', 'peoples', 'children',
+    'servants', 'kings', 'angels', 'heavens', 'days', 'times', 'ways', 'paths',
+    'hands', 'eyes', 'ears', 'prayers', 'blessings', 'promises', 'commandments',
+    'scriptures', 'works', 'deeds', 'mercies', 'sins', 'tribes', 'generations'],
+
+  // Adjectives
+  adjectives: ['good', 'great', 'new', 'old', 'holy', 'righteous', 'faithful',
+    'true', 'just', 'pure', 'perfect', 'eternal', 'everlasting', 'mighty',
+    'blessed', 'gracious', 'merciful', 'loving', 'strong', 'gentle', 'humble',
+    'wise', 'foolish', 'wicked', 'evil', 'sinful', 'broken', 'whole',
+    'first', 'last', 'many', 'few', 'much', 'more', 'most',
+    'other', 'own', 'same', 'full', 'right', 'wrong',
+    'divine', 'sacred', 'precious', 'glorious', 'heavenly', 'abundant', 'steadfast', 'living'],
+
+  // Adverbs split into negation vs general
+  negationAdverbs: ['not', 'never', 'no'],
+  generalAdverbs: ['always', 'forever', 'also', 'even', 'still',
+    'now', 'then', 'here', 'there', 'only', 'just', 'already', 'ever',
+    'truly', 'surely', 'greatly', 'deeply', 'fully', 'freely', 'boldly',
+    'abundantly', 'faithfully', 'righteously', 'humbly', 'graciously',
+    'therefore', 'indeed', 'moreover', 'however', 'nevertheless', 'likewise']
+}
+
+// Preceding-word sets for disambiguating words like "love", "praise", "walk", "light"
+const DETERMINER_TRIGGERS = new Set(['the', 'a', 'an', 'this', 'that', 'these', 'those', 'my', 'your', 'his', 'her', 'its', 'our', 'their', 'every', 'each', 'no', 'some', 'any'])
+const SUBJECT_VERB_TRIGGERS = new Set(['i', 'you', 'we', 'they', 'who', 'will', 'would', 'shall', 'should', 'may', 'might', 'can', 'could', 'must', 'to', 'not', 'never'])
+const THIRD_SING_TRIGGERS = new Set(['he', 'she', 'it', 'god', 'lord', 'jesus', 'christ', 'spirit', 'father', 'son'])
+
+// Split a token into { prefix, core, suffix } preserving punctuation
+function splitWordPunctuation(rawWord) {
+  const match = rawWord.match(/^([^a-zA-Z0-9']*)([a-zA-Z0-9']+)([^a-zA-Z0-9']*)$/)
+  if (!match) return { prefix: '', core: rawWord, suffix: '' }
+  return { prefix: match[1], core: match[2], suffix: match[3] }
+}
+
+// Apply target word's capitalization pattern and punctuation to a candidate word
+function formatOptionLikeTarget(candidate, targetRaw, category) {
+  const { prefix, core, suffix } = splitWordPunctuation(targetRaw)
+  const candCore = splitWordPunctuation(candidate).core
+
+  let formattedCore = candCore
+  if (category === 'properNouns') {
+    // Keep proper noun capitalization (or ALL CAPS if target is ALL CAPS)
+    if (core.length > 1 && core === core.toUpperCase()) {
+      formattedCore = candCore.toUpperCase()
+    } else {
+      formattedCore = candCore.charAt(0).toUpperCase() + candCore.slice(1)
+    }
+  } else if (core.length > 1 && core === core.toUpperCase()) {
+    formattedCore = candCore.toUpperCase()
+  } else if (core[0] && core[0] === core[0].toUpperCase() && core[0] !== core[0].toLowerCase()) {
+    formattedCore = candCore.charAt(0).toUpperCase() + candCore.slice(1).toLowerCase()
+  } else if (candCore.toLowerCase() === 'i') {
+    formattedCore = 'I'
+  } else {
+    formattedCore = candCore.toLowerCase()
+  }
+
+  return `${prefix}${formattedCore}${suffix}`
+}
+
+// Context-aware grammatical classifier
+function classifyWord(rawWord, prevRawWord = '') {
+  const { core } = splitWordPunctuation(rawWord)
+  const lower = core.toLowerCase()
+  if (!lower) return 'articles'
+
+  const prevLower = splitWordPunctuation(prevRawWord).core.toLowerCase()
+
+  // Find all categories that contain this word
+  const matchingCategories = []
+  for (const [category, words] of Object.entries(DISTRACTOR_BANK)) {
+    if (words.some(w => w.toLowerCase() === lower)) {
+      matchingCategories.push(category)
+    }
+  }
+
+  if (matchingCategories.length === 1) {
+    return matchingCategories[0]
+  }
+
+  if (matchingCategories.length > 1) {
+    // Disambiguate using preceding word context
+    if (DETERMINER_TRIGGERS.has(prevLower)) {
+      if (matchingCategories.includes('adjectives')) return 'adjectives'
+      if (matchingCategories.includes('singularNouns')) return 'singularNouns'
+      if (matchingCategories.includes('pluralNouns')) return 'pluralNouns'
+    }
+    if (SUBJECT_VERB_TRIGGERS.has(prevLower)) {
+      if (matchingCategories.includes('verbsBase')) return 'verbsBase'
+      if (matchingCategories.includes('beVerbsPresent')) return 'beVerbsPresent'
+    }
+    if (THIRD_SING_TRIGGERS.has(prevLower)) {
+      if (matchingCategories.includes('verbs3rdSing')) return 'verbs3rdSing'
+      if (matchingCategories.includes('verbsPast')) return 'verbsPast'
+    }
+    // Check if capitalized mid-sentence (likely proper noun)
+    if (core[0] === core[0].toUpperCase() && matchingCategories.includes('properNouns')) {
+      return 'properNouns'
+    }
+    return matchingCategories[0]
+  }
+
+  // Suffix-based morphological fallback for words not in the bank
+  if (/(?:ly)$/i.test(lower) && lower.length > 3) return 'generalAdverbs'
+  if (/(?:ing)$/i.test(lower) && lower.length > 4) return 'verbsGerund'
+  if (/(?:ed)$/i.test(lower) && lower.length > 3) {
+    return DETERMINER_TRIGGERS.has(prevLower) ? 'adjectives' : 'verbsPast'
+  }
+  if (/(?:ness|tion|sion|ment|ity|ence|ance|dom|ship)$/i.test(lower)) return 'singularNouns'
+  if (/(?:ous|ful|less|ive|able|ible|al|ial|ent|ant|ic)$/i.test(lower)) return 'adjectives'
+  if (/(?:ize|ify|ate)$/i.test(lower) && lower.length > 4) return 'verbsBase'
+
+  // Context fallback for unknown words
+  if (SUBJECT_VERB_TRIGGERS.has(prevLower)) return 'verbsBase'
+  if (THIRD_SING_TRIGGERS.has(prevLower)) return 'verbs3rdSing'
+  if (/s$/i.test(lower) && !/ss$/i.test(lower) && lower.length > 3) {
+    return DETERMINER_TRIGGERS.has(prevLower) ? 'pluralNouns' : 'pluralNouns'
+  }
+  if (prevRawWord && core[0] === core[0].toUpperCase() && core[0] !== core[0].toLowerCase()) {
+    return 'properNouns'
+  }
+
+  return 'singularNouns'
+}
+
+// Nearby grammatical fallbacks (only grammatically compatible categories)
+const COMPATIBLE_FALLBACKS = {
+  beVerbsPresent: ['modalVerbs'],
+  beVerbsPast: ['verbsPast'],
+  verbsBase: ['modalVerbs'],
+  verbs3rdSing: ['verbsPast'],
+  verbsPast: ['verbs3rdSing'],
+  singularNouns: ['adjectives'],
+  pluralNouns: ['adjectives'],
+  adjectives: ['singularNouns'],
+  coordinatingConj: ['subordinatingConj'],
+  subordinatingConj: ['coordinatingConj'],
+  negationAdverbs: ['generalAdverbs'],
+  generalAdverbs: ['negationAdverbs']
+}
+
+// Generate 5-7 grammatically plausible word options for a given word slot
+export function generateWordOptions(correctWord, allVerseWords, wordIndex) {
+  const prevWord = wordIndex > 0 ? allVerseWords[wordIndex - 1] : ''
+  const category = classifyWord(correctWord, prevWord)
+  const correctClean = cleanString(correctWord)
+
+  const options = new Set()
+  const seenClean = new Set()
+  options.add(correctWord)
+  seenClean.add(correctClean)
+
+  const tryAddOption = (rawCandidate) => {
+    const formatted = formatOptionLikeTarget(rawCandidate, correctWord, category)
+    const candClean = cleanString(formatted)
+    if (!candClean || seenClean.has(candClean)) return false
+    options.add(formatted)
+    seenClean.add(candClean)
+    return true
+  }
+
+  // 1. Pull up to 2 distractors from other words in the verse that match the EXACT same category
+  const verseIndices = allVerseWords
+    .map((_, i) => i)
+    .filter(i => i !== wordIndex)
+    .sort(() => Math.random() - 0.5)
+
+  let verseAdded = 0
+  for (const idx of verseIndices) {
+    if (verseAdded >= 2 || options.size >= 3) break
+    const candPrev = idx > 0 ? allVerseWords[idx - 1] : ''
+    if (classifyWord(allVerseWords[idx], candPrev) === category) {
+      if (tryAddOption(allVerseWords[idx])) {
+        verseAdded++
+      }
+    }
+  }
+
+  // 2. Fill remaining slots up to 6 from the matching grammatical category in DISTRACTOR_BANK
+  const bankWords = DISTRACTOR_BANK[category] || DISTRACTOR_BANK.singularNouns
+  const shuffledBank = [...bankWords].sort(() => Math.random() - 0.5)
+  for (const bankWord of shuffledBank) {
+    if (options.size >= 6) break
+    tryAddOption(bankWord)
+  }
+
+  // 3. If a small closed class (e.g. negationAdverbs) has fewer than 5 items, use compatible fallbacks
+  if (options.size < 5) {
+    const fallbacks = COMPATIBLE_FALLBACKS[category] || []
+    for (const fbCat of fallbacks) {
+      const fbWords = [...(DISTRACTOR_BANK[fbCat] || [])].sort(() => Math.random() - 0.5)
+      for (const w of fbWords) {
+        if (options.size >= 6) break
+        tryAddOption(w)
+      }
+    }
+  }
+
+  return [...options].sort(() => Math.random() - 0.5)
+}
+
 const nivCache = {}
 
 export function useScriptureMemory() {
@@ -322,7 +590,7 @@ export function useScriptureMemory() {
   const initializeDashboard = () => {
     initVanish(0)
     initFill(0.25)
-    initScramble()
+    initWordChoice()
     initFirstLetter()
     initType()
     initTypeFirst()
@@ -435,31 +703,59 @@ export function useScriptureMemory() {
     }
   }
 
-  // ==================== 3. SCRAMBLE MODE ====================
-  const scrambleTarget = ref([])
-  const scrambleBank = ref([])
-  const scrambleExpectedIndex = ref(0)
+  // ==================== 3. WORD CHOICE MODE ====================
+  const wordChoiceSlots = ref([])
+  const wordChoiceCurrentIndex = ref(0)
 
-  const initScramble = () => {
+  const wordChoiceCompleted = computed(() => {
+    if (wordChoiceSlots.value.length === 0) return false
+    return wordChoiceSlots.value.every(s => s.status === 'correct')
+  })
+
+  const initWordChoice = () => {
     const words = currentVerse.value ? currentVerse.value.split(/\s+/) : []
-    scrambleTarget.value = words
-    scrambleBank.value = words
-      .map((word, idx) => ({ word, originalIndex: idx, used: false, error: false }))
-      .sort(() => Math.random() - 0.5)
-    scrambleExpectedIndex.value = 0
+    wordChoiceCurrentIndex.value = 0
+    wordChoiceSlots.value = words.map((word, idx) => {
+      const options = generateWordOptions(word, words, idx)
+      return {
+        word,
+        options,
+        status: 'pending', // 'pending' | 'correct' | 'error'
+        errorOption: ''
+      }
+    })
   }
 
-  const guessScramble = (item) => {
-    if (item.used) return
+  const guessWordChoice = (slotIndex, option) => {
+    const slot = wordChoiceSlots.value[slotIndex]
+    if (!slot || slot.status === 'correct') return
 
-    if (item.word === scrambleTarget.value[scrambleExpectedIndex.value]) {
-      item.used = true
-      scrambleExpectedIndex.value++
+    const optClean = cleanString(option)
+    const targetClean = cleanString(slot.word)
+
+    if (optClean === targetClean) {
+      slot.status = 'correct'
+      slot.errorOption = ''
+      // Auto-advance to next pending slot
+      const nextPending = wordChoiceSlots.value.findIndex((s, i) => i > slotIndex && s.status === 'pending')
+      if (nextPending !== -1) {
+        wordChoiceCurrentIndex.value = nextPending
+      }
     } else {
-      item.error = true
+      slot.status = 'error'
+      slot.errorOption = option
       setTimeout(() => {
-        item.error = false
-      }, 400)
+        if (slot.status === 'error') {
+          slot.status = 'pending'
+          slot.errorOption = ''
+        }
+      }, 600)
+    }
+  }
+
+  const setWordChoiceIndex = (idx) => {
+    if (idx >= 0 && idx < wordChoiceSlots.value.length && wordChoiceSlots.value[idx].status !== 'correct') {
+      wordChoiceCurrentIndex.value = idx
     }
   }
 
@@ -808,12 +1104,13 @@ export function useScriptureMemory() {
     initFill,
     checkFill,
 
-    // Mode 3: Scramble
-    scrambleTarget,
-    scrambleBank,
-    scrambleExpectedIndex,
-    initScramble,
-    guessScramble,
+    // Mode 3: Word Choice
+    wordChoiceSlots,
+    wordChoiceCurrentIndex,
+    wordChoiceCompleted,
+    initWordChoice,
+    guessWordChoice,
+    setWordChoiceIndex,
 
     // Mode 4: First Letter
     firstLetterWords,

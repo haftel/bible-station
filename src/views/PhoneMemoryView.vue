@@ -157,38 +157,58 @@
           </div>
         </section>
 
-        <!-- 3. Scramble Mode -->
-        <section v-show="currentTab === 'scramble'" class="tab-pane fade-in" aria-label="Scramble mode">
-          <p class="mode-tip">Tap the words in the correct sequential order.</p>
-          <div class="scramble-target-box">
-            <template v-for="(word, idx) in scrambleTarget" :key="idx">
-              <span v-if="idx < scrambleExpectedIndex" class="scramble-solved-word fade-in">
-                {{ word }}
-              </span>
-              <span v-else class="scramble-placeholder"></span>
-            </template>
+        <!-- 3. Word Choice Mode -->
+        <section v-show="currentTab === 'word-choice'" class="tab-pane fade-in" aria-label="Word choice mode">
+          <p class="mode-tip">Tap the correct word for each position to rebuild the verse.</p>
+
+          <!-- Verse progress display -->
+          <div class="wc-progress-box">
+            <span
+              v-for="(slot, idx) in wordChoiceSlots"
+              :key="idx"
+              class="wc-progress-word"
+              :class="{
+                'wc-solved': slot.status === 'correct',
+                'wc-active': idx === wordChoiceCurrentIndex && slot.status !== 'correct',
+                'wc-pending': slot.status === 'pending' && idx !== wordChoiceCurrentIndex
+              }"
+              @click="setWordChoiceIndex(idx)"
+            >
+              <template v-if="slot.status === 'correct'">{{ slot.word }}</template>
+              <template v-else>
+                <span class="wc-blank-indicator">{{ idx === wordChoiceCurrentIndex ? '?' : '—' }}</span>
+              </template>
+            </span>
           </div>
 
-          <div class="scramble-bank-phone">
-            <button
-              v-for="(item, idx) in scrambleBank"
-              :key="idx"
-              type="button"
-              class="scramble-chip"
-              :class="{
-                'chip-used': item.used,
-                'chip-error shake': item.error
-              }"
-              :disabled="item.used"
-              @click="guessScramble(item)"
-            >
-              {{ item.word }}
-            </button>
+          <!-- Options for current word -->
+          <div v-if="!wordChoiceCompleted && wordChoiceSlots[wordChoiceCurrentIndex]" class="wc-options-phone">
+            <p class="wc-prompt">Choose word {{ wordChoiceCurrentIndex + 1 }} of {{ wordChoiceSlots.length }}:</p>
+            <div class="wc-options-grid">
+              <button
+                v-for="(option, optIdx) in wordChoiceSlots[wordChoiceCurrentIndex].options"
+                :key="optIdx"
+                type="button"
+                class="wc-option-chip"
+                :class="{
+                  'wc-option-error shake': wordChoiceSlots[wordChoiceCurrentIndex].status === 'error' && wordChoiceSlots[wordChoiceCurrentIndex].errorOption === option
+                }"
+                @click="guessWordChoice(wordChoiceCurrentIndex, option)"
+              >
+                {{ option }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Completion -->
+          <div v-if="wordChoiceCompleted" class="victory-banner fade-in">
+            <span class="victory-icon">🎉</span>
+            <p class="victory-text">Perfect! You chose every word correctly.</p>
           </div>
 
           <div class="action-footer mt-4">
-            <button type="button" class="btn-subtle" @click="initScramble">
-              ↻ Reset Scramble
+            <button type="button" class="btn-subtle" @click="initWordChoice">
+              ↻ Reset
             </button>
           </div>
         </section>
@@ -206,70 +226,6 @@
                 {{ item.revealed ? item.original : item.masked }}
               </span>{{ ' ' }}
             </template>
-          </div>
-        </section>
-
-        <!-- 5. Type Full Verse Mode -->
-        <section v-show="currentTab === 'type'" class="tab-pane fade-in" aria-label="Type full verse mode">
-          <div class="type-controls-phone">
-            <button type="button" class="btn-subtle-sm" @click="toggleTypeModePhone">
-              {{ typeMode === 'show' ? 'Hide Verse (Memory)' : 'Show Verse (Learn)' }}
-            </button>
-            <button
-              v-if="typedChars.length > 0"
-              type="button"
-              class="btn-subtle-sm"
-              @click="resetTypePhone"
-            >
-              ↻ Reset
-            </button>
-          </div>
-          <p class="mode-tip">Tap the box and type on your keyboard. Punctuation is skipped!</p>
-
-          <!-- Inline Touch-Focused Typing Box -->
-          <div
-            ref="phoneTypeBoxRef"
-            class="type-box-phone"
-            tabindex="0"
-            @click="focusPhoneTypeBox"
-            @focus="focusPhoneTypeBox"
-            @blur="handleTypeBlurPhone"
-          >
-            <!-- Native invisible input for mobile keyboards -->
-            <input
-              ref="phoneTypeInputRef"
-              type="text"
-              class="invisible-input"
-              autocapitalize="none"
-              autocomplete="off"
-              autocorrect="off"
-              spellcheck="false"
-              inputmode="text"
-              aria-label="Type verse text"
-              :disabled="typeCompleted"
-              @input="handleTypeInput"
-              @keydown="handleTypeKeydown"
-              @focus="typeBoxFocused = true"
-              @blur="typeBoxFocused = false"
-            />
-            <span
-              v-for="(charObj, idx) in typeDisplayCharacters"
-              :key="idx"
-              :class="charObj.cssClass"
-            >{{ charObj.char }}</span>
-            <span v-if="!typeCompleted && typeBoxFocused" class="cursor-blink">|</span>
-            <div
-              v-if="!typeBoxFocused && !typeCompleted && typedChars.length === 0"
-              class="type-hint-overlay"
-              @click.stop="focusPhoneTypeBox"
-            >
-              Tap here to open keyboard and start typing…
-            </div>
-          </div>
-
-          <div v-if="typeCompleted" class="victory-banner fade-in">
-            <span class="victory-icon">🎉</span>
-            <p class="victory-text">Perfect! You typed the verse from memory.</p>
           </div>
         </section>
 
@@ -404,22 +360,6 @@
               </button>
             </div>
 
-            <!-- Quick Popular Verses Chips -->
-            <div v-if="inputMode === 'translation'" class="quick-chips-section">
-              <span class="quick-chips-label">Popular Verses:</span>
-              <div class="quick-chips-scroll">
-                <button
-                  v-for="chip in popularVerses"
-                  :key="chip"
-                  type="button"
-                  class="quick-verse-chip"
-                  @click="selectQuickVerse(chip)"
-                >
-                  {{ chip }}
-                </button>
-              </div>
-            </div>
-
             <!-- Translation Form -->
             <form v-if="inputMode === 'translation'" @submit.prevent="submitVerseSheet">
               <div class="sheet-field">
@@ -543,28 +483,18 @@ const {
   initFill,
   checkFill,
 
-  // Mode 3: Scramble
-  scrambleTarget,
-  scrambleBank,
-  scrambleExpectedIndex,
-  initScramble,
-  guessScramble,
+  // Mode 3: Word Choice
+  wordChoiceSlots,
+  wordChoiceCurrentIndex,
+  wordChoiceCompleted,
+  initWordChoice,
+  guessWordChoice,
+  setWordChoiceIndex,
 
   // Mode 4: First Letter
   firstLetterWords,
   initFirstLetter,
   toggleFirstLetterReveal,
-
-  // Mode 5: Type Full
-  typeMode,
-  typedChars,
-  typeBoxFocused,
-  typeDisplayCharacters,
-  typeCompleted,
-  initType,
-  toggleTypeMode,
-  handleTypeKeydown,
-  handleTypeInput,
 
   // Mode 6: Type First Letters
   typeFirstBoxFocused,
@@ -581,22 +511,9 @@ const {
 const tabs = [
   { id: 'vanish', label: 'Vanish' },
   { id: 'fill', label: 'Blanks' },
-  { id: 'scramble', label: 'Scramble' },
+  { id: 'word-choice', label: 'Word Choice' },
   { id: 'first-letter', label: '1st Letter' },
-  { id: 'type', label: 'Type Full' },
   { id: 'type-first', label: 'Type 1st' }
-]
-
-// Quick Popular Verses for 1-Tap Loading on Phone
-const popularVerses = [
-  'John 3:16',
-  'Philippians 4:6-7',
-  'Romans 8:28',
-  'Psalm 23:1-3',
-  'Proverbs 3:5-6',
-  'Matthew 6:33',
-  'Joshua 1:9',
-  '2 Timothy 1:7'
 ]
 
 // Bottom Sheet State
@@ -610,11 +527,6 @@ const openVerseSheet = () => {
 
 const closeVerseSheet = () => {
   isSheetOpen.value = false
-}
-
-const selectQuickVerse = async (refText) => {
-  referenceInput.value = refText
-  await submitVerseSheet()
 }
 
 const submitVerseSheet = async () => {
@@ -661,35 +573,8 @@ const loadFromStorage = () => {
 }
 
 // Typing References
-const phoneTypeBoxRef = ref(null)
-const phoneTypeInputRef = ref(null)
 const phoneTypeFirstBoxRef = ref(null)
 const phoneTypeFirstInputRef = ref(null)
-
-const focusPhoneTypeBox = () => {
-  typeBoxFocused.value = true
-  phoneTypeInputRef.value?.focus()
-}
-
-const handleTypeBlurPhone = (e) => {
-  if (e.relatedTarget !== phoneTypeInputRef.value && e.relatedTarget !== phoneTypeBoxRef.value) {
-    typeBoxFocused.value = false
-  }
-}
-
-const toggleTypeModePhone = () => {
-  toggleTypeMode()
-  nextTick(() => {
-    focusPhoneTypeBox()
-  })
-}
-
-const resetTypePhone = () => {
-  initType()
-  nextTick(() => {
-    focusPhoneTypeBox()
-  })
-}
 
 const focusPhoneTypeFirstBox = () => {
   typeFirstBoxFocused.value = true
@@ -718,12 +603,7 @@ const resetTypeFirstPhone = () => {
 
 const switchTab = (tabId) => {
   currentTab.value = tabId
-  if (tabId === 'type') {
-    initType()
-    nextTick(() => {
-      focusPhoneTypeBox()
-    })
-  } else if (tabId === 'type-first') {
+  if (tabId === 'type-first') {
     initTypeFirst()
     nextTick(() => {
       focusPhoneTypeFirstBox()
@@ -732,13 +612,6 @@ const switchTab = (tabId) => {
 }
 
 // Auto-blur invisible input on completion so celebration is visible
-watch(typeCompleted, (isComplete) => {
-  if (isComplete) {
-    phoneTypeInputRef.value?.blur()
-    typeBoxFocused.value = false
-  }
-})
-
 watch(typeFirstCompleted, (isComplete) => {
   if (isComplete) {
     phoneTypeFirstInputRef.value?.blur()
@@ -1100,44 +973,77 @@ onMounted(async () => {
   color: var(--error-color, #991b1b) !important;
 }
 
-/* Mode 3: Scramble */
-.scramble-target-box {
+/* Mode 3: Word Choice */
+.wc-progress-box {
   background: var(--bg-color, #f7f5f0);
-  border: 1px dashed var(--border-color, #e8e4de);
+  border: 1px solid var(--border-color, #e8e4de);
   border-radius: var(--radius-md, 12px);
   padding: 0.85rem;
-  min-height: 80px;
+  min-height: 60px;
   font-family: var(--scripture-font, Georgia, serif);
-  font-size: 1.15rem;
-  line-height: 1.8;
+  font-size: 1.1rem;
+  line-height: 1.9;
   margin-bottom: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
 }
 
-.scramble-solved-word {
-  color: var(--text-main, #2c2c2c);
-  font-weight: 500;
-  margin-right: 0.35rem;
-}
-
-.scramble-placeholder {
+.wc-progress-word {
   display: inline-block;
-  width: 24px;
-  height: 2px;
-  background: #c5bebe;
-  vertical-align: middle;
-  margin: 0 0.25rem;
+  cursor: pointer;
+  padding: 0.15rem 0.25rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.scramble-bank-phone {
+.wc-solved {
+  color: var(--success-color, #166534);
+  font-weight: 600;
+}
+
+.wc-active {
+  background-color: rgba(61, 107, 110, 0.15);
+  border: 1.5px solid var(--accent-color, #3d6b6e);
+  color: var(--accent-color, #3d6b6e);
+  font-weight: 600;
+}
+
+.wc-pending {
+  color: var(--text-light, #6b6560);
+}
+
+.wc-blank-indicator {
+  font-weight: 700;
+  font-size: 0.95em;
+}
+
+.wc-options-phone {
+  margin-top: 0.5rem;
+}
+
+.wc-prompt {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-light, #6b6560);
+  margin: 0 0 0.65rem;
+  text-align: center;
+}
+
+.wc-options-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  justify-content: center;
 }
 
-.scramble-chip {
-  padding: 0.55rem 0.95rem;
+.wc-option-chip {
+  padding: 0.6rem 1.1rem;
   background: #ffffff;
-  border: 1px solid var(--border-color, #e8e4de);
+  border: 1.5px solid var(--border-color, #e8e4de);
   border-radius: var(--radius-full, 9999px);
   font-family: var(--scripture-font, Georgia, serif);
   font-size: 1.05rem;
@@ -1145,19 +1051,18 @@ onMounted(async () => {
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: all 0.15s ease;
-  min-height: 42px;
+  min-height: 44px;
 }
 
-.scramble-chip:active {
+.wc-option-chip:active {
   transform: scale(0.95);
   background-color: var(--disclaimer-bg, #f0ece4);
 }
 
-.chip-used {
-  opacity: 0.25;
-  pointer-events: none;
-  background-color: #f3f3f3;
-  border-color: #e0e0e0;
+.wc-option-error {
+  border-color: var(--error-color, #991b1b) !important;
+  background-color: var(--error-bg, #fee2e2) !important;
+  color: var(--error-color, #991b1b) !important;
 }
 
 .chip-error {
@@ -1495,45 +1400,6 @@ onMounted(async () => {
   background: #ffffff;
   color: var(--accent-color, #3d6b6e);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-}
-
-.quick-chips-section {
-  margin-bottom: 1rem;
-}
-
-.quick-chips-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-light, #6b6560);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.35rem;
-}
-
-.quick-chips-scroll {
-  display: flex;
-  gap: 0.4rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding-bottom: 0.35rem;
-}
-
-.quick-chips-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.quick-verse-chip {
-  padding: 0.4rem 0.75rem;
-  background: var(--bg-color, #f7f5f0);
-  border: 1px solid var(--border-color, #e8e4de);
-  border-radius: var(--radius-full, 9999px);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--accent-color, #3d6b6e);
-  white-space: nowrap;
-  cursor: pointer;
 }
 
 .sheet-field {

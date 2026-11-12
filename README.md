@@ -14,15 +14,15 @@ Live Site: [https://biblestation.org](https://biblestation.org)
 - **🧠 Scripture Memory Tool**: Interactive scripture memorization suite with whole chapter and single verse/range support (e.g., `1 John 1`, `Psalm 23`, `John 3:16`), a dedicated segmented mode switcher separating **Bible Translation** lookup from **Paste Custom Text** for maximum discoverability, and searchable translation selector (instant search by full name or abbreviation e.g. NASB, KJV with helper actions for unlisted translations). Automated clean text fetching (no verse numbers or section headings) for **New International Version (NIV, default)**, **New International Version (NIV - 1984)**, and **New American Standard Bible (NASB - 1995)**, alongside ESV, CSB, NKJV, NLT, NET, AMP, WEB, KJV, BBE, ASV and Custom text paste, offering a responsive practice mode switcher (desktop tabs and mobile dropdown) and 6 distinct practice modes:
   1. **Vanish Mode**: Eraser slider (0% to 100%) with interactive click-to-reveal word blanks.
   2. **Fill in the Blanks**: Customizable blank percentage (25% to 100%) with automated answer validation and visual feedback.
-  3. **Scramble Mode**: Word bank with randomly shuffled word buttons to reconstruct verses sequentially.
+  3. **Word Choice Mode**: Contextual multiple-choice challenge where each word slot presents 5–7 grammatically matched options (matching part of speech, verb tense/form, pronoun case, noun number, capitalization, and punctuation) to rebuild the verse sequentially.
   4. **First Letter Mode**: Displays initial letters with word length placeholders and hover tooltip cheats.
   5. **Type Full Mode**: Letter-by-letter live comparison typing engine with color-coded feedback, memory challenge toggle, and mobile virtual keyboard support.
   6. **Type First Letters Mode**: Type only the first letter of each word to reveal it with mobile software keyboard support — incorrect guesses flash red without showing the answer, with a "Show Next Word" hint button for when you're stumped.
 - **🕊️ Bible Verses for Feelings**: Comprehensive catalog of 240 modern NIV verses across **30 emotional states** grouped into **10 categories** (Uplifting and Heavy feelings), complete with dynamic color accenting and random verse generation.
-- **📱 Phone Scripture Memorizer Web App (`/phonememory`)**: Dedicated standalone mobile phone web app experience designed specifically for smartphones. Accessible exclusively via direct URL (`biblestation.org/phonememory`), it hides standard website headers and footers for a distraction-free full viewport, featuring:
+- **📱 Mobile Scripture Memorizer Web App (`/memory/mobile`)**: Dedicated standalone mobile phone web app experience designed specifically for smartphones. Accessible via direct URL (`biblestation.org/memory/mobile`, with `/phonememory` and mobile visits to `/memory` automatically redirecting there) or via the mobile-friendly link on `/memory`, it hides standard website headers and footers for a distraction-free full viewport, featuring:
   - Sticky mobile app bar with safe-area insets, reference badge, and instant "Change" trigger.
-  - Ergonomic slide-up bottom sheet drawer with 1-tap quick verse chips (`John 3:16`, `Phil 4:6-7`, `Romans 8:28`, `Psalm 23:1`, etc.), translation selection, and custom text pasting.
-  - Thumb-friendly horizontal mode switcher for all 6 memory modes (Vanish, Blanks, Scramble, 1st Letter, Type Full, Type 1st).
+  - Ergonomic slide-up bottom sheet drawer with translation selection, reference lookup, and custom text pasting.
+  - Thumb-friendly horizontal mode switcher for 5 memory modes (Vanish, Blanks, Word Choice, 1st Letter, Type 1st).
   - Touch-optimized interaction design (16px inputs to prevent iOS browser zoom, 44px+ touch targets, seamless mobile virtual keyboard typing, and celebration dismiss).
   - Local storage persistence to automatically save and restore the last practiced verse across visits.
 
@@ -67,7 +67,7 @@ bible-station/
 │   │   ├── HomeView.vue          # Landing page & hero
 │   │   ├── DevotionalsView.vue   # Devotionals feed
 │   │   ├── MemoryView.vue        # 6-mode interactive scripture memorizer
-│   │   ├── PhoneMemoryView.vue   # Dedicated phone web app scripture memorizer (/phonememory)
+│   │   ├── PhoneMemoryView.vue   # Dedicated mobile web app scripture memorizer (/memory/mobile)
 │   │   └── VersesForFeelingsView.vue # Categorized verses by emotion
 │   ├── App.vue                   # Root application component
 │   └── main.js                   # Application entrypoint

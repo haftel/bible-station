@@ -11,14 +11,14 @@ Bible Station is a single-page application (SPA) built using **Vue 3** and **Vit
 ```mermaid
 graph TD
     App["App.vue (Global Layout)"]
-    App --> Nav["Navbar.vue (Hidden on /phonememory)"]
+    App --> Nav["Navbar.vue (Hidden on /memory/mobile)"]
     App --> RouterView["<router-view />"]
-    App --> Footer["AppFooter.vue (Hidden on /phonememory)"]
+    App --> Footer["AppFooter.vue (Hidden on /memory/mobile)"]
     
     RouterView --> Home["HomeView.vue (/)"]
     RouterView --> Devotionals["DevotionalsView.vue (/devotionals)"]
     RouterView --> Memory["MemoryView.vue (/memory)"]
-    RouterView --> PhoneMemory["PhoneMemoryView.vue (/phonememory)"]
+    RouterView --> PhoneMemory["PhoneMemoryView.vue (/memory/mobile)"]
     RouterView --> Feelings["VersesForFeelingsView.vue (/verses-for-feelings)"]
     
     Devotionals -.-> DevData["src/data/devotionalsData.js"]
@@ -31,7 +31,7 @@ graph TD
 ### Key Technical Specs
 - **Framework**: Vue 3 (Composition API / Single File Components `<script setup>`)
 - **Build Tool**: Vite
-- **Routing**: Vue Router 4 using HTML5 Web History (`createWebHistory(import.meta.env.BASE_URL)`). Clean direct URLs without hashtags (`/devotionals`, `/memory`, `/verses-for-feelings`, `/phonememory`).
+- **Routing**: Vue Router 4 using HTML5 Web History (`createWebHistory(import.meta.env.BASE_URL)`). Clean direct URLs without hashtags (`/devotionals`, `/memory`, `/memory/mobile`, `/verses-for-feelings`), with `/phonememory` and `/phone-memory` redirecting to `/memory/mobile`, and `/memory` automatically redirecting mobile devices (by user agent or viewport ≤ 767px) to `/memory/mobile`.
 - **GitHub Pages Fallback**: Single-Page Application redirect via `public/404.html` and `index.html` to support direct deep linking and page reloads on static GitHub Pages hosting.
 - **Styling**: Vanilla CSS utilizing CSS Custom Properties (Design Tokens), zero heavy CSS frameworks. Google Fonts `Inter` and `Playfair Display` for typography.
 
@@ -74,7 +74,7 @@ graph TD
 ## 3. Global Navigation & Layout
 
 ### 3.1 Navigation Bar (`src/components/Navbar.vue`)
-- Positioned persistently at the top of standard site views (hidden automatically on `/phonememory` to provide a dedicated standalone phone web app experience).
+- Positioned persistently at the top of standard site views (hidden automatically on `/memory/mobile` to provide a dedicated standalone mobile web app experience).
 - **Glass-morphism**: Semi-transparent warm-tinted background (`rgba(247, 245, 240, 0.85)`) with `backdrop-filter: blur(12px)` for frosted-glass effect.
 - **Brand Logo**: Inline SVG open-bible icon (black outline, `--accent-color` stroke) next to the brand title.
 - **Brand Title**: "Bible Station" in `Playfair Display` serif, linking to `/`.
@@ -84,12 +84,12 @@ graph TD
   2. `Scripture Memory Tool` (`/memory`)
   3. `Bible Verses for Feelings` (`/verses-for-feelings`)
   4. `Devotionals` (`/devotionals`)
-- **Direct-Only Link Exclusion**: By design, no link to `/phonememory` exists in the navigation bar; it is strictly accessible by direct URL.
+- **Mobile Route Linking**: No link to `/memory/mobile` exists in the global navigation bar; it is linked from the `/memory` page ("Using a mobile device? Switch to our mobile-friendly page!") and accessible by direct URL.
 - **Active Route Highlighting**: Active link indicated with pill-shaped highlight (`--radius-full`), `--accent-color` text, and `--disclaimer-bg` background.
 - **Mobile Responsiveness**: Clean mobile drawer/toggle for viewports under `768px` with glass-morphism backdrop.
 
 ### 3.2 Footer (`src/components/AppFooter.vue`)
-- Positioned at the bottom of the page content on standard site views (hidden on `/phonememory`).
+- Positioned at the bottom of the page content on standard site views (hidden on `/memory/mobile`).
 - Displays copyright notice: `© 2026 Bible Station. All Rights Reserved.`
 
 ---
@@ -184,11 +184,12 @@ graph TD
      - Toolbar buttons: `25%`, `50%`, `75%`, `100%`.
      - Replaces selected words with inline text inputs.
      - "Check Answers" button: Compares sanitized strings (`cleanString`), turns correct words green, shakes and turns incorrect words red, displays status feedback message.
-  3. **Scramble Mode**:
-     - Word bank with randomly shuffled buttons.
-     - Blank underline targets for each word in the verse.
-     - User clicks buttons in correct sequential order; correct clicks advance target, incorrect clicks trigger red shake feedback.
-     - "Reset Scramble" button restarts the challenge.
+  3. **Word Choice Mode**:
+     - Verse progress display showing solved words in green and pending word slots (`—` or `?` for the active slot); clicking any pending slot jumps to it.
+     - For the active word slot, displays 5–7 grammatically matched option buttons generated via `generateWordOptions()` using fine-grained grammatical categories (pronoun case, verb tense/form, proper/singular/plural nouns, coordinating/subordinating conjunctions, adjectives, negation/general adverbs), preceding-word context disambiguation, punctuation/capitalization matching, and same-category words from the verse.
+     - Selecting the correct word fills the slot and auto-advances to the next pending slot; selecting an incorrect word triggers red shake feedback.
+     - Displays completion message ("Perfect! You chose every word correctly.") when all slots are solved.
+     - "Reset Word Choice" button restarts the challenge.
   4. **First Letter Mode**:
      - Displays the first alphanumeric character of each word, replacing remaining characters with `_`.
      - Clicking/tapping a word toggles inline reveal of the full word (works on both desktop and mobile).
@@ -235,8 +236,8 @@ graph TD
     10. *Self-Worth & Isolation*: Lonely, Insecure, Guilty
 - **Data Source**: `src/data/feelingsData.js` containing 30 emotion keys, each with at least 8 verified modern NIV (2011) scriptures.
 
-### 4.5 Phone Scripture Memorizer Web App (`/phonememory` -> `src/views/PhoneMemoryView.vue`)
-- **Direct-Only Link Route**: Accessible strictly via direct URL (`biblestation.org/phonememory` or `/phonememory`), with zero links in `Navbar.vue`, `AppFooter.vue`, or `HomeView.vue`.
+### 4.5 Mobile Scripture Memorizer Web App (`/memory/mobile` -> `src/views/PhoneMemoryView.vue`)
+- **Mobile Route & Redirects**: Accessible at `biblestation.org/memory/mobile` (or `/memory/mobile`), linked from the mobile callout banner on `/memory` ("Using a mobile device? Switch to our mobile-friendly page!"). Visiting `/memory` on a mobile device automatically redirects to `/memory/mobile`, and legacy `/phonememory` and `/phone-memory` routes redirect to `/memory/mobile`.
 - **Standalone App Experience**:
   - Global `Navbar` and `AppFooter` are conditionally hidden (`v-if="!route.meta.isPhoneApp"`), dedicating 100% of the mobile viewport (`min-height: 100dvh`) to scripture memorization.
   - Safe-area insets (`env(safe-area-inset-top)` and `env(safe-area-inset-bottom)`) integrated into layout padding for edge-to-edge mobile devices.
@@ -246,22 +247,20 @@ graph TD
   - Interactive active-verse badge displaying current reference and translation pill (e.g. `John 3:16 · NIV`). Tapping opens the verse bottom sheet.
   - "Change" pill button (`.change-verse-btn`) providing immediate access to the verse picker.
 - **Thumb-Friendly Horizontal Mode Switcher**:
-  - Horizontally scrollable strip (`.mode-nav`) featuring all 6 modes (`Vanish`, `Blanks`, `Scramble`, `1st Letter`, `Type Full`, `Type 1st`).
+  - Horizontally scrollable strip (`.mode-nav`) featuring 5 modes (`Vanish`, `Blanks`, `Word Choice`, `1st Letter`, `Type 1st`). ("Type Full" is intentionally omitted from the mobile view.)
   - Active pill highlighting in primary Warm Teal (`#3d6b6e`), full pill radius, and smooth tactile feedback.
 - **Ergonomic Bottom Sheet Verse Drawer**:
   - Triggered by tapping "Change" or the verse reference tag.
   - Modal sheet animated from the screen bottom (`transform: translateY`) with backdrop blur and grab handle.
-  - **Quick Popular Verses Section**: Horizontal 1-tap chip selector for instant practice (`John 3:16`, `Philippians 4:6-7`, `Romans 8:28`, `Psalm 23:1-3`, `Proverbs 3:5-6`, `Matthew 6:33`, `Joshua 1:9`, `2 Timothy 1:7`).
   - **Mode Toggle**: Seamlessly switch between "Bible Translation" (reference lookup + translation picker) and "Paste Custom Text" (title + custom textarea).
   - Automatically loads and closes on submission with inline validation banners.
 - **Calibrated Phone Touch Practice Modes**:
-  - 100% behavioral parity with desktop `/memory`, powered by shared composable `src/composables/useScriptureMemory.js`:
+  - Powered by shared composable `src/composables/useScriptureMemory.js`:
     1. **Vanish**: Large touch-friendly percentage pills (`0%`, `25%`, `50%`, `75%`, `100%`), 1.15rem Georgia serif typography, tap-to-reveal word interaction.
     2. **Fill in the Blanks**: Percentage selectors, 16px text input fields to prevent mobile browser auto-zoom, and instant "Check Answers" validation.
-    3. **Scramble**: Target solved line, large scrambled word chips with 42px+ touch targets and active scale states, error shake feedback, and reset control.
+    3. **Word Choice**: Verse progress display with tappable slots, 5–7 plausible word option chips per slot with 44px+ touch targets and active scale states, error shake feedback, victory banner, and reset control.
     4. **First Letter**: Masked scripture hints with relaxed letter spacing, tap to toggle word peek.
-    5. **Type Full**: Inline display box with native invisible input overlay (`.invisible-input`) for automatic virtual keyboard invocation, blinking cursor, memory toggle, and auto-dismiss keyboard on completion.
-    6. **Type First Letters**: Word-level first-letter challenge with "Show Next Word" hint button, error flash, and completion victory banner.
+    5. **Type First Letters**: Word-level first-letter challenge with "Show Next Word" hint button, error flash, and completion victory banner.
 - **Local Storage Persistence**:
   - Automatically caches the user's active verse reference, translation, and mode into `localStorage` (`biblestation_phone_memory_v1`), allowing seamless resumption when re-opening the web app from a mobile home screen bookmark.
 

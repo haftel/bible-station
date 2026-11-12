@@ -3,6 +3,11 @@
     <header class="page-header">
       <h1 class="page-title">Scripture Memorizer</h1>
       <p class="page-subtitle">Fetch a verse or paste your own to practice memorization.</p>
+      <p class="mobile-cta">
+        <router-link to="/memory/mobile" class="mobile-cta-link">
+          📱 Using a mobile device? Switch to our mobile-friendly page!
+        </router-link>
+      </p>
     </header>
 
     <main class="container">
@@ -344,34 +349,55 @@
           </div>
         </div>
 
-        <!-- Tab 3: Scramble Game -->
-        <div v-show="currentTab === 'scramble'" class="tab-content">
-          <div class="game-text-display scramble-target">
-            <template v-for="(word, idx) in scrambleTarget" :key="idx">
-              <span v-if="idx < scrambleExpectedIndex" class="scramble-target-word fade-in">
-                {{ word }}
-              </span>
-              <span v-else class="scramble-target-blank"></span>
-            </template>
+        <!-- Tab 3: Word Choice Game -->
+        <div v-show="currentTab === 'word-choice'" class="tab-content">
+          <p class="game-instructions">Choose the correct word for each position to rebuild the verse.</p>
+
+          <!-- Verse progress display -->
+          <div class="game-text-display wc-progress-desktop">
+            <span
+              v-for="(slot, idx) in wordChoiceSlots"
+              :key="idx"
+              class="wc-word-slot"
+              :class="{
+                'wc-slot-solved': slot.status === 'correct',
+                'wc-slot-active': idx === wordChoiceCurrentIndex && slot.status !== 'correct',
+                'wc-slot-pending': slot.status === 'pending' && idx !== wordChoiceCurrentIndex
+              }"
+              @click="setWordChoiceIndex(idx)"
+            >
+              <template v-if="slot.status === 'correct'">{{ slot.word }}</template>
+              <template v-else>
+                <span class="wc-blank">{{ idx === wordChoiceCurrentIndex ? '?' : '—' }}</span>
+              </template>
+            </span>{{ ' ' }}
           </div>
 
-          <div class="scramble-bank">
-            <button
-              v-for="(item, idx) in scrambleBank"
-              :key="idx"
-              :class="[
-                'scramble-btn',
-                { 'scramble-btn-used': item.used, 'scramble-error shake': item.error }
-              ]"
-              :disabled="item.used"
-              @click="guessScramble(item, idx)"
-            >
-              {{ item.word }}
-            </button>
+          <!-- Options for current word -->
+          <div v-if="!wordChoiceCompleted && wordChoiceSlots[wordChoiceCurrentIndex]" class="wc-options-section">
+            <p class="wc-options-label">Choose word {{ wordChoiceCurrentIndex + 1 }} of {{ wordChoiceSlots.length }}:</p>
+            <div class="wc-options-bank">
+              <button
+                v-for="(option, optIdx) in wordChoiceSlots[wordChoiceCurrentIndex].options"
+                :key="optIdx"
+                :class="[
+                  'wc-option-btn',
+                  { 'wc-option-error shake': wordChoiceSlots[wordChoiceCurrentIndex].status === 'error' && wordChoiceSlots[wordChoiceCurrentIndex].errorOption === option }
+                ]"
+                @click="guessWordChoice(wordChoiceCurrentIndex, option)"
+              >
+                {{ option }}
+              </button>
+            </div>
           </div>
+
+          <!-- Completion -->
+          <p v-if="wordChoiceCompleted" class="feedback-message text-success fade-in">
+            Perfect! You chose every word correctly.
+          </p>
 
           <div class="text-center mt-4">
-            <button @click="initScramble" class="btn btn-secondary">Reset Scramble</button>
+            <button @click="initWordChoice" class="btn btn-secondary">Reset Word Choice</button>
           </div>
         </div>
 
@@ -529,6 +555,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { generateWordOptions } from '@/composables/useScriptureMemory'
 
 const translations = [
   { id: 'niv2011', label: 'New International Version (NIV)', name: 'New International Version', abbr: 'NIV', year: '2011' },
@@ -662,7 +689,7 @@ const currentRef = ref('')
 const tabs = [
   { id: 'vanish', label: 'Vanish' },
   { id: 'fill', label: 'Fill in Blanks' },
-  { id: 'scramble', label: 'Scramble' },
+  { id: 'word-choice', label: 'Word Choice' },
   { id: 'first-letter', label: 'First Letter' },
   { id: 'type', label: 'Type Full' },
   { id: 'type-first', label: 'Type First Letters' }
@@ -968,7 +995,7 @@ const initializeDashboard = () => {
   currentTab.value = 'vanish'
   initVanish(0)
   initFill(0.25)
-  initScramble()
+  initWordChoice()
   initFirstLetter()
   initType()
   initTypeFirst()
@@ -1081,34 +1108,58 @@ const checkFill = () => {
   }
 }
 
-// ==================== 3. SCRAMBLE MODE ====================
-const scrambleTarget = ref([])
-const scrambleBank = ref([])
-const scrambleExpectedIndex = ref(0)
+// ==================== 3. WORD CHOICE MODE ====================
+const wordChoiceSlots = ref([])
+const wordChoiceCurrentIndex = ref(0)
 
-const initScramble = () => {
-  const words = currentVerse.value.split(/\s+/)
-  scrambleTarget.value = words
-  scrambleBank.value = words
-    .map((word, idx) => ({ word, originalIndex: idx, used: false, error: false }))
-    .sort(() => Math.random() - 0.5)
-  scrambleExpectedIndex.value = 0
+const wordChoiceCompleted = computed(() => {
+  if (wordChoiceSlots.value.length === 0) return false
+  return wordChoiceSlots.value.every(s => s.status === 'correct')
+})
+
+const initWordChoice = () => {
+  const words = currentVerse.value ? currentVerse.value.split(/\s+/) : []
+  wordChoiceCurrentIndex.value = 0
+  wordChoiceSlots.value = words.map((word, idx) => {
+    const options = generateWordOptions(word, words, idx)
+    return {
+      word,
+      options,
+      status: 'pending', // 'pending' | 'correct' | 'error'
+      errorOption: ''
+    }
+  })
 }
 
-const guessScramble = (item, idx) => {
-  if (item.used) return
+const guessWordChoice = (slotIndex, option) => {
+  const slot = wordChoiceSlots.value[slotIndex]
+  if (!slot || slot.status === 'correct') return
 
-  if (item.word === scrambleTarget.value[scrambleExpectedIndex.value]) {
-    item.used = true
-    scrambleExpectedIndex.value++
-    if (scrambleExpectedIndex.value === scrambleTarget.value.length) {
-      // Completed scramble
+  const optClean = cleanString(option)
+  const targetClean = cleanString(slot.word)
+
+  if (optClean === targetClean) {
+    slot.status = 'correct'
+    slot.errorOption = ''
+    const nextPending = wordChoiceSlots.value.findIndex((s, i) => i > slotIndex && s.status === 'pending')
+    if (nextPending !== -1) {
+      wordChoiceCurrentIndex.value = nextPending
     }
   } else {
-    item.error = true
+    slot.status = 'error'
+    slot.errorOption = option
     setTimeout(() => {
-      item.error = false
-    }, 400)
+      if (slot.status === 'error') {
+        slot.status = 'pending'
+        slot.errorOption = ''
+      }
+    }, 600)
+  }
+}
+
+const setWordChoiceIndex = (idx) => {
+  if (idx >= 0 && idx < wordChoiceSlots.value.length && wordChoiceSlots.value[idx].status !== 'correct') {
+    wordChoiceCurrentIndex.value = idx
   }
 }
 
@@ -1496,6 +1547,30 @@ const revealCurrentWord = () => {
   opacity: 0.6;
 }
 
+.mobile-cta {
+  margin: 0.85rem 0 0;
+}
+
+.mobile-cta-link {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--accent-color);
+  background-color: var(--disclaimer-bg);
+  border: 1px solid var(--border-color);
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.mobile-cta-link:hover {
+  background-color: #e6e1d8;
+  border-color: var(--accent-color);
+  text-decoration: none;
+}
+
 .error-banner {
   background-color: var(--error-bg);
   color: var(--error-color);
@@ -1674,70 +1749,94 @@ const revealCurrentWord = () => {
   border-bottom-color: var(--error-color) !important;
 }
 
-/* Scramble Game */
-.scramble-bank {
+/* Word Choice Game */
+.wc-progress-desktop {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
+  gap: 0.4rem;
+  row-gap: 0.75rem;
+  align-items: center;
+  min-height: 80px;
+}
+
+.wc-word-slot {
+  display: inline-block;
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.wc-slot-solved {
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.wc-slot-active {
+  background-color: rgba(61, 107, 110, 0.14);
+  border: 1.5px solid var(--accent-color);
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.wc-slot-pending {
+  color: var(--text-light);
+}
+
+.wc-blank {
+  display: inline-block;
+  min-width: 1.8rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.wc-options-section {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border-color);
 }
 
-.scramble-btn {
+.wc-options-label {
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin: 0 0 1rem;
+}
+
+.wc-options-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.wc-option-btn {
   background: #ffffff;
-  border: 1px solid var(--border-color);
-  padding: 0.5rem 1.1rem;
+  border: 1.5px solid var(--border-color);
+  padding: 0.55rem 1.2rem;
   border-radius: var(--radius-full);
   cursor: pointer;
   font-size: 1.1rem;
   font-family: Georgia, 'Times New Roman', serif;
+  color: var(--text-main);
   transition: all var(--transition-base);
   box-shadow: var(--shadow-xs);
 }
 
-.scramble-btn:hover:not(:disabled) {
+.wc-option-btn:hover {
   border-color: var(--accent-color);
   background: #faf8f4;
   box-shadow: var(--shadow-sm);
   transform: translateY(-1px);
 }
 
-.scramble-btn-used {
-  background: var(--bg-subtle);
-  color: transparent;
-  border-color: var(--border-color);
-  cursor: default;
-  box-shadow: inset 0 2px 4px rgba(60, 50, 40, 0.05);
-  transform: none;
-}
-
-.scramble-error {
+.wc-option-error {
   background-color: var(--error-bg) !important;
   border-color: #f87171 !important;
   color: var(--error-color) !important;
-}
-
-.scramble-target {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  row-gap: 1rem;
-  min-height: 80px;
-}
-
-.scramble-target-word {
-  color: var(--accent-color);
-  font-weight: bold;
-  margin-right: 0.4rem;
-}
-
-.scramble-target-blank {
-  display: inline-block;
-  width: 2.5rem;
-  border-bottom: 2px solid var(--border-color);
-  margin: 0 0.2rem;
 }
 
 /* First Letter Game */
