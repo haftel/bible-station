@@ -52,7 +52,7 @@ bible-station/
 ├── src/
 │   ├── assets/
 │   │   └── styles/
-│   │       └── main.css          # Design tokens (colors, shadows, radii, transitions), Inter font, reset & utilities
+│   │       └── main.css          # Design tokens (colors, shadows, radii, transitions), DM Sans & Source Serif 4 fonts, reset & utilities
 │   ├── components/
 │   │   ├── Navbar.vue            # Responsive global top navigation bar
 │   │   └── AppFooter.vue         # Global application footer
@@ -88,9 +88,8 @@ bible-station/
 - npm (version 10.x or higher)
 
 ### External Dependencies
-- **[Inter](https://fonts.google.com/specimen/Inter)** typeface loaded via Google Fonts CDN (weights 400, 500, 600, 700) for UI and body typography.
-- **[Playfair Display](https://fonts.google.com/specimen/Playfair+Display)** typeface loaded via Google Fonts CDN (weights 400, 500, 600, 700 + italic) for headings and display typography.
-- Georgia serif remains for scripture text.
+- **[DM Sans](https://fonts.google.com/specimen/DM+Sans)** typeface loaded via Google Fonts CDN (weights 400, 500, 600, 700) for clean modern display and UI body typography.
+- **[Source Serif 4](https://fonts.google.com/specimen/Source+Serif+4)** typeface loaded via Google Fonts CDN (weights 400, 500, 600, 700 + italic) for scripture and devotional reading typography.
 
 ### Installation
 

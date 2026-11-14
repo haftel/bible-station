@@ -33,36 +33,36 @@ graph TD
 - **Build Tool**: Vite
 - **Routing**: Vue Router 4 using HTML5 Web History (`createWebHistory(import.meta.env.BASE_URL)`). Clean direct URLs without hashtags (`/devotionals`, `/memory`, `/memory/mobile`, `/verses-for-feelings`), with `/phonememory` and `/phone-memory` redirecting to `/memory/mobile`, and `/memory` automatically redirecting mobile devices (by user agent or viewport ≤ 767px) to `/memory/mobile`.
 - **GitHub Pages Fallback**: Single-Page Application redirect via `public/404.html` and `index.html` to support direct deep linking and page reloads on static GitHub Pages hosting.
-- **Styling**: Vanilla CSS utilizing CSS Custom Properties (Design Tokens), zero heavy CSS frameworks. Google Fonts `Inter` and `Playfair Display` for typography.
+- **Styling**: Vanilla CSS utilizing CSS Custom Properties (Design Tokens), zero heavy CSS frameworks. Google Fonts `DM Sans` and `Source Serif 4` for typography.
 
 ---
 
 ## 2. Design System & Style Tokens
 
-### 2.1 Color Palette ("Warm Sanctuary")
-- `--bg-color: #f7f5f0` (Primary page background — warm cream)
-- `--bg-subtle: #f2efe8` (Subtle background for alternating sections)
-- `--text-main: #2c2c2c` (Primary body text — deep charcoal)
-- `--text-light: #6b6560` (Secondary text, subtitles, meta — warm gray)
-- `--accent-color: #3d6b6e` (Primary Warm Teal: headers, primary buttons, borders)
-- `--secondary-color: #5a7a68` (Positive/Uplifting Warm Sage: positive emotion accents)
-- `--disclaimer-bg: #f0ece4` (Callout container background — warm cream)
+### 2.1 Color Palette ("Quiet Modern")
+- `--bg-color: #fafafa` (Primary page background — crisp off-white)
+- `--bg-subtle: #f5f5f5` (Subtle background for alternating sections)
+- `--text-main: #1a1a1a` (Primary body text — deep neutral black)
+- `--text-light: #71717a` (Secondary text, subtitles, meta — zinc-500)
+- `--accent-color: #2563eb` (Primary Accent: blue-600 for buttons, links, active states)
+- `--secondary-color: #16a34a` (Positive/Uplifting Accent: green-600)
+- `--disclaimer-bg: #f0f0f0` (Callout container background — neutral light gray)
 - `--card-bg: #ffffff` (Card background)
-- `--border-color: #e8e4de` (Standard border — warm gray)
+- `--border-color: #e5e5e5` (Standard border — neutral-200)
 - `--success-color: #166534` / `--success-bg: #dcfce7` (Correct input feedback)
 - `--error-color: #991b1b` / `--error-bg: #fee2e2` (Error input feedback)
 
 ### 2.2 Elevation & Shape Tokens
-- `--shadow-xs` through `--shadow-xl`: Layered multi-stop box-shadows with warm-tinted `rgba(60, 50, 40, ...)` for subtle material depth
-- `--shadow-glow: 0 4px 16px -2px rgba(61, 107, 110, 0.15)`: Warm teal glow for primary button hover
-- `--radius-sm: 8px`, `--radius-md: 12px`, `--radius-lg: 16px`, `--radius-xl: 24px`, `--radius-full: 9999px` (pill)
+- `--shadow-xs` through `--shadow-xl`: Subtle multi-stop box-shadows with neutral `rgba(0, 0, 0, ...)` for modern minimalist depth
+- `--shadow-glow: 0 4px 16px -2px rgba(37, 99, 235, 0.15)`: Soft blue glow for primary button hover
+- `--radius-sm: 6px`, `--radius-md: 10px`, `--radius-lg: 14px`, `--radius-xl: 20px`, `--radius-full: 9999px` (pill)
 - `--transition-fast: 0.15s`, `--transition-base: 0.2s`, `--transition-smooth: 0.3s` (all using `cubic-bezier(0.4, 0, 0.2, 1)`)
 
 ### 2.3 Typography
-- **Heading & Display Font**: `'Playfair Display', Georgia, 'Times New Roman', serif` — aliased as `var(--heading-font)` (loaded via Google Fonts in `index.html`, weights 400/500/600/700, includes italic)
-- **UI & Navigation Font**: `'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` — aliased as `var(--body-font)` (loaded via Google Fonts in `index.html`, weights 400/500/600/700)
-- **Scripture & Devotional Text Font**: `Georgia, 'Times New Roman', serif` — aliased as `var(--scripture-font)`
-- **Decorative Elements**: Page titles include a centered decorative underline (40px × 2px accent-colored rule via `::after` pseudo-element).
+- **Heading & Display Font**: `'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` — aliased as `var(--heading-font)` (loaded via Google Fonts in `index.html`, weights 400/500/600/700)
+- **UI & Navigation Font**: `'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif` — aliased as `var(--body-font)`
+- **Scripture & Devotional Text Font**: `'Source Serif 4', Georgia, 'Times New Roman', serif` — aliased as `var(--scripture-font)` (loaded via Google Fonts in `index.html`, weights 400/500/600/700, includes italic)
+- **Minimalist Aesthetics**: Clean title presentations without decorative underlines; borderless hero headers with deep blue gradient (`linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)`).
 
 ### 2.4 Animations
 - **Fade In**: `@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }` (0.35s, cubic-bezier)
@@ -75,9 +75,9 @@ graph TD
 
 ### 3.1 Navigation Bar (`src/components/Navbar.vue`)
 - Positioned persistently at the top of standard site views (hidden automatically on `/memory/mobile` to provide a dedicated standalone mobile web app experience).
-- **Glass-morphism**: Semi-transparent warm-tinted background (`rgba(247, 245, 240, 0.85)`) with `backdrop-filter: blur(12px)` for frosted-glass effect.
+- **Glass-morphism**: Semi-transparent clean background (`rgba(250, 250, 250, 0.85)`) with `backdrop-filter: blur(12px)` for frosted-glass effect.
 - **Brand Logo**: Inline SVG open-bible icon (black outline, `--accent-color` stroke) next to the brand title.
-- **Brand Title**: "Bible Station" in `Playfair Display` serif, linking to `/`.
+- **Brand Title**: "Bible Station" in `DM Sans` bold, linking to `/`.
 - **Favicon**: `public/favicon.svg` — same open-bible SVG with a `#fcfcfc` rounded-rect background for dark-mode browser tab visibility.
 - **Navigation Links**:
   1. `Home` (`/`)
@@ -217,8 +217,8 @@ graph TD
 - **Dynamic Verse Display Box**:
   - Displays selected verse text and citation.
   - Border and button accent adapts dynamically:
-    - Uplifting/Positive feelings: `--secondary-color` (`#5c7a6b`).
-    - Heavy/Negative feelings: `--accent-color` (`#4a6c6f`).
+    - Uplifting/Positive feelings: `--secondary-color` (`#16a34a`).
+    - Heavy/Negative feelings: `--accent-color` (`#2563eb`).
   - "Get Another Verse for '[Mood]'" button generates a new random verse from the active category.
   - Smoothly scrolls into view upon button click.
 - **Emotion Categories**:
@@ -242,13 +242,13 @@ graph TD
   - Global `Navbar` and `AppFooter` are conditionally hidden (`v-if="!route.meta.isPhoneApp"`), dedicating 100% of the mobile viewport (`min-height: 100dvh`) to scripture memorization.
   - Safe-area insets (`env(safe-area-inset-top)` and `env(safe-area-inset-bottom)`) integrated into layout padding for edge-to-edge mobile devices.
 - **Top Mobile App Bar**:
-  - Sticky glass-morphism header (`rgba(247, 245, 240, 0.95)`, `backdrop-filter: blur(12px)`).
+  - Sticky glass-morphism header (`rgba(250, 250, 250, 0.95)`, `backdrop-filter: blur(12px)`).
   - Bible Station brand icon alongside "Scripture Memory" title.
   - Interactive active-verse badge displaying current reference and translation pill (e.g. `John 3:16 · NIV`). Tapping opens the verse bottom sheet.
   - "Change" pill button (`.change-verse-btn`) providing immediate access to the verse picker.
 - **Thumb-Friendly Horizontal Mode Switcher**:
   - Horizontally scrollable strip (`.mode-nav`) featuring 5 modes (`Vanish`, `Blanks`, `Word Choice`, `1st Letter`, `Type 1st`). ("Type Full" is intentionally omitted from the mobile view.)
-  - Active pill highlighting in primary Warm Teal (`#3d6b6e`), full pill radius, and smooth tactile feedback.
+  - Active pill highlighting in primary Accent Blue (`#2563eb`), full pill radius, and smooth tactile feedback.
 - **Ergonomic Bottom Sheet Verse Drawer**:
   - Triggered by tapping "Change" or the verse reference tag.
   - Modal sheet animated from the screen bottom (`transform: translateY`) with backdrop blur and grab handle.
@@ -256,7 +256,7 @@ graph TD
   - Automatically loads and closes on submission with inline validation banners.
 - **Calibrated Phone Touch Practice Modes**:
   - Powered by shared composable `src/composables/useScriptureMemory.js`:
-    1. **Vanish**: Large touch-friendly percentage pills (`0%`, `25%`, `50%`, `75%`, `100%`), 1.15rem Georgia serif typography, tap-to-reveal word interaction.
+    1. **Vanish**: Large touch-friendly percentage pills (`0%`, `25%`, `50%`, `75%`, `100%`), 1.15rem Source Serif 4 typography, tap-to-reveal word interaction.
     2. **Fill in the Blanks**: Percentage selectors, 16px text input fields to prevent mobile browser auto-zoom, and instant "Check Answers" validation.
     3. **Word Choice**: Verse progress display with tappable slots, 5–7 plausible word option chips per slot with 44px+ touch targets and active scale states, error shake feedback, victory banner, and reset control.
     4. **First Letter**: Masked scripture hints with relaxed letter spacing, tap to toggle word peek.

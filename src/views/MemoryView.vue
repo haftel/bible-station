@@ -1527,24 +1527,13 @@ const revealCurrentWord = () => {
 }
 
 .page-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--heading-font);
   font-size: 2.75rem;
-  font-weight: 600;
-  color: var(--accent-color);
+  font-weight: 700;
+  color: var(--text-main);
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
   line-height: 1.2;
-}
-
-.page-title::after {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 2px;
-  background-color: var(--accent-color);
-  margin: 1rem auto 0;
-  border-radius: 1px;
-  opacity: 0.6;
 }
 
 .mobile-cta {
@@ -1553,7 +1542,7 @@ const revealCurrentWord = () => {
 
 .mobile-cta-link {
   display: inline-block;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--accent-color);
@@ -1566,7 +1555,7 @@ const revealCurrentWord = () => {
 }
 
 .mobile-cta-link:hover {
-  background-color: #e6e1d8;
+  background-color: #e5e5e5;
   border-color: var(--accent-color);
   text-decoration: none;
 }
@@ -1587,7 +1576,7 @@ const revealCurrentWord = () => {
 }
 
 .dashboard-header {
-  background: linear-gradient(135deg, #2c2c2c 0%, #3d3a36 50%, #2c2c2c 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
   color: #ffffff;
   padding: 2.25rem 1.5rem;
   text-align: center;
@@ -1595,9 +1584,9 @@ const revealCurrentWord = () => {
 
 .dashboard-header h2 {
   margin: 0;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--heading-font);
   font-size: 1.8rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.01em;
 }
@@ -1620,7 +1609,7 @@ const revealCurrentWord = () => {
   border: none;
   border-bottom: none;
   border-radius: var(--radius-sm);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -1646,7 +1635,7 @@ const revealCurrentWord = () => {
 }
 
 .game-text-display {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--scripture-font);
   font-size: 1.4rem;
   line-height: 2.2;
   color: var(--text-main);
@@ -1655,7 +1644,7 @@ const revealCurrentWord = () => {
 
 .game-instructions {
   text-align: center;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 0.9rem;
   color: var(--text-light);
   margin-bottom: 1.5rem;
@@ -1671,7 +1660,7 @@ const revealCurrentWord = () => {
 }
 
 .toolbar span {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 0.9rem;
   color: var(--text-light);
   margin-right: 0.5rem;
@@ -1683,7 +1672,7 @@ const revealCurrentWord = () => {
   padding: 0.45rem 1rem;
   border-radius: var(--radius-full);
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 0.85rem;
   font-weight: 500;
   transition: all var(--transition-base);
@@ -1691,7 +1680,7 @@ const revealCurrentWord = () => {
 
 .toolbar-btn:hover,
 .toolbar-btn-active {
-  background: #e6e1d8;
+  background: #e5e5e5;
   border-color: var(--accent-color);
   color: var(--accent-color);
   font-weight: 600;
@@ -1705,24 +1694,24 @@ const revealCurrentWord = () => {
 }
 
 .vanish-word-hidden {
-  color: #cdc7be;
+  color: #d4d4d8;
   cursor: pointer;
   transition: color var(--transition-fast);
 }
 
 .vanish-word-hidden:hover {
-  color: #a09890;
+  color: #a1a1aa;
 }
 
 /* Fill Game */
 .fill-input {
   display: inline-block;
   border: none;
-  border-bottom: 2px solid #a09890;
+  border-bottom: 2px solid #a1a1aa;
   background-color: var(--bg-subtle);
   margin: 0 4px;
   text-align: center;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--scripture-font);
   font-size: inherit;
   color: var(--accent-color);
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
@@ -1734,7 +1723,7 @@ const revealCurrentWord = () => {
   outline: none;
   border-bottom-color: var(--accent-color);
   background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(60, 50, 40, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .fill-correct {
@@ -1774,7 +1763,7 @@ const revealCurrentWord = () => {
 }
 
 .wc-slot-active {
-  background-color: rgba(61, 107, 110, 0.14);
+  background-color: rgba(37, 99, 235, 0.14);
   border: 1.5px solid var(--accent-color);
   color: var(--accent-color);
   font-weight: bold;
@@ -1799,7 +1788,7 @@ const revealCurrentWord = () => {
 
 .wc-options-label {
   text-align: center;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-light);
@@ -1820,7 +1809,7 @@ const revealCurrentWord = () => {
   border-radius: var(--radius-full);
   cursor: pointer;
   font-size: 1.1rem;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--scripture-font);
   color: var(--text-main);
   transition: all var(--transition-base);
   box-shadow: var(--shadow-xs);
@@ -1828,7 +1817,7 @@ const revealCurrentWord = () => {
 
 .wc-option-btn:hover {
   border-color: var(--accent-color);
-  background: #faf8f4;
+  background: #fafafa;
   box-shadow: var(--shadow-sm);
   transform: translateY(-1px);
 }
@@ -1883,17 +1872,17 @@ const revealCurrentWord = () => {
 }
 
 .type-char-future {
-  color: #cdc7be;
+  color: #d4d4d8;
 }
 
 .type-char-punct {
-  color: #a09890;
+  color: #a1a1aa;
 }
 
 .type-display-box:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(61, 107, 110, 0.12);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .type-display-box {
@@ -1941,9 +1930,9 @@ const revealCurrentWord = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(247, 245, 240, 0.85);
+  background: rgba(250, 250, 250, 0.85);
   border-radius: var(--radius-md);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 1rem;
   color: var(--text-light);
   cursor: text;
@@ -1951,7 +1940,7 @@ const revealCurrentWord = () => {
 }
 
 .type-focus-hint:hover {
-  background: rgba(247, 245, 240, 0.7);
+  background: rgba(250, 250, 250, 0.7);
   color: var(--accent-color);
 }
 
@@ -1965,7 +1954,7 @@ const revealCurrentWord = () => {
 .type-first-word {
   display: inline-block;
   margin-right: 0.45rem;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--scripture-font);
   font-size: 1.15rem;
   line-height: 2;
   letter-spacing: 0.03em;
@@ -2029,7 +2018,7 @@ const revealCurrentWord = () => {
 
 .translation-trigger-btn.is-active {
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(61, 107, 110, 0.12);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .trigger-label {
@@ -2140,14 +2129,14 @@ const revealCurrentWord = () => {
 
 .translation-option-item:hover,
 .translation-option-item.is-highlighted {
-  background-color: #f3efe6;
+  background-color: #f5f5f5;
   color: var(--accent-color);
 }
 
 .translation-option-item.is-selected {
   font-weight: 600;
   color: var(--accent-color);
-  background-color: rgba(61, 107, 110, 0.08);
+  background-color: rgba(37, 99, 235, 0.08);
 }
 
 .option-main {
@@ -2190,7 +2179,7 @@ const revealCurrentWord = () => {
 }
 
 .btn-switch-custom-inline:hover {
-  background-color: #2a4b4d;
+  background-color: #1d4ed8;
 }
 
 /* Input Mode Segmented Control */
@@ -2214,7 +2203,7 @@ const revealCurrentWord = () => {
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 0.95rem;
   font-weight: 500;
   color: var(--text-light);
@@ -2265,13 +2254,13 @@ const revealCurrentWord = () => {
 }
 
 .inline-text-action:hover {
-  color: #2a4b4d;
+  color: #1d4ed8;
 }
 
 /* Translation Dropdown Footer */
 .translation-dropdown-footer {
   border-top: 1px solid var(--border-color);
-  background-color: #faf8f5;
+  background-color: #fafafa;
   padding: 0.5rem 0.75rem;
   flex-shrink: 0;
 }
@@ -2293,7 +2282,7 @@ const revealCurrentWord = () => {
 }
 
 .dropdown-footer-custom-btn:hover {
-  background-color: rgba(61, 107, 110, 0.08);
+  background-color: rgba(37, 99, 235, 0.08);
   border-color: var(--accent-color);
 }
 
@@ -2335,7 +2324,7 @@ const revealCurrentWord = () => {
 }
 
 .custom-textarea {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--scripture-font);
   font-size: 1.05rem;
   line-height: 1.6;
   resize: vertical;
@@ -2363,7 +2352,7 @@ const revealCurrentWord = () => {
 
 .mobile-mode-label {
   display: block;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 0.8rem;
   font-weight: 700;
   color: var(--text-light);
@@ -2385,7 +2374,7 @@ const revealCurrentWord = () => {
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 0.85rem 2.5rem 0.85rem 1.15rem;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--body-font);
   font-size: 1rem;
   font-weight: 600;
   color: var(--accent-color);
@@ -2397,7 +2386,7 @@ const revealCurrentWord = () => {
 .mobile-mode-select:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(61, 107, 110, 0.12);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .mobile-select-chevron {

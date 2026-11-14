@@ -109,29 +109,17 @@ const getAnotherVerse = () => {
 }
 
 .page-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--heading-font);
   font-size: 2.75rem;
-  font-weight: 600;
-  color: var(--accent-color);
+  font-weight: 700;
+  color: var(--text-main);
   margin-bottom: 0.6rem;
   margin-top: 0;
   letter-spacing: -0.5px;
   line-height: 1.2;
 }
 
-.page-title::after {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 2px;
-  background-color: var(--accent-color);
-  margin: 1rem auto 0;
-  border-radius: 1px;
-  opacity: 0.6;
-}
-
 .page-subtitle {
-  font-family: 'Inter', sans-serif;
   color: var(--text-light);
   font-size: 1.1rem;
   line-height: 1.7;
@@ -144,12 +132,12 @@ const getAnotherVerse = () => {
 }
 
 .super-section-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--heading-font);
   margin-top: 0;
   margin-bottom: 1.75rem;
-  color: var(--accent-color);
+  color: var(--text-main);
   font-size: 1.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   letter-spacing: -0.3px;
 }
@@ -179,7 +167,7 @@ const getAnotherVerse = () => {
 }
 
 .category-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--heading-font);
   margin-top: 0;
   margin-bottom: 1.25rem;
   color: var(--text-main);
@@ -203,7 +191,7 @@ const getAnotherVerse = () => {
 }
 
 .verse-theme-positive {
-  border-left: 5px solid var(--secondary-color);
+  border-left: 4px solid var(--secondary-color);
 }
 
 .verse-theme-positive .verse-reference {
@@ -217,7 +205,7 @@ const getAnotherVerse = () => {
 
 
 .verse-theme-negative {
-  border-left: 5px solid var(--primary-color);
+  border-left: 4px solid var(--primary-color);
 }
 
 .verse-theme-negative .verse-reference {
@@ -229,32 +217,26 @@ const getAnotherVerse = () => {
 }
 
 .verse-text {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--scripture-font);
   font-size: 1.45rem;
   font-style: italic;
-  color: var(--accent-color);
+  color: var(--text-main);
   margin: 0 auto 1.75rem;
   max-width: 600px;
   line-height: 1.8;
   border-left: none;
   padding-left: 0;
-
-
 }
 
 .verse-reference {
-  font-family: 'Inter', sans-serif;
   font-size: 1rem;
   font-style: normal;
   font-weight: 700;
   margin-bottom: 1.75rem;
   letter-spacing: -0.2px;
-
-
 }
 
 .another-btn {
-  font-family: 'Inter', sans-serif;
   color: white;
   border: none;
   padding: 0.75rem 1.75rem;
@@ -269,7 +251,7 @@ const getAnotherVerse = () => {
 .another-btn:hover {
   opacity: 0.92;
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px -2px rgba(61, 107, 110, 0.2);
+  box-shadow: 0 4px 16px -2px rgba(37, 99, 235, 0.2);
 }
 
 .another-btn:active {
@@ -285,12 +267,11 @@ const getAnotherVerse = () => {
 }
 
 .mood-btn {
-  background-color: var(--disclaimer-bg);
+  background-color: var(--bg-subtle);
   border: 1px solid var(--border-color);
   color: var(--text-main);
   padding: 0.65rem 0.5rem;
   border-radius: var(--radius-full);
-  font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -303,7 +284,7 @@ const getAnotherVerse = () => {
   color: white;
   border-color: var(--accent-color);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px -2px rgba(61, 107, 110, 0.18);
+  box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.18);
 }
 
 .mood-btn-active {
@@ -317,7 +298,5 @@ const getAnotherVerse = () => {
   .verse-container {
     padding: 2.5rem 1.5rem;
   }
-
-
 }
 </style>

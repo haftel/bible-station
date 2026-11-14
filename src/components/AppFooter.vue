@@ -11,7 +11,7 @@
   color: var(--text-light);
   font-size: 0.85rem;
   margin-top: auto;
-  background-color: var(--disclaimer-bg);
+  background-color: var(--bg-subtle);
   letter-spacing: 0.01em;
   border-top: 1px solid var(--border-color);
 }

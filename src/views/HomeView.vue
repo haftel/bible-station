@@ -44,7 +44,7 @@
 
 <style scoped>
 .hero-header {
-  background: linear-gradient(135deg, #3d6b6e 0%, #2d5254 50%, #3a5f55 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
   color: #ffffff;
   text-align: center;
   padding: 7rem 1.5rem 6rem;
@@ -52,12 +52,12 @@
 }
 
 .hero-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--heading-font);
   font-size: 4rem;
   color: #ffffff;
   margin: 0 0 1.5rem 0;
   letter-spacing: -1px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.1;
 }
 
@@ -88,10 +88,10 @@
 
 .welcome-section strong {
   display: block;
-  font-family: 'Playfair Display', Georgia, serif;
-  color: var(--accent-color);
+  font-family: var(--heading-font);
+  color: var(--text-main);
   font-size: 1.6rem;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 1rem;
   letter-spacing: -0.3px;
 }
@@ -115,7 +115,6 @@
   padding: 2.75rem 2.25rem;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
-  border-top: 3px solid var(--accent-color);
   text-align: center;
   transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
   display: flex;
@@ -130,10 +129,10 @@
 .feature-title {
   margin-top: 0;
   margin-bottom: 1.25rem;
-  font-family: 'Playfair Display', Georgia, serif;
-  color: var(--accent-color);
+  font-family: var(--heading-font);
+  color: var(--text-main);
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.3px;
 }
 
@@ -174,7 +173,7 @@
 
 .feature-btn:hover {
   opacity: 0.92;
-  box-shadow: 0 4px 16px -2px rgba(61, 107, 110, 0.2);
+  box-shadow: 0 4px 16px -2px rgba(37, 99, 235, 0.2);
   transform: translateY(-1px);
 }
 
@@ -191,7 +190,7 @@
 }
 
 .hero-verse-banner {
-  background-color: var(--disclaimer-bg);
+  background-color: var(--bg-subtle);
   border-radius: var(--radius-lg);
   padding: 4rem 2.5rem;
   text-align: center;
@@ -199,10 +198,10 @@
 }
 
 .hero-bible-verse {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--scripture-font);
   font-size: 1.5rem;
   font-style: italic;
-  color: var(--accent-color);
+  color: var(--text-main);
   margin: 0;
   padding: 0;
   line-height: 1.7;
@@ -211,12 +210,12 @@
 
 .hero-bible-verse cite {
   display: block;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--body-font);
   font-size: 0.95rem;
   font-style: normal;
   font-weight: 600;
   margin-top: 1.75rem;
-  color: var(--text-main);
+  color: var(--text-light);
   letter-spacing: 0.02em;
 }
 

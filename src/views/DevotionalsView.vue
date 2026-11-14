@@ -214,24 +214,13 @@ onMounted(() => {
 }
 
 .page-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--heading-font);
   font-size: 2.75rem;
-  font-weight: 600;
-  color: var(--accent-color);
+  font-weight: 700;
+  color: var(--text-main);
   margin-bottom: 1rem;
   letter-spacing: -0.5px;
   line-height: 1.2;
-}
-
-.page-title::after {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 2px;
-  background-color: var(--accent-color);
-  margin: 1rem auto 0;
-  border-radius: 1px;
-  opacity: 0.6;
 }
 
 /* Title row with copy link button */
@@ -244,10 +233,10 @@ onMounted(() => {
 .post-title {
   margin-top: 0;
   margin-bottom: 0.2rem;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--heading-font);
   color: var(--text-main);
   font-size: 1.65rem;
-  font-weight: 600;
+  font-weight: 700;
   flex: 1;
   letter-spacing: -0.3px;
   line-height: 1.3;
@@ -319,7 +308,7 @@ onMounted(() => {
 
 @keyframes highlightFlash {
   0% { box-shadow: var(--shadow-sm); }
-  15% { box-shadow: 0 0 0 3px rgba(61, 107, 110, 0.2); }
+  15% { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
   100% { box-shadow: var(--shadow-sm); }
 }
 
@@ -352,7 +341,7 @@ onMounted(() => {
 
 .pagination-btn:hover:not(:disabled):not(.pagination-btn-active) {
   background-color: var(--disclaimer-bg);
-  border-color: #cdc7be;
+  border-color: #d4d4d4;
 }
 
 .pagination-btn:disabled {
