@@ -148,6 +148,8 @@
                     'slice-hovered': hoveredFeelingId === tert.id
                   }"
                   @mouseenter="onSliceEnter(tert.id)"
+                  @touchstart.passive="onSliceTouchStart($event, tert.id)"
+                  @touchend="onSliceTouchEnd($event, tert.id)"
                   @click="handleSliceClick(tert.id)"
                 >
                   <path
@@ -181,6 +183,8 @@
                     'branch-highlight': activeSecondary?.id === sec.id
                   }"
                   @mouseenter="onSliceEnter(sec.id)"
+                  @touchstart.passive="onSliceTouchStart($event, sec.id)"
+                  @touchend="onSliceTouchEnd($event, sec.id)"
                   @click="handleSliceClick(sec.id)"
                 >
                   <path
@@ -215,6 +219,8 @@
                   'branch-highlight': activeCore?.id === core.id
                 }"
                 @mouseenter="onSliceEnter(core.id)"
+                @touchstart.passive="onSliceTouchStart($event, core.id)"
+                @touchend="onSliceTouchEnd($event, core.id)"
                 @click="handleSliceClick(core.id)"
               >
                 <path
@@ -235,7 +241,12 @@
             </g>
 
             <!-- ================= CENTER HUB ================= -->
-            <g class="wheel-center-hub" @click="resetSelection" cursor="pointer">
+            <g
+              class="wheel-center-hub"
+              @click="resetSelection"
+              @touchend.prevent="resetSelection"
+              cursor="pointer"
+            >
               <!-- Center Circle Backdrop -->
               <circle cx="0" cy="0" r="74" class="hub-circle" filter="url(#hub-shadow)" />
 
@@ -569,7 +580,41 @@ const onWheelMouseLeave = () => {
   }, 250)
 }
 
+// Touch event state tracking
+let touchStartX = 0
+let touchStartY = 0
+let touchStartTime = 0
+let touchStartCoreId = null
+let touchStartSecondaryId = null
+
+const onSliceTouchStart = (event, id) => {
+  if (event.touches && event.touches[0]) {
+    touchStartX = event.touches[0].clientX
+    touchStartY = event.touches[0].clientY
+    touchStartTime = Date.now()
+    // Snapshot the exact active branch state BEFORE this tap!
+    touchStartCoreId = activeCoreId.value
+    touchStartSecondaryId = activeSecondaryId.value
+  }
+}
+
+const onSliceTouchEnd = (event, id) => {
+  if (!event.changedTouches || !event.changedTouches[0]) return
+  const dx = Math.abs(event.changedTouches[0].clientX - touchStartX)
+  const dy = Math.abs(event.changedTouches[0].clientY - touchStartY)
+  const dt = Date.now() - touchStartTime
+
+  // Check for clean stationary tap gesture (movement < 15px, duration < 500ms)
+  if (dx < 15 && dy < 15 && dt < 500) {
+    event.preventDefault() // Prevents delayed synthetic click and hover events on iOS/Android
+    handleTouchTap(id)
+  }
+}
+
 const onSliceEnter = (id) => {
+  // Ignore synthetic mouseenter events fired by mobile browsers during/after touch taps
+  if (Date.now() - touchStartTime < 700) return
+
   if (collapseTimer) {
     clearTimeout(collapseTimer)
     collapseTimer = null
@@ -593,8 +638,8 @@ const onSliceEnter = (id) => {
   }
 }
 
-// Touch / click handler for slices
-const handleSliceClick = (id) => {
+// Mobile touch tap handler
+const handleTouchTap = (id) => {
   if (!id || !FEELINGS_INDEX[id]) return
   const node = FEELINGS_INDEX[id]
 
@@ -604,8 +649,7 @@ const handleSliceClick = (id) => {
     return
   }
 
-  // Interactive Focus Mode:
-  // Tier 3 (Outer Layer): 1 touch immediately selects feeling and displays verse
+  // Tier 3 (Outer Layer): 1 touch always immediately selects and displays verse!
   if (node.tier === 3) {
     activeCoreId.value = node.coreId
     activeSecondaryId.value = node.parentId
@@ -614,12 +658,12 @@ const handleSliceClick = (id) => {
   }
 
   // Tier 2 (Middle Layer / Secondary):
-  // 1st touch: expands its tertiaries
-  // 2nd touch: selects secondary feeling and displays verse
+  // 2nd tap: If this secondary was ALREADY the active secondary at touch touchdown, select it!
   if (node.tier === 2) {
-    if (activeSecondaryId.value === node.id) {
+    if (touchStartSecondaryId === node.id) {
       selectFeeling(id)
     } else {
+      // 1st touch: strictly expand its tertiaries
       activeCoreId.value = node.coreId
       activeSecondaryId.value = node.id
       hoveredFeelingId.value = node.id
@@ -628,18 +672,35 @@ const handleSliceClick = (id) => {
   }
 
   // Tier 1 (Inner Layer / Core):
-  // 1st touch: expands its secondaries
-  // 2nd touch: selects core feeling and displays verse
+  // 2nd tap: If this core was ALREADY the active core with NO secondary active, select it!
   if (node.tier === 1) {
-    if (activeCoreId.value === node.id && !activeSecondaryId.value) {
+    if (touchStartCoreId === node.id && !touchStartSecondaryId) {
       selectFeeling(id)
     } else {
+      // 1st touch (or switching from another core / drill-down):
+      // Strictly expand this core's secondaries, NEVER select it!
       activeCoreId.value = node.id
       activeSecondaryId.value = null
       hoveredFeelingId.value = node.id
     }
     return
   }
+}
+
+// Desktop mouse click handler for slices
+const handleSliceClick = (id) => {
+  // If a touch interaction just occurred, touch handler already processed it
+  if (Date.now() - touchStartTime < 700) return
+  if (!id || !FEELINGS_INDEX[id]) return
+
+  const node = FEELINGS_INDEX[id]
+  if (viewMode.value === 'full' || node.tier === 3) {
+    selectFeeling(id)
+    return
+  }
+
+  // On desktop, mouse hover already expanded the slice, so click selects it
+  selectFeeling(id)
 }
 
 const selectFeeling = (id) => {

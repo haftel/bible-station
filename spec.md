@@ -224,7 +224,7 @@ graph TD
   - **Smooth Hover & Intent Tracking**: Container-level mouse tracking with debounced exit (250ms) ensures that navigating between concentric rings from a core emotion outward into secondary and tertiary sub-feelings never snaps back or reverts to unintended branches.
   - **Touch & Mobile Optimization**:
     - **Outer Layer (Tier 3)**: Single touch immediately selects the feeling, loads its NIV encouragement verse, and scrolls to the scripture card.
-    - **Inner Layers (Tier 1 Core & Tier 2 Secondary)**: 2-touch progressive exploration—1st touch blooms the next concentric sub-feeling tier without jumping away, and a 2nd touch on an already-expanded slice selects that feeling and displays its verse.
+    - **Inner Layers (Tier 1 Core & Tier 2 Secondary)**: 2-touch progressive exploration with touch-state snapshotting—1st touch blooms the next concentric sub-feeling tier without jumping away, and a 2nd touch on an already-expanded slice selects that feeling and displays its verse. When switching between cores from any state (including after selecting a 3rd-tier feeling), tapping another core strictly expands its sub-feelings without selecting.
     - **Center Hub**: Tapping the center hub collapses the wheel back to the 7-core ring and resets selection.
     - **Responsive Scaling**: Fluid SVG viewBox scaling down to 320px mobile viewports with accessible ≥44px touch targets.
   - **View Modes**:
