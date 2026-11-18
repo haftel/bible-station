@@ -220,13 +220,21 @@ graph TD
     - **Ring 1: Core Emotions (`r: 80–155`)**: 7 primary emotions (Happy, Sad, Disgusted, Angry, Fearful, Bad, Surprised) with custom harmonious hues from the Quiet Modern palette.
     - **Ring 2: Secondary Emotions (`r: 162–242`)**: 41 secondary sub-feelings. In "Interactive Focus" mode, dynamically expands and displays the secondaries belonging to the active core emotion on hover/tap.
     - **Ring 3: Tertiary Emotions (`r: 248–336`)**: 82 deeper sub-sub-feelings. In "Interactive Focus" mode, blooms outward for the active secondary feeling on hover/tap.
+  - **Initial State**: Starts completely unexpanded on page load—only Ring 1 (the 7 core emotions) is rendered, providing a clean, balanced introduction without premature selection.
+  - **Smooth Hover & Intent Tracking**: Container-level mouse tracking with debounced exit (250ms) ensures that navigating between concentric rings from a core emotion outward into secondary and tertiary sub-feelings never snaps back or reverts to unintended branches.
+  - **Touch & Mobile Optimization**:
+    - Tap core &rarr; expands secondaries and selects core feeling.
+    - Tap secondary &rarr; expands tertiaries and selects secondary feeling.
+    - Tap tertiary &rarr; selects tertiary feeling and updates verse.
+    - Tap center hub &rarr; resets wheel to initial 7-core ring.
+    - Responsive SVG scaling down to 320px mobile viewports with accessible ≥44px touch targets.
   - **View Modes**:
     - **Interactive Focus Mode (Default)**: Progressive disclosure expanding outwards from core to sub-feeling to sub-sub-feeling as the user hovers or taps.
     - **Full Wheel View Mode**: Complete scientific circular sunburst displaying all 130 emotions across all 3 concentric rings simultaneously.
   - **Search & Filter**: Real-time feelings autocomplete search box filtering across all 130 emotions, displaying emotional paths and instant wheel navigation.
   - **Breadcrumbs Trail**: Interactive breadcrumb bar showing `Core › Secondary › Tertiary` with clickable chips to navigate the emotional hierarchy.
 - **Dynamic Scripture Display Box**:
-  - Displays selected verse text and citation.
+  - Displays selected verse text and citation. When no feeling is yet selected, a gentle welcome invitation card invites exploration.
   - Border accent, subtle shadow glow, and button styles adapt dynamically to the selected emotion's core color family.
   - Feeling badge chip displaying full hierarchical path (e.g. `Sad › Lonely › Abandoned`).
   - "Get Another Verse for '[Feeling]'" button cycles through multiple curated NIV 2011 verses with an active counter (e.g. `Verse 1 of 8`).

@@ -16,14 +16,14 @@
         <div class="mode-toggle-group">
           <button
             :class="['toggle-btn', { active: viewMode === 'focus' }]"
-            @click="viewMode = 'focus'"
+            @click="setMode('focus')"
             title="Interactive expansion on hover/tap"
           >
             ✦ Interactive Focus
           </button>
           <button
             :class="['toggle-btn', { active: viewMode === 'full' }]"
-            @click="viewMode = 'full'"
+            @click="setMode('full')"
             title="Display all 3 tiers of feelings simultaneously"
           >
             ◉ Full Wheel View
@@ -72,8 +72,8 @@
 
     <main class="container wheel-main-container">
       <!-- Active Emotion Breadcrumb -->
-      <nav class="breadcrumb-container" aria-label="Feeling navigation">
-        <span class="breadcrumb-label">Current Feeling:</span>
+      <nav class="breadcrumb-container" aria-label="Feeling navigation" v-if="activeCore">
+        <span class="breadcrumb-label">Current Branch:</span>
         <div class="breadcrumb-trail">
           <button
             class="breadcrumb-chip core-chip"
@@ -97,11 +97,11 @@
             class="breadcrumb-chip tertiary-chip"
             v-if="activeTertiary"
             :style="{ borderColor: activeTertiary.color, color: activeTertiary.darkColor, backgroundColor: activeTertiary.lightColor }"
+            @click="selectFeeling(activeTertiary.id)"
           >
             {{ activeTertiary.label }}
           </button>
           <button
-            v-if="selectedFeelingId"
             class="reset-selection-btn"
             @click="resetSelection"
             title="Reset wheel to center"
@@ -111,9 +111,13 @@
         </div>
       </nav>
 
-      <!-- SVG Feelings Wheel -->
+      <!-- SVG Feelings Wheel Stage -->
       <div class="wheel-stage">
-        <div class="wheel-svg-wrapper">
+        <div
+          class="wheel-svg-wrapper"
+          @mouseenter="onWheelMouseEnter"
+          @mouseleave="onWheelMouseLeave"
+        >
           <svg
             viewBox="-380 -380 760 760"
             class="feelings-wheel-svg"
@@ -124,7 +128,7 @@
               <filter id="hub-shadow" x="-30%" y="-30%" width="160%" height="160%">
                 <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,0.12)" />
               </filter>
-              <filter id="hover-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <filter id="slice-shadow" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.18)" />
               </filter>
             </defs>
@@ -143,9 +147,8 @@
                     'slice-active': selectedFeelingId === tert.id,
                     'slice-hovered': hoveredFeelingId === tert.id
                   }"
-                  @mouseenter="handleHover(tert.id)"
-                  @mouseleave="handleHover(null)"
-                  @click="selectFeeling(tert.id)"
+                  @mouseenter="onSliceEnter(tert.id)"
+                  @click="handleSliceClick(tert.id)"
                 >
                   <path
                     :d="describeArc(248, 336, tert.startAngle, tert.endAngle, 0.6)"
@@ -177,9 +180,8 @@
                     'slice-hovered': hoveredFeelingId === sec.id,
                     'branch-highlight': activeSecondary?.id === sec.id
                   }"
-                  @mouseenter="handleHover(sec.id)"
-                  @mouseleave="handleHover(null)"
-                  @click="selectFeeling(sec.id)"
+                  @mouseenter="onSliceEnter(sec.id)"
+                  @click="handleSliceClick(sec.id)"
                 >
                   <path
                     :d="describeArc(162, 242, sec.startAngle, sec.endAngle, 0.8)"
@@ -212,9 +214,8 @@
                   'slice-hovered': hoveredFeelingId === core.id,
                   'branch-highlight': activeCore?.id === core.id
                 }"
-                @mouseenter="handleHover(core.id)"
-                @mouseleave="handleHover(null)"
-                @click="selectFeeling(core.id)"
+                @mouseenter="onSliceEnter(core.id)"
+                @click="handleSliceClick(core.id)"
               >
                 <path
                   :d="describeArc(80, 155, core.startAngle, core.endAngle, 1.2)"
@@ -239,26 +240,26 @@
               <circle cx="0" cy="0" r="74" class="hub-circle" filter="url(#hub-shadow)" />
 
               <!-- Content in Center -->
-              <template v-if="hoveredFeeling || selectedFeeling">
+              <template v-if="displayFeeling">
                 <text y="-22" class="hub-eyebrow">
-                  {{ (hoveredFeeling || selectedFeeling).tier === 1 ? 'CORE EMOTION' : ((hoveredFeeling || selectedFeeling).tier === 2 ? 'SUB-FEELING' : 'DEEPER FEELING') }}
+                  {{ displayFeeling.tier === 1 ? 'CORE EMOTION' : (displayFeeling.tier === 2 ? 'SUB-FEELING' : 'DEEPER FEELING') }}
                 </text>
                 <text
                   y="6"
                   class="hub-feeling-name"
-                  :fill="(hoveredFeeling || selectedFeeling).darkColor"
+                  :fill="displayFeeling.darkColor"
                 >
-                  {{ (hoveredFeeling || selectedFeeling).label }}
+                  {{ displayFeeling.label }}
                 </text>
                 <text y="28" class="hub-action-hint">
-                  Click to see verse
+                  Click to view verse
                 </text>
               </template>
               <template v-else>
                 <text y="-18" class="hub-peace-icon">🕊️</text>
                 <text y="4" class="hub-default-title">How are you</text>
                 <text y="22" class="hub-default-subtitle">feeling?</text>
-                <text y="40" class="hub-default-hint">Hover to expand</text>
+                <text y="40" class="hub-default-hint">Hover or tap to expand</text>
               </template>
             </g>
           </svg>
@@ -267,7 +268,7 @@
         <!-- Wheel Hint / Instructions -->
         <p class="wheel-hint-text">
           <span class="hint-bullet">💡</span>
-          <strong>Tip:</strong> Hover over any core feeling to expand its sub-feelings. Click any feeling to load encouraging scripture.
+          <strong>How it works:</strong> Hover or tap a core emotion to expand its sub-feelings, then choose any feeling to load encouraging scripture.
         </p>
       </div>
 
@@ -343,6 +344,18 @@
         </div>
       </section>
 
+      <!-- Welcome Invitation Card (when no verse is yet selected) -->
+      <section v-else class="verse-welcome-card fade-in">
+        <div class="welcome-card-content">
+          <span class="welcome-icon">📖</span>
+          <h3 class="welcome-title">Find Peace & Encouragement for Your Soul</h3>
+          <p class="welcome-text">
+            Every season of life brings a multitude of emotions. Select or hover over any feeling on the wheel above
+            to see God's promises from the NIV Bible tailored for what you're experiencing today.
+          </p>
+        </div>
+      </section>
+
       <!-- ================= CATEGORY BROWSE LIST (ACCESSIBILITY & QUICK ACCESS) ================= -->
       <section class="browse-categories-section">
         <div class="browse-header" @click="showBrowseList = !showBrowseList">
@@ -409,7 +422,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import {
   FEELINGS_HIERARCHY,
   FEELINGS_INDEX,
@@ -423,14 +436,16 @@ const searchFocused = ref(false)
 const copiedRecently = ref(false)
 const showBrowseList = ref(false)
 
+// Active and selected states (INITIALIZED TO NULL - Wheel starts unexpanded!)
 const hoveredFeelingId = ref(null)
-const selectedFeelingId = ref('peaceful') // Warm default feeling
+const selectedFeelingId = ref(null)
+const activeCoreId = ref(null)
+const activeSecondaryId = ref(null)
+
 const currentVerseIndex = ref(0)
 const verseCardRef = ref(null)
 
-// Focus expansion tracking
-const lockedCoreId = ref('happy')
-const lockedSecondaryId = ref('peaceful')
+let collapseTimer = null
 
 // ==================== COMPUTED HIERARCHY ====================
 const selectedFeeling = computed(() => {
@@ -443,19 +458,21 @@ const hoveredFeeling = computed(() => {
   return FEELINGS_INDEX[hoveredFeelingId.value] || null
 })
 
+// Current feeling displayed in central hub (hovered takes precedence, then selected)
+const displayFeeling = computed(() => {
+  return hoveredFeeling.value || selectedFeeling.value || null
+})
+
 const activeCore = computed(() => {
-  const current = hoveredFeeling.value || selectedFeeling.value
-  if (!current) return FEELINGS_INDEX[lockedCoreId.value] || FEELINGS_HIERARCHY[0]
-  return FEELINGS_INDEX[current.coreId] || null
+  if (activeCoreId.value) {
+    return FEELINGS_INDEX[activeCoreId.value] || null
+  }
+  return null
 })
 
 const activeSecondary = computed(() => {
-  const current = hoveredFeeling.value || selectedFeeling.value
-  if (!current) return null
-  if (current.tier === 2) return current
-  if (current.tier === 3) return FEELINGS_INDEX[current.parentId] || null
-  if (lockedSecondaryId.value && FEELINGS_INDEX[lockedSecondaryId.value]?.coreId === activeCore.value?.id) {
-    return FEELINGS_INDEX[lockedSecondaryId.value]
+  if (activeSecondaryId.value) {
+    return FEELINGS_INDEX[activeSecondaryId.value] || null
   }
   return null
 })
@@ -466,36 +483,35 @@ const activeTertiary = computed(() => {
   return current
 })
 
-// Slices visibility based on Mode
+// Visible Ring 2 (Secondary) Slices
 const visibleSecondarySlices = computed(() => {
   if (viewMode.value === 'full') {
-    // All secondaries
     const list = []
     FEELINGS_HIERARCHY.forEach(c => list.push(...c.secondaries))
     return list
   }
-  // Focus Mode: only secondaries of activeCore
-  if (!activeCore.value) return []
-  return activeCore.value.secondaries || []
+  // Focus Mode: only show secondaries if a core is active!
+  if (!activeCoreId.value) return []
+  const coreNode = FEELINGS_HIERARCHY.find(c => c.id === activeCoreId.value)
+  return coreNode?.secondaries || []
 })
 
+// Visible Ring 3 (Tertiary) Slices
 const visibleTertiarySlices = computed(() => {
   if (viewMode.value === 'full') {
-    // All tertiaries
     const list = []
     FEELINGS_HIERARCHY.forEach(c => {
       c.secondaries.forEach(s => list.push(...s.tertiaries))
     })
     return list
   }
-  // Focus Mode: only tertiaries of activeSecondary, or all secondaries of activeCore
-  if (activeSecondary.value) {
-    return activeSecondary.value.tertiaries || []
-  }
-  if (activeCore.value) {
-    const list = []
-    activeCore.value.secondaries.forEach(s => list.push(...s.tertiaries))
-    return list
+  // Focus Mode: only show tertiaries if activeSecondaryId is active!
+  if (activeSecondaryId.value) {
+    const sec = FEELINGS_INDEX[activeSecondaryId.value]
+    if (!sec) return []
+    const coreNode = FEELINGS_HIERARCHY.find(c => c.id === sec.coreId)
+    const secNode = coreNode?.secondaries.find(s => s.id === activeSecondaryId.value)
+    return secNode?.tertiaries || []
   }
   return []
 })
@@ -520,36 +536,87 @@ const filteredFeelings = computed(() => {
   return all.filter(f => f.label.toLowerCase().includes(q) || f.path.some(p => p.toLowerCase().includes(q)))
 })
 
-// ==================== METHODS ====================
-const handleHover = (id) => {
-  hoveredFeelingId.value = id
-  if (id) {
-    const node = FEELINGS_INDEX[id]
-    if (node) {
-      if (node.tier === 1) {
-        lockedCoreId.value = node.id
-      } else if (node.tier === 2) {
-        lockedCoreId.value = node.coreId
-        lockedSecondaryId.value = node.id
-      } else if (node.tier === 3) {
-        lockedCoreId.value = node.coreId
-        lockedSecondaryId.value = node.parentId
+// ==================== HOVER & NAVIGATION HANDLERS ====================
+const onWheelMouseEnter = () => {
+  if (collapseTimer) {
+    clearTimeout(collapseTimer)
+    collapseTimer = null
+  }
+}
+
+const onWheelMouseLeave = () => {
+  // Grace period when moving out of the wheel entirely
+  collapseTimer = setTimeout(() => {
+    hoveredFeelingId.value = null
+    if (!selectedFeelingId.value) {
+      // Revert to initial clean unexpanded state
+      activeCoreId.value = null
+      activeSecondaryId.value = null
+    } else {
+      // Keep selected feeling's branch open
+      const sel = FEELINGS_INDEX[selectedFeelingId.value]
+      if (sel) {
+        activeCoreId.value = sel.coreId
+        activeSecondaryId.value = sel.tier >= 2 ? (sel.tier === 2 ? sel.id : sel.parentId) : null
       }
     }
+  }, 250)
+}
+
+const onSliceEnter = (id) => {
+  if (collapseTimer) {
+    clearTimeout(collapseTimer)
+    collapseTimer = null
   }
+  hoveredFeelingId.value = id
+  const node = FEELINGS_INDEX[id]
+  if (!node) return
+
+  if (node.tier === 1) {
+    activeCoreId.value = node.id
+    // Don't clear secondary if it already belongs to this core
+    if (activeSecondaryId.value && FEELINGS_INDEX[activeSecondaryId.value]?.coreId !== node.id) {
+      activeSecondaryId.value = null
+    }
+  } else if (node.tier === 2) {
+    activeCoreId.value = node.coreId
+    activeSecondaryId.value = node.id
+  } else if (node.tier === 3) {
+    activeCoreId.value = node.coreId
+    activeSecondaryId.value = node.parentId
+  }
+}
+
+// Touch / click handler for slices
+const handleSliceClick = (id) => {
+  if (!id || !FEELINGS_INDEX[id]) return
+  const node = FEELINGS_INDEX[id]
+
+  // Expand branch
+  activeCoreId.value = node.coreId
+  if (node.tier === 2) {
+    activeSecondaryId.value = node.id
+  } else if (node.tier === 3) {
+    activeSecondaryId.value = node.parentId
+  }
+
+  // Select feeling and show verse
+  selectFeeling(id)
 }
 
 const selectFeeling = (id) => {
   if (!id || !FEELINGS_INDEX[id]) return
+  const node = FEELINGS_INDEX[id]
   selectedFeelingId.value = id
   currentVerseIndex.value = 0
-  const node = FEELINGS_INDEX[id]
-  lockedCoreId.value = node.coreId
+
+  activeCoreId.value = node.coreId
   if (node.tier === 2) {
-    lockedSecondaryId.value = node.id
+    activeSecondaryId.value = node.id
   } else if (node.tier === 3) {
-    lockedSecondaryId.value = node.parentId
+    activeSecondaryId.value = node.parentId
   }
+
   searchQuery.value = ''
   searchFocused.value = false
 
@@ -562,10 +629,18 @@ const selectFeeling = (id) => {
 
 const resetSelection = () => {
   hoveredFeelingId.value = null
-  selectedFeelingId.value = 'peaceful'
-  lockedCoreId.value = 'happy'
-  lockedSecondaryId.value = 'peaceful'
+  selectedFeelingId.value = null
+  activeCoreId.value = null
+  activeSecondaryId.value = null
   currentVerseIndex.value = 0
+}
+
+const setMode = (mode) => {
+  viewMode.value = mode
+  if (mode === 'focus' && !selectedFeelingId.value) {
+    activeCoreId.value = null
+    activeSecondaryId.value = null
+  }
 }
 
 const cycleNextVerse = () => {
@@ -639,11 +714,6 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   const shouldFlip = midAngle > 90 && midAngle < 270
   return `rotate(${midAngle.toFixed(1)}) translate(0, -${midR.toFixed(1)}) rotate(${shouldFlip ? 180 : 0})`
 }
-
-onMounted(() => {
-  // Select initial peaceful verse
-  selectFeeling('peaceful')
-})
 </script>
 
 <style scoped>
@@ -932,17 +1002,19 @@ onMounted(() => {
   align-items: center;
   margin: 1rem auto 2.5rem;
   position: relative;
+  width: 100%;
 }
 
 .wheel-svg-wrapper {
   width: 100%;
-  max-width: 640px;
+  max-width: 620px;
   aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   user-select: none;
+  touch-action: manipulation;
 }
 
 .feelings-wheel-svg {
@@ -1069,6 +1141,8 @@ onMounted(() => {
   color: var(--text-light);
   margin-top: 1.5rem;
   text-align: center;
+  max-width: 500px;
+  line-height: 1.5;
 }
 
 .hint-bullet {
@@ -1087,6 +1161,38 @@ onMounted(() => {
   text-align: center;
   scroll-margin-top: 4rem;
   transition: all var(--transition-base);
+}
+
+.verse-welcome-card {
+  background: var(--card-bg);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.75rem 2rem;
+  margin: 2.5rem auto 3.5rem;
+  max-width: 800px;
+  text-align: center;
+}
+
+.welcome-icon {
+  font-size: 2.25rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.welcome-title {
+  font-family: var(--heading-font);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 0.5rem;
+}
+
+.welcome-text {
+  color: var(--text-light);
+  font-size: 1rem;
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto;
 }
 
 .verse-card-header {
@@ -1368,23 +1474,65 @@ onMounted(() => {
   border-color: var(--accent-color);
 }
 
-/* ==================== RESPONSIVE ADJUSTMENTS ==================== */
+/* ==================== MOBILE RESPONSIVE ==================== */
 @media (max-width: 640px) {
+  .page-header {
+    padding: 2.5rem 1rem 1.25rem;
+  }
+
   .page-title {
-    font-size: 2.1rem;
+    font-size: 2rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
   }
 
   .wheel-controls-bar {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .mode-toggle-group {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
   }
 
   .search-box-wrapper {
     max-width: 100%;
   }
 
+  .wheel-stage {
+    margin: 0.5rem auto 1.5rem;
+  }
+
+  .wheel-svg-wrapper {
+    max-width: 100%;
+  }
+
+  .breadcrumb-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
   .verse-display-card {
-    padding: 2.25rem 1.25rem;
+    padding: 2rem 1.25rem;
+    margin: 1.5rem auto 2.5rem;
+  }
+
+  .verse-card-headline {
+    font-size: 1.2rem;
   }
 
   .verse-quote {
@@ -1399,6 +1547,20 @@ onMounted(() => {
 
   .action-btn {
     width: 100%;
+    min-height: 44px; /* Accessible touch target */
+  }
+
+  .browse-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .browse-toggle-btn {
+    width: 100%;
+    text-align: center;
+    min-height: 40px;
   }
 }
 </style>
