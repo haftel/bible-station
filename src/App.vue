@@ -1,6 +1,6 @@
 <template>
   <div id="app" :class="{ 'is-phone-app': isPhoneApp }">
-    <Navbar v-if="!isPhoneApp" />
+    <Navbar />
     <main :class="isPhoneApp ? 'phone-content' : 'page-content'">
       <router-view v-slot="{ Component }">
         <transition name="page-fade" mode="out-in">

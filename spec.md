@@ -245,14 +245,14 @@ graph TD
 
 ### 4.5 Mobile Scripture Memorizer Web App (`/memory/mobile` -> `src/views/PhoneMemoryView.vue`)
 - **Mobile Route & Redirects**: Accessible at `biblestation.org/memory/mobile` (or `/memory/mobile`), linked from the mobile callout banner on `/memory` ("Using a mobile device? Switch to our mobile-friendly page!"). Visiting `/memory` on a mobile device automatically redirects to `/memory/mobile`, and legacy `/phonememory` and `/phone-memory` routes redirect to `/memory/mobile`.
-- **Standalone App Experience**:
-  - Global `Navbar` and `AppFooter` are conditionally hidden (`v-if="!route.meta.isPhoneApp"`), dedicating 100% of the mobile viewport (`min-height: 100dvh`) to scripture memorization.
-  - Safe-area insets (`env(safe-area-inset-top)` and `env(safe-area-inset-bottom)`) integrated into layout padding for edge-to-edge mobile devices.
+- **Unified Site Experience & Navigation**:
+  - Global `Navbar` with brand logo and responsive hamburger navigation menu is displayed at the top (`height: 64px; z-index: 100`), ensuring the mobile memory page feels completely cohesive with the rest of the website.
+  - Global `AppFooter` is conditionally hidden (`v-if="!route.meta.isPhoneApp"`), preserving maximum vertical screen real estate for interactive typing and memory controls.
+  - Safe-area insets (`env(safe-area-inset-bottom)`) integrated into layout padding for edge-to-edge mobile devices.
 - **Top Mobile App Bar**:
-  - Sticky glass-morphism header (`rgba(250, 250, 250, 0.95)`, `backdrop-filter: blur(12px)`).
-  - Bible Station brand icon alongside "Scripture Memory" title.
-  - Interactive active-verse badge displaying current reference and translation pill (e.g. `John 3:16 · NIV`). Tapping opens the verse bottom sheet.
-  - "Change" pill button (`.change-verse-btn`) providing immediate access to the verse picker.
+  - Sticky glass-morphism header (`rgba(250, 250, 250, 0.95)`, `backdrop-filter: blur(12px)`) positioned at `top: 64px; z-index: 40` to seamlessly dock directly below the site navbar.
+  - Interactive active-passage badge displaying current reference and translation pill (e.g. `Deuteronomy 31:6 · NIV`). Tapping opens the verse bottom sheet.
+  - "Change Verse" pill button (`.change-verse-btn`) providing immediate access to the verse picker.
 - **Thumb-Friendly Horizontal Mode Switcher**:
   - Horizontally scrollable strip (`.mode-nav`) featuring 5 modes (`Vanish`, `Blanks`, `Word Choice`, `1st Letter`, `Type 1st`). ("Type Full" is intentionally omitted from the mobile view.)
   - Active pill highlighting in primary Accent Blue (`#2563eb`), full pill radius, and smooth tactile feedback.

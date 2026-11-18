@@ -3,18 +3,12 @@
     <!-- Top Mobile App Bar -->
     <header class="app-bar">
       <div class="app-bar-content">
-        <div class="brand-zone">
-          <svg class="brand-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          </svg>
-          <div class="brand-text">
-            <span class="app-title">Scripture Memory</span>
-            <span class="active-verse-tag" @click="openVerseSheet">
-              {{ currentRef || 'Select Verse' }}
-              <span v-if="inputMode === 'translation' && selectedTranslationAbbr" class="translation-pill">
-                {{ selectedTranslationAbbr }}
-              </span>
+        <div class="passage-info" @click="openVerseSheet" role="button" tabindex="0" title="Tap to change verse">
+          <span class="passage-label">Passage</span>
+          <div class="active-verse-tag">
+            <span class="verse-reference-text">{{ currentRef || 'Select Verse' }}</span>
+            <span v-if="inputMode === 'translation' && selectedTranslationAbbr" class="translation-pill">
+              {{ selectedTranslationAbbr }}
             </span>
           </div>
         </div>
@@ -24,11 +18,11 @@
           @click="openVerseSheet"
           aria-label="Change verse"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="8"/>
             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          <span>Change</span>
+          <span>Change Verse</span>
         </button>
       </div>
 
@@ -673,56 +667,54 @@ watch(() => route.query.ref, async (newRef) => {
 /* App Bar & Sticky Header */
 .app-bar {
   position: sticky;
-  top: 0;
-  z-index: 50;
+  top: 64px;
+  z-index: 40;
   background-color: rgba(250, 250, 250, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color, #e5e5e5);
-  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .app-bar-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem 0.5rem;
+  padding: 0.6rem 1rem 0.45rem;
+  gap: 0.75rem;
 }
 
-.brand-zone {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  min-width: 0;
-}
-
-.brand-icon {
-  stroke: var(--accent-color, #2563eb);
-  flex-shrink: 0;
-}
-
-.brand-text {
+.passage-info {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  cursor: pointer;
 }
 
-.app-title {
+.passage-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-light, #71717a);
+  text-transform: uppercase;
+  margin-bottom: 0.1rem;
+}
+
+.verse-reference-text {
   font-family: var(--heading-font);
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--accent-color, #2563eb);
+  color: var(--text-main, #1a1a1a);
   letter-spacing: -0.01em;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 .active-verse-tag {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.78rem;
-  color: var(--text-light, #71717a);
-  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--text-main, #1a1a1a);
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
