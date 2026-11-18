@@ -555,7 +555,7 @@
 
 <script setup>
 import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
-import { generateWordOptions } from '@/composables/useScriptureMemory'
+import { generateWordOptions, cleanBollsVerseText } from '@/composables/useScriptureMemory'
 
 const translations = [
   { id: 'niv2011', label: 'New International Version (NIV)', name: 'New International Version', abbr: 'NIV', year: '2011' },
@@ -812,26 +812,6 @@ const parseBibleReference = (str) => {
         ? `${book.name} ${chapter}:${startVerse}`
         : `${book.name} ${chapter}:${startVerse}-${endVerse}`)
   return { id: book.id, num: book.num, name: book.name, chapter, startVerse, endVerse, isFullChapter, refDisplay }
-}
-
-const cleanBollsVerseText = (rawText) => {
-  const parts = rawText.split(/<br\s*\/?>/i)
-  let i = 0
-  while (i < parts.length - 1) {
-    const current = parts[i].trim()
-    const next = parts[i + 1].trim()
-    const endsWithPunct = /[.,;:'"!?”)\]]$/.test(current)
-    const nextStartsUpper = /^[A-Z“"‘'0-9]/.test(next)
-    if (!endsWithPunct && nextStartsUpper) {
-      i++ // Skip heading
-    } else {
-      break
-    }
-  }
-  let text = parts.slice(i).join(' ')
-  text = text.replace(/<sup[^>]*>.*?<\/sup>/gi, '')
-  text = text.replace(/^<b>.*?<\/b>\s*/i, '')
-  return text.replace(/<[^>]*>?/gm, '').trim()
 }
 
 // In-memory cache for loaded NIV books

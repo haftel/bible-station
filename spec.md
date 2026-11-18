@@ -166,7 +166,7 @@ graph TD
     - Reference / Title input: Text field for passage title or reference (e.g. `John 3:16` or `Romans 8:28`).
     - Custom Scripture Textarea: Multi-line text field allowing immediate pasting of any text.
     - "Switch to Bible Translations" action to return to translation lookup anytime.
-  - Load Verse button: Fetches verses or full chapters via client-side reference parsing, sourcing clean text (without verse numbers or section headings) from local NIV datasets (`public/data/translations/niv2011/` and `public/data/translations/niv1984/`) or direct scripture service (`bolls.life` for NASB 1995, ESV, KJV, etc.), or uses custom text, cleans whitespace/headings, and initializes the dashboard.
+  - Load Verse button: Fetches verses or full chapters via client-side reference parsing, sourcing clean text from local NIV datasets (`public/data/translations/niv2011/` and `public/data/translations/niv1984/`) or scripture services (`bolls.life` for NASB 1995, ESV, KJV, ASV, etc., and `bible-api.com`), or uses custom text. Raw API text is passed through `cleanBollsVerseText` to strip section headings, footnote superscripts (`<sup>...</sup>`), footnote bodies (`<f>...</f>`), Strong's concordance references (`<S>...</S>` found in KJV and ASV), and stray HTML tags, followed by whitespace normalization, before initializing the memory dashboard.
 - **Interactive Game Dashboard** (6 Modes):
   - **Responsive Mode Navigation**:
     - **Desktop (> 768px)**: Horizontal tab pill bar (`.desktop-tabs`) with active state highlights.

@@ -131,9 +131,18 @@ export const cleanBollsVerseText = (rawText) => {
     }
   }
   let text = parts.slice(i).join(' ')
-  text = text.replace(/<sup[^>]*>.*?<\/sup>/gi, '')
+  // Strip footnote superscripts (e.g. <sup>[1]</sup> or <sup>again: or, from above</sup>)
+  text = text.replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi, '')
+  // Strip Strong's concordance tags and numbers (e.g. <S>2424</S>, <S>3756, 1410</S>) in KJV & ASV
+  text = text.replace(/<S[^>]*>[\s\S]*?<\/S>/gi, '')
+  // Strip footnote content tags (e.g. <f>...</f>)
+  text = text.replace(/<f[^>]*>[\s\S]*?<\/f>/gi, '')
+  // Strip leading bold section headers
   text = text.replace(/^<b>.*?<\/b>\s*/i, '')
-  return text.replace(/<[^>]*>?/gm, '').trim()
+  // Strip any remaining HTML tags
+  text = text.replace(/<[^>]*>?/gm, '')
+  // Normalize extra whitespace
+  return text.replace(/\s+/g, ' ').trim()
 }
 
 export const cleanString = (str) => str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
