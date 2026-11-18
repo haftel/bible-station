@@ -22,7 +22,7 @@ graph TD
     RouterView --> Feelings["VersesForFeelingsView.vue (/verses-for-feelings)"]
     
     Devotionals -.-> DevData["src/data/devotionalsData.js"]
-    Feelings -.-> FeelData["src/data/feelingsData.js"]
+    Feelings -.-> FeelData["src/data/feelingsWheelData.js"]
     Memory -.-> MemoryEngine["useScriptureMemory Composable"]
     PhoneMemory -.-> MemoryEngine
     MemoryEngine -.-> BibleAPI["Local NIV JSONs & bolls.life API"]
@@ -213,28 +213,28 @@ graph TD
      - Full completion celebration message ("Perfect! You completed the verse!") when all words are completed, auto-dismissing virtual keyboard.
 
 ### 4.4 Verses for Feelings View (`/verses-for-feelings` -> `src/views/VersesForFeelingsView.vue`)
-- **Header**: Title "Scripture for Every Season", subtitle.
-- **Dynamic Verse Display Box**:
+- **Header**: Title "Scripture for Every Season", subtitle, and view controls toolbar.
+- **Interactive Feelings Wheel (Centerpiece SVG)**:
+  - Standard concentric circular Feelings Wheel with 3 progressive tiers:
+    - **Center Hub (`r = 74`)**: Displays current focus feeling, tier classification, prompt ("How are you feeling?"), and quick reset action.
+    - **Ring 1: Core Emotions (`r: 80–155`)**: 7 primary emotions (Happy, Sad, Disgusted, Angry, Fearful, Bad, Surprised) with custom harmonious hues from the Quiet Modern palette.
+    - **Ring 2: Secondary Emotions (`r: 162–242`)**: 41 secondary sub-feelings. In "Interactive Focus" mode, dynamically expands and displays the secondaries belonging to the active core emotion on hover/tap.
+    - **Ring 3: Tertiary Emotions (`r: 248–336`)**: 82 deeper sub-sub-feelings. In "Interactive Focus" mode, blooms outward for the active secondary feeling on hover/tap.
+  - **View Modes**:
+    - **Interactive Focus Mode (Default)**: Progressive disclosure expanding outwards from core to sub-feeling to sub-sub-feeling as the user hovers or taps.
+    - **Full Wheel View Mode**: Complete scientific circular sunburst displaying all 130 emotions across all 3 concentric rings simultaneously.
+  - **Search & Filter**: Real-time feelings autocomplete search box filtering across all 130 emotions, displaying emotional paths and instant wheel navigation.
+  - **Breadcrumbs Trail**: Interactive breadcrumb bar showing `Core › Secondary › Tertiary` with clickable chips to navigate the emotional hierarchy.
+- **Dynamic Scripture Display Box**:
   - Displays selected verse text and citation.
-  - Border and button accent adapts dynamically:
-    - Uplifting/Positive feelings: `--secondary-color` (`#16a34a`).
-    - Heavy/Negative feelings: `--accent-color` (`#2563eb`).
-  - "Get Another Verse for '[Mood]'" button generates a new random verse from the active category.
-  - Smoothly scrolls into view upon button click.
-- **Emotion Categories**:
-  - **Uplifting Feelings**:
-    1. *Joy & Celebration*: Joyful, Excited, Victorious
-    2. *Gratitude & Awe*: Thankful, Blessed, Amazed
-    3. *Peace & Contentment*: Peaceful, Content, Safe
-    4. *Love & Connection*: Loved, Loving, Forgiven
-    5. *Hope & Inspiration*: Hopeful, Inspired, Confident
-  - **Heavy Feelings**:
-    6. *Fear & Uncertainty*: Anxious, Afraid, Doubtful
-    7. *Sorrow & Grief*: Sad, Heartbroken, Grieving
-    8. *Anger & Hurt*: Angry, Bitter, Betrayed
-    9. *Weariness & Stress*: Tired, Overwhelmed, Stressed
-    10. *Self-Worth & Isolation*: Lonely, Insecure, Guilty
-- **Data Source**: `src/data/feelingsData.js` containing 30 emotion keys, each with at least 8 verified modern NIV (2011) scriptures.
+  - Border accent, subtle shadow glow, and button styles adapt dynamically to the selected emotion's core color family.
+  - Feeling badge chip displaying full hierarchical path (e.g. `Sad › Lonely › Abandoned`).
+  - "Get Another Verse for '[Feeling]'" button cycles through multiple curated NIV 2011 verses with an active counter (e.g. `Verse 1 of 8`).
+  - "Copy Verse" button with instant clipboard confirmation (`✓ Copied!`).
+  - Direct deep link to practice the passage in the Scripture Memorizer (`/memory`).
+  - Smoothly scrolls into view upon selection.
+- **Accessible Categories Accordion**: Expandable grid below the wheel displaying all 130 feelings categorized under their 7 core families for fast browsing or screen reader accessibility.
+- **Data Source**: `src/data/feelingsWheelData.js` containing 130 indexed emotion keys with pre-calculated radial geometry, hierarchical trees, and hundreds of verified modern NIV (2011) scriptures.
 
 ### 4.5 Mobile Scripture Memorizer Web App (`/memory/mobile` -> `src/views/PhoneMemoryView.vue`)
 - **Mobile Route & Redirects**: Accessible at `biblestation.org/memory/mobile` (or `/memory/mobile`), linked from the mobile callout banner on `/memory` ("Using a mobile device? Switch to our mobile-friendly page!"). Visiting `/memory` on a mobile device automatically redirects to `/memory/mobile`, and legacy `/phonememory` and `/phone-memory` routes redirect to `/memory/mobile`.

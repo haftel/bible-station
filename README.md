@@ -18,7 +18,7 @@ Live Site: [https://biblestation.org](https://biblestation.org)
   4. **First Letter Mode**: Displays initial letters with word length placeholders and hover tooltip cheats.
   5. **Type Full Mode**: Letter-by-letter live comparison typing engine with color-coded feedback, memory challenge toggle, and mobile virtual keyboard support.
   6. **Type First Letters Mode**: Type only the first letter of each word to reveal it with mobile software keyboard support — incorrect guesses flash red without showing the answer, with a "Show Next Word" hint button for when you're stumped.
-- **🕊️ Bible Verses for Feelings**: Comprehensive catalog of 240 modern NIV verses across **30 emotional states** grouped into **10 categories** (Uplifting and Heavy feelings), complete with dynamic color accenting and random verse generation.
+- **🕊️ Interactive Feelings Wheel & Scripture for Every Season**: Comprehensive, interactive standard Feelings Wheel with 3 progressive concentric tiers (7 core emotions &rarr; 41 secondary feelings &rarr; 82 deeper sub-feelings) mapping 130 emotions to verified NIV (2011) encouragement scriptures. Features progressive hover expansion, dual display modes (Interactive Focus vs. Full Wheel View), instant real-time feelings search, clickable breadcrumb navigation, dynamic core-themed verse cards with multi-verse cycling, one-click copy, direct Scripture Memorizer practice links, and an accessible categorical browse view.
 - **📱 Mobile Scripture Memorizer Web App (`/memory/mobile`)**: Dedicated standalone mobile phone web app experience designed specifically for smartphones. Accessible via direct URL (`biblestation.org/memory/mobile`, with `/phonememory` and mobile visits to `/memory` automatically redirecting there) or via the mobile-friendly link on `/memory`, it hides standard website headers and footers for a distraction-free full viewport, featuring:
   - Sticky mobile app bar with safe-area insets, reference badge, and instant "Change" trigger.
   - Ergonomic slide-up bottom sheet drawer with translation selection, reference lookup, and custom text pasting.
@@ -60,7 +60,8 @@ bible-station/
 │   │   └── useScriptureMemory.js # Core scripture engine & 6 memory game state machines
 │   ├── data/
 │   │   ├── devotionalsData.js    # Devotional articles data
-│   │   └── feelingsData.js       # 30 feelings categories and 240 modern NIV scripture texts
+│   │   ├── feelingsWheelData.js  # Standard 3-tier feelings taxonomy (130 emotions) & verified NIV 2011 scriptures
+│   │   └── feelingsData.js       # Base feelings categories and 240 modern NIV scripture texts
 │   ├── router/
 │   │   └── index.js              # Vue Router configuration
 │   ├── views/
