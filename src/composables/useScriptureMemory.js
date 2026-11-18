@@ -95,7 +95,9 @@ for (const b of ALL_BOOKS) {
 
 export const parseBibleReference = (str) => {
   if (!str) return null
-  const clean = str.trim().replace(/\s+/g, ' ')
+  let clean = str.trim().replace(/\s+/g, ' ')
+  // Strip trailing translation abbreviation if present (e.g. "Deuteronomy 31:6 NIV" -> "Deuteronomy 31:6")
+  clean = clean.replace(/\s*\(?(?:NIV|KJV|ESV|NLT|NKJV|CSB|NASB|AMP|NET|WEB|ASV|BBE|NIV2011|NIV1984)\)?\s*$/i, '').trim()
   // Matches "1 John 1", "John 3:16", "Romans 8:28-30", "Psalm 23"
   const m = clean.match(/^((?:[1-3]\s+)?[a-zA-Z\s]+?)\s*(\d+)(?:[\s:]+(\d+)(?:\s*-\s*(\d+))?)?$/)
   if (!m) return null

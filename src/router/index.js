@@ -29,9 +29,9 @@ const routes = [
     name: 'Memory',
     component: MemoryView,
     meta: { title: 'Scripture Memorizer - Bible Station' },
-    beforeEnter: () => {
+    beforeEnter: (to) => {
       if (isMobileDevice()) {
-        return { path: '/memory/mobile', replace: true }
+        return { path: '/memory/mobile', query: to.query, replace: true }
       }
     }
   },
@@ -46,11 +46,11 @@ const routes = [
   },
   {
     path: '/phonememory',
-    redirect: '/memory/mobile'
+    redirect: to => ({ path: '/memory/mobile', query: to.query })
   },
   {
     path: '/phone-memory',
-    redirect: '/memory/mobile'
+    redirect: to => ({ path: '/memory/mobile', query: to.query })
   },
   {
     path: '/verses-for-feelings',

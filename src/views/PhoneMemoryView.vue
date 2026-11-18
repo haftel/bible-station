@@ -453,7 +453,10 @@
 
 <script setup>
 import { ref, nextTick, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useScriptureMemory, TRANSLATIONS } from '@/composables/useScriptureMemory'
+
+const route = useRoute()
 
 const {
   inputMode,
@@ -619,10 +622,39 @@ watch(typeFirstCompleted, (isComplete) => {
   }
 })
 
+const handleQueryParamVerse = async () => {
+  if (route.query.ref) {
+    referenceInput.value = String(route.query.ref)
+    if (route.query.translation) {
+      selectedTranslation.value = String(route.query.translation)
+    }
+    inputMode.value = 'translation'
+    await fetchVerse()
+    saveToStorage()
+    return true
+  } else if (route.query.text) {
+    customText.value = String(route.query.text)
+    inputMode.value = 'custom'
+    await fetchVerse()
+    saveToStorage()
+    return true
+  }
+  return false
+}
+
 // Initialize on mount
 onMounted(async () => {
   loadFromStorage()
-  await fetchVerse()
+  const loadedFromQuery = await handleQueryParamVerse()
+  if (!loadedFromQuery) {
+    await fetchVerse()
+  }
+})
+
+watch(() => route.query.ref, async (newRef) => {
+  if (newRef) {
+    await handleQueryParamVerse()
+  }
 })
 </script>
 

@@ -223,11 +223,10 @@ graph TD
   - **Initial State**: Starts completely unexpanded on page load—only Ring 1 (the 7 core emotions) is rendered, providing a clean, balanced introduction without premature selection.
   - **Smooth Hover & Intent Tracking**: Container-level mouse tracking with debounced exit (250ms) ensures that navigating between concentric rings from a core emotion outward into secondary and tertiary sub-feelings never snaps back or reverts to unintended branches.
   - **Touch & Mobile Optimization**:
-    - Tap core &rarr; expands secondaries and selects core feeling.
-    - Tap secondary &rarr; expands tertiaries and selects secondary feeling.
-    - Tap tertiary &rarr; selects tertiary feeling and updates verse.
-    - Tap center hub &rarr; resets wheel to initial 7-core ring.
-    - Responsive SVG scaling down to 320px mobile viewports with accessible ≥44px touch targets.
+    - **Outer Layer (Tier 3)**: Single touch immediately selects the feeling, loads its NIV encouragement verse, and scrolls to the scripture card.
+    - **Inner Layers (Tier 1 Core & Tier 2 Secondary)**: 2-touch progressive exploration—1st touch blooms the next concentric sub-feeling tier without jumping away, and a 2nd touch on an already-expanded slice selects that feeling and displays its verse.
+    - **Center Hub**: Tapping the center hub collapses the wheel back to the 7-core ring and resets selection.
+    - **Responsive Scaling**: Fluid SVG viewBox scaling down to 320px mobile viewports with accessible ≥44px touch targets.
   - **View Modes**:
     - **Interactive Focus Mode (Default)**: Progressive disclosure expanding outwards from core to sub-feeling to sub-sub-feeling as the user hovers or taps.
     - **Full Wheel View Mode**: Complete scientific circular sunburst displaying all 130 emotions across all 3 concentric rings simultaneously.
@@ -239,7 +238,7 @@ graph TD
   - Feeling badge chip displaying full hierarchical path (e.g. `Sad › Lonely › Abandoned`).
   - "Get Another Verse for '[Feeling]'" button cycles through multiple curated NIV 2011 verses with an active counter (e.g. `Verse 1 of 8`).
   - "Copy Verse" button with instant clipboard confirmation (`✓ Copied!`).
-  - Direct deep link to practice the passage in the Scripture Memorizer (`/memory`).
+  - Direct deep link to practice the passage in the Scripture Memorizer (`/memory?ref=...&translation=niv2011`). Both desktop (`MemoryView`) and mobile (`PhoneMemoryView`) automatically detect query parameters on mount and on query change, executing `fetchVerse()` so all 6 memorization modes are immediately initialized with the selected feeling's verse.
   - Smoothly scrolls into view upon selection.
 - **Accessible Categories Accordion**: Expandable grid below the wheel displaying all 130 feelings categorized under their 7 core families for fast browsing or screen reader accessibility.
 - **Data Source**: `src/data/feelingsWheelData.js` containing 130 indexed emotion keys with pre-calculated radial geometry, hierarchical trees, and hundreds of verified modern NIV (2011) scriptures.

@@ -554,8 +554,11 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { generateWordOptions, cleanBollsVerseText } from '@/composables/useScriptureMemory'
+
+const route = useRoute()
 
 const translations = [
   { id: 'niv2011', label: 'New International Version (NIV)', name: 'New International Version', abbr: 'NIV', year: '2011' },
@@ -677,6 +680,7 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  handleQueryParamVerse()
 })
 
 onUnmounted(() => {
@@ -794,7 +798,10 @@ for (const b of ALL_BOOKS) {
 }
 
 const parseBibleReference = (str) => {
-  const clean = str.trim().replace(/\s+/g, ' ')
+  if (!str) return null
+  let clean = str.trim().replace(/\s+/g, ' ')
+  // Strip trailing translation abbreviation if present (e.g. "Deuteronomy 31:6 NIV" -> "Deuteronomy 31:6")
+  clean = clean.replace(/\s*\(?(?:NIV|KJV|ESV|NLT|NKJV|CSB|NASB|AMP|NET|WEB|ASV|BBE|NIV2011|NIV1984)\)?\s*$/i, '').trim()
   // Matches "1 John 1", "John 3:16", "Romans 8:28-30", "Psalm 23"
   const m = clean.match(/^((?:[1-3]\s+)?[a-zA-Z\s]+?)\s*(\d+)(?:[\s:]+(\d+)(?:\s*-\s*(\d+))?)?$/)
   if (!m) return null
@@ -980,6 +987,25 @@ const initializeDashboard = () => {
   initType()
   initTypeFirst()
 }
+
+const handleQueryParamVerse = async () => {
+  if (route.query.ref) {
+    referenceInput.value = String(route.query.ref)
+    if (route.query.translation) {
+      selectedTranslation.value = String(route.query.translation)
+    }
+    inputMode.value = 'translation'
+    await fetchVerse()
+  } else if (route.query.text) {
+    customText.value = String(route.query.text)
+    inputMode.value = 'custom'
+    await fetchVerse()
+  }
+}
+
+watch(() => route.query.ref, () => {
+  handleQueryParamVerse()
+})
 
 // ==================== 1. VANISH MODE ====================
 const vanishPercent = ref(0)

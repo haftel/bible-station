@@ -335,7 +335,13 @@
           </button>
 
           <router-link
-            to="/memory"
+            :to="{
+              path: '/memory',
+              query: {
+                ref: getCleanVerseRef(selectedVerse.ref),
+                translation: 'niv2011'
+              }
+            }"
             class="action-btn practice-verse-link"
             title="Practice this passage in the Scripture Memorizer tool"
           >
@@ -592,16 +598,48 @@ const handleSliceClick = (id) => {
   if (!id || !FEELINGS_INDEX[id]) return
   const node = FEELINGS_INDEX[id]
 
-  // Expand branch
-  activeCoreId.value = node.coreId
-  if (node.tier === 2) {
-    activeSecondaryId.value = node.id
-  } else if (node.tier === 3) {
-    activeSecondaryId.value = node.parentId
+  // Full Wheel Mode: everything is already visible, select directly
+  if (viewMode.value === 'full') {
+    selectFeeling(id)
+    return
   }
 
-  // Select feeling and show verse
-  selectFeeling(id)
+  // Interactive Focus Mode:
+  // Tier 3 (Outer Layer): 1 touch immediately selects feeling and displays verse
+  if (node.tier === 3) {
+    activeCoreId.value = node.coreId
+    activeSecondaryId.value = node.parentId
+    selectFeeling(id)
+    return
+  }
+
+  // Tier 2 (Middle Layer / Secondary):
+  // 1st touch: expands its tertiaries
+  // 2nd touch: selects secondary feeling and displays verse
+  if (node.tier === 2) {
+    if (activeSecondaryId.value === node.id) {
+      selectFeeling(id)
+    } else {
+      activeCoreId.value = node.coreId
+      activeSecondaryId.value = node.id
+      hoveredFeelingId.value = node.id
+    }
+    return
+  }
+
+  // Tier 1 (Inner Layer / Core):
+  // 1st touch: expands its secondaries
+  // 2nd touch: selects core feeling and displays verse
+  if (node.tier === 1) {
+    if (activeCoreId.value === node.id && !activeSecondaryId.value) {
+      selectFeeling(id)
+    } else {
+      activeCoreId.value = node.id
+      activeSecondaryId.value = null
+      hoveredFeelingId.value = node.id
+    }
+    return
+  }
 }
 
 const selectFeeling = (id) => {
@@ -647,6 +685,11 @@ const cycleNextVerse = () => {
   if (availableVerses.value.length > 1) {
     currentVerseIndex.value = (currentVerseIndex.value + 1) % availableVerses.value.length
   }
+}
+
+const getCleanVerseRef = (refStr) => {
+  if (!refStr) return ''
+  return refStr.replace(/\s*\(?(?:NIV|KJV|ESV|NLT|NKJV|CSB|NASB|AMP|NET|WEB|ASV|BBE|NIV2011|NIV1984)\)?\s*$/i, '').trim()
 }
 
 const copyVerseToClipboard = async () => {
