@@ -1735,22 +1735,20 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
     gap: 0.75rem;
   }
 
-  .mode-toggle-group,
-  .size-toggle-group {
+  .mode-toggle-group {
     width: 100%;
     justify-content: center;
   }
 
-  .toggle-btn,
-  .size-btn {
+  .size-toggle-group {
+    display: none;
+  }
+
+  .toggle-btn {
     flex: 1;
     text-align: center;
     padding: 0.5rem 0.6rem;
     font-size: 0.8rem;
-  }
-
-  .size-group-label {
-    display: none;
   }
 
   .search-box-wrapper {
