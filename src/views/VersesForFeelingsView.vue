@@ -105,13 +105,6 @@
           >
             {{ activeTertiary.label }}
           </button>
-          <button
-            class="reset-selection-btn"
-            @click="resetSelection"
-            title="Reset wheel to center"
-          >
-            ↺ Reset
-          </button>
         </div>
       </nav>
 
@@ -1005,23 +998,6 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   color: var(--text-light);
   font-weight: bold;
   font-size: 0.85rem;
-}
-
-.reset-selection-btn {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-light);
-  border-radius: var(--radius-full);
-  padding: 0.25rem 0.65rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  margin-left: 0.5rem;
-  transition: all var(--transition-fast);
-}
-
-.reset-selection-btn:hover {
-  color: var(--text-main);
-  border-color: var(--text-main);
 }
 
 /* ==================== WHEEL CONTAINER EXPANSION ==================== */

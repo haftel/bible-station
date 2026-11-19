@@ -229,7 +229,7 @@ graph TD
     - **Center Hub**: Tapping or clicking the center hub resets the selection.
     - **Responsive Scaling**: Fluid SVG viewBox scaling down to 320px mobile viewports with accessible ≥44px touch targets.
   - **Search & Filter**: Real-time feelings autocomplete search box filtering across all 130 emotions, displaying emotional paths and instant wheel navigation.
-  - **Breadcrumbs Trail**: Interactive breadcrumb bar showing `Core › Secondary › Tertiary` with clickable chips to navigate the emotional hierarchy.
+  - **Breadcrumbs Trail**: Interactive breadcrumb bar showing `Current Branch: Core › Secondary › Tertiary` with clickable chips to navigate the emotional hierarchy (selection reset is performed directly by tapping or clicking the wheel's center hub).
 - **Dynamic Scripture Display Box**:
   - Displays selected verse text and citation. When no feeling is yet selected, a gentle welcome invitation card invites exploration ("Find Encouragement from God's Word").
   - Border accent, subtle shadow glow, and button styles adapt dynamically to the selected emotion's core color family.
