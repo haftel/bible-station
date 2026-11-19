@@ -26,6 +26,32 @@
           </button>
         </div>
 
+        <!-- Wheel Size Control -->
+        <div class="size-toggle-group" role="group" aria-label="Wheel Size">
+          <span class="size-group-label">Size:</span>
+          <button
+            :class="['size-btn', { active: wheelSize === 'normal' }]"
+            @click="setWheelSize('normal')"
+            title="Standard wheel size"
+          >
+            Standard
+          </button>
+          <button
+            :class="['size-btn', { active: wheelSize === 'large' }]"
+            @click="setWheelSize('large')"
+            title="Large wheel size (Recommended for desktop)"
+          >
+            Large
+          </button>
+          <button
+            :class="['size-btn', { active: wheelSize === 'xl' }]"
+            @click="setWheelSize('xl')"
+            title="Extra large wheel size for widescreen monitors"
+          >
+            Extra Large
+          </button>
+        </div>
+
         <div class="search-box-wrapper">
           <div class="search-input-container">
             <span class="search-icon">🔍</span>
@@ -110,13 +136,13 @@
       <!-- SVG Feelings Wheel Stage -->
       <div class="wheel-stage">
         <div
-          class="wheel-svg-wrapper"
+          :class="['wheel-svg-wrapper', `size-${wheelSize}`]"
           @mouseenter="onWheelMouseEnter"
           @mouseleave="onWheelMouseLeave"
         >
           <svg
             viewBox="-380 -380 760 760"
-            class="feelings-wheel-svg"
+            :class="['feelings-wheel-svg', `mode-${viewMode}`]"
             role="img"
             aria-label="Interactive Feelings Wheel"
           >
@@ -132,7 +158,7 @@
             <!-- Guide Rings -->
             <circle cx="0" cy="0" r="155" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
             <circle cx="0" cy="0" r="242" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="3,3" opacity="0.4" />
-            <circle cx="0" cy="0" r="336" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="3,3" opacity="0.3" />
+            <circle cx="0" cy="0" r="356" fill="none" stroke="#e5e5e5" stroke-width="1" stroke-dasharray="3,3" opacity="0.3" />
 
             <!-- ================= RING 3: TERTIARY SLICES ================= -->
             <g class="ring-tertiary">
@@ -149,15 +175,15 @@
                   @click="handleSliceClick(tert.id)"
                 >
                   <path
-                    :d="describeArc(248, 336, tert.startAngle, tert.endAngle, 0.6)"
+                    :d="describeArc(248, 356, tert.startAngle, tert.endAngle, 0.6)"
                     :fill="tert.color"
                     class="slice-path"
                   />
                   <!-- Radial Label -->
                   <text
-                    :x="getRadialCoords(tert.startAngle, tert.endAngle, 248, 336).x"
-                    :y="getRadialCoords(tert.startAngle, tert.endAngle, 248, 336).y"
-                    :transform="`rotate(${getRadialCoords(tert.startAngle, tert.endAngle, 248, 336).rot}, ${getRadialCoords(tert.startAngle, tert.endAngle, 248, 336).x}, ${getRadialCoords(tert.startAngle, tert.endAngle, 248, 336).y})`"
+                    :x="getRadialCoords(tert.startAngle, tert.endAngle, 248, 356).x"
+                    :y="getRadialCoords(tert.startAngle, tert.endAngle, 248, 356).y"
+                    :transform="`rotate(${getRadialCoords(tert.startAngle, tert.endAngle, 248, 356).rot}, ${getRadialCoords(tert.startAngle, tert.endAngle, 248, 356).x}, ${getRadialCoords(tert.startAngle, tert.endAngle, 248, 356).y})`"
                     text-anchor="middle"
                     dominant-baseline="central"
                     class="slice-label label-tertiary"
@@ -443,6 +469,8 @@ import {
 
 // ==================== STATE ====================
 const viewMode = ref('focus') // 'focus' | 'full'
+const savedSize = typeof localStorage !== 'undefined' ? localStorage.getItem('feelings_wheel_size') : null
+const wheelSize = ref(savedSize || 'large') // Defaults to 'large' for enhanced desktop legibility
 const searchQuery = ref('')
 const searchFocused = ref(false)
 const copiedRecently = ref(false)
@@ -737,6 +765,15 @@ const setMode = (mode) => {
   }
 }
 
+const setWheelSize = (size) => {
+  wheelSize.value = size
+  try {
+    localStorage.setItem('feelings_wheel_size', size)
+  } catch (err) {
+    // Graceful fallback if localStorage is disabled or restricted
+  }
+}
+
 const cycleNextVerse = () => {
   if (availableVerses.value.length > 1) {
     currentVerseIndex.value = (currentVerseIndex.value + 1) % availableVerses.value.length
@@ -884,6 +921,47 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
 }
 
 .toggle-btn:hover:not(.active) {
+  color: var(--text-main);
+}
+
+/* ==================== SIZE TOGGLE GROUP ==================== */
+.size-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #f0f0f0;
+  padding: 3px 6px 3px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+}
+
+.size-group-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-right: 0.25rem;
+  user-select: none;
+}
+
+.size-btn {
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.size-btn.active {
+  background: var(--card-bg);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+.size-btn:hover:not(.active) {
   color: var(--text-main);
 }
 
@@ -1072,6 +1150,24 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   border-color: var(--text-main);
 }
 
+/* ==================== WHEEL CONTAINER EXPANSION ==================== */
+.wheel-main-container {
+  max-width: 880px;
+  transition: max-width var(--transition-base);
+}
+
+@media (min-width: 1024px) {
+  .wheel-main-container {
+    max-width: 1060px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .wheel-main-container {
+    max-width: 1200px;
+  }
+}
+
 /* ==================== WHEEL STAGE ==================== */
 .wheel-stage {
   display: flex;
@@ -1084,7 +1180,6 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
 
 .wheel-svg-wrapper {
   width: 100%;
-  max-width: 620px;
   aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
@@ -1092,6 +1187,43 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   position: relative;
   user-select: none;
   touch-action: manipulation;
+  transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sizing Modes */
+.wheel-svg-wrapper.size-normal {
+  max-width: 640px;
+}
+
+.wheel-svg-wrapper.size-large {
+  max-width: 860px;
+}
+
+.wheel-svg-wrapper.size-xl {
+  max-width: 1000px;
+}
+
+@media (max-width: 1024px) {
+  .wheel-svg-wrapper.size-large,
+  .wheel-svg-wrapper.size-xl {
+    max-width: 760px;
+  }
+}
+
+@media (max-width: 800px) {
+  .wheel-svg-wrapper.size-large,
+  .wheel-svg-wrapper.size-xl {
+    max-width: 660px;
+  }
+}
+
+@media (max-width: 640px) {
+  .wheel-svg-wrapper,
+  .wheel-svg-wrapper.size-normal,
+  .wheel-svg-wrapper.size-large,
+  .wheel-svg-wrapper.size-xl {
+    max-width: 100%;
+  }
 }
 
 .feelings-wheel-svg {
@@ -1124,24 +1256,55 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   pointer-events: none;
   font-weight: 600;
   fill: #ffffff;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  transition: font-size 0.2s ease;
+  paint-order: stroke fill;
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  transition: font-size 0.2s ease, filter 0.2s ease;
+  text-rendering: optimizeLegibility;
 }
 
 .label-core {
-  font-size: 13.5px;
+  font-size: 14.5px;
   font-weight: 700;
   letter-spacing: 0.2px;
 }
 
 .label-secondary {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: -0.1px;
 }
 
 .label-tertiary {
-  font-size: 9.2px;
-  font-weight: 500;
+  font-size: 10.6px;
+  font-weight: 600;
+  letter-spacing: -0.15px;
+}
+
+/* In Interactive Focus mode, only a single secondary's sub-feelings are visible,
+   allowing a larger, highly comfortable font size */
+.mode-focus .label-tertiary {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/* Interactive hover magnification */
+.slice-hovered .slice-label,
+.slice-active .slice-label {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
+  font-weight: 700;
+}
+
+.slice-hovered .label-tertiary,
+.slice-active .label-tertiary {
+  font-size: 12px;
+}
+
+.mode-focus .slice-hovered .label-tertiary,
+.mode-focus .slice-active .label-tertiary {
+  font-size: 13.5px;
 }
 
 /* Center Hub Styling */
@@ -1572,16 +1735,22 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
     gap: 0.75rem;
   }
 
-  .mode-toggle-group {
+  .mode-toggle-group,
+  .size-toggle-group {
     width: 100%;
     justify-content: center;
   }
 
-  .toggle-btn {
+  .toggle-btn,
+  .size-btn {
     flex: 1;
     text-align: center;
     padding: 0.5rem 0.6rem;
     font-size: 0.8rem;
+  }
+
+  .size-group-label {
+    display: none;
   }
 
   .search-box-wrapper {

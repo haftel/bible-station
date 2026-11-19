@@ -217,9 +217,12 @@ graph TD
 - **Interactive Feelings Wheel (Centerpiece SVG)**:
   - Standard concentric circular Feelings Wheel with 3 progressive tiers:
     - **Center Hub (`r = 74`)**: Displays current focus feeling, tier classification, prompt ("How are you feeling?"), and quick reset action.
-    - **Ring 1: Core Emotions (`r: 80–155`)**: 7 primary emotions (Happy, Sad, Disgusted, Angry, Fearful, Bad, Surprised) with custom harmonious hues from the Quiet Modern palette.
-    - **Ring 2: Secondary Emotions (`r: 162–242`)**: 41 secondary sub-feelings. In "Interactive Focus" mode, dynamically expands and displays the secondaries belonging to the active core emotion on hover/tap.
-    - **Ring 3: Tertiary Emotions (`r: 248–336`)**: 82 deeper sub-sub-feelings. In "Interactive Focus" mode, blooms outward for the active secondary feeling on hover/tap.
+    - **Ring 1: Core Emotions (`r: 80–155`)**: 7 primary emotions (Happy, Sad, Disgusted, Angry, Fearful, Bad, Surprised) with custom harmonious hues from the Quiet Modern palette. Font size: 14.5px bold.
+    - **Ring 2: Secondary Emotions (`r: 162–242`)**: 41 secondary sub-feelings. In "Interactive Focus" mode, dynamically expands and displays the secondaries belonging to the active core emotion on hover/tap. Font size: 12px semibold.
+    - **Ring 3: Tertiary Emotions (`r: 248–356`)**: 82 deeper sub-sub-feelings. Radial depth expanded to 356 (+20% radial length from 88px to 108px), accommodating long labels (such as *Out of Control*, *Insignificant*, *Disillusioned*). In "Interactive Focus" mode, blooms outward for the active secondary feeling on hover/tap. Font size: 10.6px in Full mode, 12.5px in Focus mode, with interactive hover magnification pop (12px Full / 13.5px Focus).
+    - **High-Contrast Typography & Legibility**: SVG text features `paint-order: stroke fill` with crisp dark outlines (`stroke: rgba(0,0,0,0.6); stroke-width: 2.2px; stroke-linejoin: round;`) and `text-rendering: optimizeLegibility`, ensuring clear readability across bright yellows, amber, and pastel tones.
+  - **Wheel Size Controls**: Dedicated size selector in the header toolbar offering `Standard` (640px), `Large` (860px, default), and `Extra Large` (1000px) with `localStorage` persistence, tailoring the wheel to both standard laptop displays and large widescreen desktop monitors.
+  - **Large-Screen Responsive Container Expansion**: `.wheel-main-container` expands dynamically to `1060px` at `≥ 1024px` and `1200px` at `≥ 1280px`, providing widescreen users with a prominent view while keeping text cards (scripture display box, categories browse accordion) centered at an optimal 820px reading line-length.
   - **Initial State**: Starts completely unexpanded on page load—only Ring 1 (the 7 core emotions) is rendered, providing a clean, balanced introduction without premature selection.
   - **Smooth Hover & Intent Tracking**: Container-level mouse tracking with debounced exit (250ms) ensures that navigating between concentric rings from a core emotion outward into secondary and tertiary sub-feelings never snaps back or reverts to unintended branches.
   - **Touch & Mobile Optimization**:
