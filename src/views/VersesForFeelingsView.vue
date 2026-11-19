@@ -3,29 +3,11 @@
     <header class="page-header">
       <h1 class="page-title">Scripture for Every Season</h1>
       <p class="page-subtitle">
-        Explore our interactive Feelings Wheel. Hover over or tap any emotion to expand deeper feelings,
-        and receive encouragement directly from the word of God.
+        Explore the Feelings Wheel to find comfort and receive encouragement directly from the word of God.
       </p>
 
       <!-- View Controls & Search Bar -->
       <div class="wheel-controls-bar">
-        <div class="mode-toggle-group">
-          <button
-            :class="['toggle-btn', { active: viewMode === 'focus' }]"
-            @click="setMode('focus')"
-            title="Interactive expansion on hover/tap"
-          >
-            ✦ Interactive Focus
-          </button>
-          <button
-            :class="['toggle-btn', { active: viewMode === 'full' }]"
-            @click="setMode('full')"
-            title="Display all 3 tiers of feelings simultaneously"
-          >
-            ◉ Full Wheel View
-          </button>
-        </div>
-
         <!-- Wheel Size Control -->
         <div class="size-toggle-group" role="group" aria-label="Wheel Size">
           <span class="size-group-label">Size:</span>
@@ -142,9 +124,9 @@
         >
           <svg
             viewBox="-380 -380 760 760"
-            :class="['feelings-wheel-svg', `mode-${viewMode}`]"
+            class="feelings-wheel-svg"
             role="img"
-            aria-label="Interactive Feelings Wheel"
+            aria-label="Feelings Wheel"
           >
             <defs>
               <filter id="hub-shadow" x="-30%" y="-30%" width="160%" height="160%">
@@ -292,7 +274,6 @@
                 <text y="-18" class="hub-peace-icon">🕊️</text>
                 <text y="4" class="hub-default-title">How are you</text>
                 <text y="22" class="hub-default-subtitle">feeling?</text>
-                <text y="40" class="hub-default-hint">Hover or tap to expand</text>
               </template>
             </g>
           </svg>
@@ -301,7 +282,7 @@
         <!-- Wheel Hint / Instructions -->
         <p class="wheel-hint-text">
           <span class="hint-bullet">💡</span>
-          <strong>How it works:</strong> Hover or tap a core emotion to expand its sub-feelings, then choose any feeling to load encouraging scripture.
+          <strong>How it works:</strong> Select any emotion on the wheel or search above to load encouraging scripture.
         </p>
       </div>
 
@@ -389,7 +370,7 @@
           <span class="welcome-icon">📖</span>
           <h3 class="welcome-title">Find Encouragement from God's Word</h3>
           <p class="welcome-text">
-            Select or hover over any feeling on the wheel above to see scripture to guide you through what you're experiencing today.
+            Select any feeling on the wheel above to see scripture to guide you through what you're experiencing today.
           </p>
         </div>
       </section>
@@ -468,7 +449,6 @@ import {
 } from '@/data/feelingsWheelData.js'
 
 // ==================== STATE ====================
-const viewMode = ref('focus') // 'focus' | 'full'
 const savedSize = typeof localStorage !== 'undefined' ? localStorage.getItem('feelings_wheel_size') : null
 const wheelSize = ref(savedSize || 'large') // Defaults to 'large' for enhanced desktop legibility
 const searchQuery = ref('')
@@ -476,7 +456,7 @@ const searchFocused = ref(false)
 const copiedRecently = ref(false)
 const showBrowseList = ref(false)
 
-// Active and selected states (INITIALIZED TO NULL - Wheel starts unexpanded!)
+// Active and selected states
 const hoveredFeelingId = ref(null)
 const selectedFeelingId = ref(null)
 const activeCoreId = ref(null)
@@ -525,35 +505,18 @@ const activeTertiary = computed(() => {
 
 // Visible Ring 2 (Secondary) Slices
 const visibleSecondarySlices = computed(() => {
-  if (viewMode.value === 'full') {
-    const list = []
-    FEELINGS_HIERARCHY.forEach(c => list.push(...c.secondaries))
-    return list
-  }
-  // Focus Mode: only show secondaries if a core is active!
-  if (!activeCoreId.value) return []
-  const coreNode = FEELINGS_HIERARCHY.find(c => c.id === activeCoreId.value)
-  return coreNode?.secondaries || []
+  const list = []
+  FEELINGS_HIERARCHY.forEach(c => list.push(...c.secondaries))
+  return list
 })
 
 // Visible Ring 3 (Tertiary) Slices
 const visibleTertiarySlices = computed(() => {
-  if (viewMode.value === 'full') {
-    const list = []
-    FEELINGS_HIERARCHY.forEach(c => {
-      c.secondaries.forEach(s => list.push(...s.tertiaries))
-    })
-    return list
-  }
-  // Focus Mode: only show tertiaries if activeSecondaryId is active!
-  if (activeSecondaryId.value) {
-    const sec = FEELINGS_INDEX[activeSecondaryId.value]
-    if (!sec) return []
-    const coreNode = FEELINGS_HIERARCHY.find(c => c.id === sec.coreId)
-    const secNode = coreNode?.secondaries.find(s => s.id === activeSecondaryId.value)
-    return secNode?.tertiaries || []
-  }
-  return []
+  const list = []
+  FEELINGS_HIERARCHY.forEach(c => {
+    c.secondaries.forEach(s => list.push(...s.tertiaries))
+  })
+  return list
 })
 
 // Verses for selected feeling
@@ -589,7 +552,7 @@ const onWheelMouseLeave = () => {
   collapseTimer = setTimeout(() => {
     hoveredFeelingId.value = null
     if (!selectedFeelingId.value) {
-      // Revert to initial clean unexpanded state
+      // Revert to initial clean state
       activeCoreId.value = null
       activeSecondaryId.value = null
     } else {
@@ -664,50 +627,7 @@ const onSliceEnter = (id) => {
 // Mobile touch tap handler
 const handleTouchTap = (id) => {
   if (!id || !FEELINGS_INDEX[id]) return
-  const node = FEELINGS_INDEX[id]
-
-  // Full Wheel Mode: everything is already visible, select directly
-  if (viewMode.value === 'full') {
-    selectFeeling(id)
-    return
-  }
-
-  // Tier 3 (Outer Layer): 1 touch always immediately selects and displays verse!
-  if (node.tier === 3) {
-    activeCoreId.value = node.coreId
-    activeSecondaryId.value = node.parentId
-    selectFeeling(id)
-    return
-  }
-
-  // Tier 2 (Middle Layer / Secondary):
-  // 2nd tap: If this secondary was ALREADY the active secondary at touch touchdown, select it!
-  if (node.tier === 2) {
-    if (touchStartSecondaryId === node.id) {
-      selectFeeling(id)
-    } else {
-      // 1st touch: strictly expand its tertiaries
-      activeCoreId.value = node.coreId
-      activeSecondaryId.value = node.id
-      hoveredFeelingId.value = node.id
-    }
-    return
-  }
-
-  // Tier 1 (Inner Layer / Core):
-  // 2nd tap: If this core was ALREADY the active core with NO secondary active, select it!
-  if (node.tier === 1) {
-    if (touchStartCoreId === node.id && !touchStartSecondaryId) {
-      selectFeeling(id)
-    } else {
-      // 1st touch (or switching from another core / drill-down):
-      // Strictly expand this core's secondaries, NEVER select it!
-      activeCoreId.value = node.id
-      activeSecondaryId.value = null
-      hoveredFeelingId.value = node.id
-    }
-    return
-  }
+  selectFeeling(id)
 }
 
 // Desktop mouse click handler for slices
@@ -715,14 +635,6 @@ const handleSliceClick = (id) => {
   // If a touch interaction just occurred, touch handler already processed it
   if (Date.now() - touchStartTime < 700) return
   if (!id || !FEELINGS_INDEX[id]) return
-
-  const node = FEELINGS_INDEX[id]
-  if (viewMode.value === 'full' || node.tier === 3) {
-    selectFeeling(id)
-    return
-  }
-
-  // On desktop, mouse hover already expanded the slice, so click selects it
   selectFeeling(id)
 }
 
@@ -755,14 +667,6 @@ const resetSelection = () => {
   activeCoreId.value = null
   activeSecondaryId.value = null
   currentVerseIndex.value = 0
-}
-
-const setMode = (mode) => {
-  viewMode.value = mode
-  if (mode === 'focus' && !selectedFeelingId.value) {
-    activeCoreId.value = null
-    activeSecondaryId.value = null
-  }
 }
 
 const setWheelSize = (size) => {
@@ -892,36 +796,6 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   justify-content: center;
   gap: 1.25rem;
   margin-top: 1rem;
-}
-
-.mode-toggle-group {
-  display: inline-flex;
-  background: #f0f0f0;
-  padding: 3px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-color);
-}
-
-.toggle-btn {
-  background: transparent;
-  border: none;
-  padding: 0.5rem 1.1rem;
-  border-radius: var(--radius-full);
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-light);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.toggle-btn.active {
-  background: var(--card-bg);
-  color: var(--text-main);
-  box-shadow: var(--shadow-sm);
-}
-
-.toggle-btn:hover:not(.active) {
-  color: var(--text-main);
 }
 
 /* ==================== SIZE TOGGLE GROUP ==================== */
@@ -1283,13 +1157,6 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   letter-spacing: -0.15px;
 }
 
-/* In Interactive Focus mode, only a single secondary's sub-feelings are visible,
-   allowing a larger, highly comfortable font size */
-.mode-focus .label-tertiary {
-  font-size: 12.5px;
-  font-weight: 600;
-}
-
 /* Interactive hover magnification */
 .slice-hovered .slice-label,
 .slice-active .slice-label {
@@ -1300,11 +1167,6 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
 .slice-hovered .label-tertiary,
 .slice-active .label-tertiary {
   font-size: 12px;
-}
-
-.mode-focus .slice-hovered .label-tertiary,
-.mode-focus .slice-active .label-tertiary {
-  font-size: 13.5px;
 }
 
 /* Center Hub Styling */
@@ -1340,14 +1202,6 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   font-size: 12.5px;
   font-weight: 700;
   fill: var(--text-main);
-  text-anchor: middle;
-}
-
-.hub-default-hint {
-  font-family: var(--body-font);
-  font-size: 9.5px;
-  font-weight: 500;
-  fill: var(--text-light);
   text-anchor: middle;
 }
 
@@ -1735,20 +1589,8 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
     gap: 0.75rem;
   }
 
-  .mode-toggle-group {
-    width: 100%;
-    justify-content: center;
-  }
-
   .size-toggle-group {
     display: none;
-  }
-
-  .toggle-btn {
-    flex: 1;
-    text-align: center;
-    padding: 0.5rem 0.6rem;
-    font-size: 0.8rem;
   }
 
   .search-box-wrapper {

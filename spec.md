@@ -213,26 +213,21 @@ graph TD
      - Full completion celebration message ("Perfect! You completed the verse!") when all words are completed, auto-dismissing virtual keyboard.
 
 ### 4.4 Verses for Feelings View (`/verses-for-feelings` -> `src/views/VersesForFeelingsView.vue`)
-- **Header**: Clean header with title "Scripture for Every Season", subtitle inviting users to explore the Feelings Wheel and receive encouragement directly from God's Word, and view controls toolbar.
-- **Interactive Feelings Wheel (Centerpiece SVG)**:
-  - Standard concentric circular Feelings Wheel with 3 progressive tiers:
-    - **Center Hub (`r = 74`)**: Displays current focus feeling, tier classification, prompt ("How are you feeling?"), and quick reset action.
+- **Header**: Clean header with title "Scripture for Every Season", subtitle inviting users to explore the Feelings Wheel and receive encouragement directly from God's Word, and size/search toolbar.
+- **Feelings Wheel (Centerpiece SVG)**:
+  - Standard concentric circular Feelings Wheel displaying all 3 tiers simultaneously (Full Wheel View):
+    - **Center Hub (`r = 74`)**: Displays hovered or selected feeling details (tier classification, emotion name, and "Click to view verse" prompt), default prompt ("How are you feeling?" with dove icon), and quick reset action on click.
     - **Ring 1: Core Emotions (`r: 80–155`)**: 7 primary emotions (Happy, Sad, Disgusted, Angry, Fearful, Bad, Surprised) with custom harmonious hues from the Quiet Modern palette. Font size: 14.5px bold.
-    - **Ring 2: Secondary Emotions (`r: 162–242`)**: 41 secondary sub-feelings. In "Interactive Focus" mode, dynamically expands and displays the secondaries belonging to the active core emotion on hover/tap. Font size: 12px semibold.
-    - **Ring 3: Tertiary Emotions (`r: 248–356`)**: 82 deeper sub-sub-feelings. Radial depth expanded to 356 (+20% radial length from 88px to 108px), accommodating long labels (such as *Out of Control*, *Insignificant*, *Disillusioned*). In "Interactive Focus" mode, blooms outward for the active secondary feeling on hover/tap. Font size: 10.6px in Full mode, 12.5px in Focus mode, with interactive hover magnification pop (12px Full / 13.5px Focus).
+    - **Ring 2: Secondary Emotions (`r: 162–242`)**: 41 secondary sub-feelings. Font size: 12px semibold.
+    - **Ring 3: Tertiary Emotions (`r: 248–356`)**: 82 deeper sub-sub-feelings. Radial depth expanded to 356 (+20% radial length from 88px to 108px), accommodating long labels (such as *Out of Control*, *Insignificant*, *Disillusioned*). Font size: 10.6px with interactive hover magnification pop (12px).
     - **High-Contrast Typography & Legibility**: SVG text features `paint-order: stroke fill` with crisp dark outlines (`stroke: rgba(0,0,0,0.6); stroke-width: 2.2px; stroke-linejoin: round;`) and `text-rendering: optimizeLegibility`, ensuring clear readability across bright yellows, amber, and pastel tones.
   - **Wheel Size Controls**: Dedicated size selector in the header toolbar offering `Standard` (640px), `Large` (860px, default), and `Extra Large` (1000px) with `localStorage` persistence, tailoring the wheel to both standard laptop displays and large widescreen desktop monitors. Automatically hidden on mobile viewports (`≤ 640px`) where the wheel fluidly spans full screen width.
   - **Large-Screen Responsive Container Expansion**: `.wheel-main-container` expands dynamically to `1060px` at `≥ 1024px` and `1200px` at `≥ 1280px`, providing widescreen users with a prominent view while keeping text cards (scripture display box, categories browse accordion) centered at an optimal 820px reading line-length.
-  - **Initial State**: Starts completely unexpanded on page load—only Ring 1 (the 7 core emotions) is rendered, providing a clean, balanced introduction without premature selection.
-  - **Smooth Hover & Intent Tracking**: Container-level mouse tracking with debounced exit (250ms) ensures that navigating between concentric rings from a core emotion outward into secondary and tertiary sub-feelings never snaps back or reverts to unintended branches.
+  - **Center Hub Hover Inspection**: Hovering over any slice on desktop dynamically previews the emotion's tier and name in the center hub and highlights its hierarchical branch. Moving away reverts to the selected emotion or default prompt after a debounced 250ms grace period.
   - **Touch & Mobile Optimization**:
-    - **Outer Layer (Tier 3)**: Single touch immediately selects the feeling, loads its NIV encouragement verse, and scrolls to the scripture card.
-    - **Inner Layers (Tier 1 Core & Tier 2 Secondary)**: 2-touch progressive exploration with touch-state snapshotting—1st touch blooms the next concentric sub-feeling tier without jumping away, and a 2nd touch on an already-expanded slice selects that feeling and displays its verse. When switching between cores from any state (including after selecting a 3rd-tier feeling), tapping another core strictly expands its sub-feelings without selecting.
-    - **Center Hub**: Tapping the center hub collapses the wheel back to the 7-core ring and resets selection.
+    - Direct tap on any feeling (core, secondary, or tertiary) selects the emotion, loads its encouraging NIV scripture, and smoothly scrolls to the scripture card.
+    - **Center Hub**: Tapping or clicking the center hub resets the selection.
     - **Responsive Scaling**: Fluid SVG viewBox scaling down to 320px mobile viewports with accessible ≥44px touch targets.
-  - **View Modes**:
-    - **Interactive Focus Mode (Default)**: Progressive disclosure expanding outwards from core to sub-feeling to sub-sub-feeling as the user hovers or taps.
-    - **Full Wheel View Mode**: Complete scientific circular sunburst displaying all 130 emotions across all 3 concentric rings simultaneously.
   - **Search & Filter**: Real-time feelings autocomplete search box filtering across all 130 emotions, displaying emotional paths and instant wheel navigation.
   - **Breadcrumbs Trail**: Interactive breadcrumb bar showing `Core › Secondary › Tertiary` with clickable chips to navigate the emotional hierarchy.
 - **Dynamic Scripture Display Box**:
