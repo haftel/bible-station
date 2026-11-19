@@ -1,14 +1,10 @@
 <template>
   <div class="feelings-view">
     <header class="page-header">
-      <div class="header-badge">
-        <span class="badge-dot"></span>
-        Biblical Encouragement & Empathy
-      </div>
       <h1 class="page-title">Scripture for Every Season</h1>
       <p class="page-subtitle">
         Explore our interactive Feelings Wheel. Hover over or tap any emotion to expand deeper feelings,
-        and receive a comforting, verified scripture (NIV 2011) spoken directly to your heart.
+        and receive encouragement directly from the word of God.
       </p>
 
       <!-- View Controls & Search Bar -->
@@ -365,10 +361,9 @@
       <section v-else class="verse-welcome-card fade-in">
         <div class="welcome-card-content">
           <span class="welcome-icon">📖</span>
-          <h3 class="welcome-title">Find Peace & Encouragement for Your Soul</h3>
+          <h3 class="welcome-title">Find Encouragement from God's Word</h3>
           <p class="welcome-text">
-            Every season of life brings a multitude of emotions. Select or hover over any feeling on the wheel above
-            to see God's promises from the NIV Bible tailored for what you're experiencing today.
+            Select or hover over any feeling on the wheel above to see scripture to guide you through what you're experiencing today.
           </p>
         </div>
       </section>
@@ -832,28 +827,6 @@ const getTangentialTransform = (startAngle, endAngle, innerR, outerR) => {
   padding: 3.5rem 1.5rem 1.75rem;
   max-width: 840px;
   margin: 0 auto;
-}
-
-.header-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  padding: 0.35rem 0.9rem;
-  border-radius: var(--radius-full);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-light);
-  margin-bottom: 1.25rem;
-  box-shadow: var(--shadow-xs);
-}
-
-.badge-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent-color);
 }
 
 .page-title {

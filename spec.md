@@ -213,7 +213,7 @@ graph TD
      - Full completion celebration message ("Perfect! You completed the verse!") when all words are completed, auto-dismissing virtual keyboard.
 
 ### 4.4 Verses for Feelings View (`/verses-for-feelings` -> `src/views/VersesForFeelingsView.vue`)
-- **Header**: Title "Scripture for Every Season", subtitle, and view controls toolbar.
+- **Header**: Clean header with title "Scripture for Every Season", subtitle inviting users to explore the Feelings Wheel and receive encouragement directly from God's Word, and view controls toolbar.
 - **Interactive Feelings Wheel (Centerpiece SVG)**:
   - Standard concentric circular Feelings Wheel with 3 progressive tiers:
     - **Center Hub (`r = 74`)**: Displays current focus feeling, tier classification, prompt ("How are you feeling?"), and quick reset action.
@@ -233,7 +233,7 @@ graph TD
   - **Search & Filter**: Real-time feelings autocomplete search box filtering across all 130 emotions, displaying emotional paths and instant wheel navigation.
   - **Breadcrumbs Trail**: Interactive breadcrumb bar showing `Core › Secondary › Tertiary` with clickable chips to navigate the emotional hierarchy.
 - **Dynamic Scripture Display Box**:
-  - Displays selected verse text and citation. When no feeling is yet selected, a gentle welcome invitation card invites exploration.
+  - Displays selected verse text and citation. When no feeling is yet selected, a gentle welcome invitation card invites exploration ("Find Encouragement from God's Word").
   - Border accent, subtle shadow glow, and button styles adapt dynamically to the selected emotion's core color family.
   - Feeling badge chip displaying full hierarchical path (e.g. `Sad › Lonely › Abandoned`).
   - "Get Another Verse for '[Feeling]'" button cycles through multiple curated NIV 2011 verses with an active counter (e.g. `Verse 1 of 8`).
